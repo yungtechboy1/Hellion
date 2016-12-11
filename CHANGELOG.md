@@ -1,6 +1,6 @@
 ## Hellion ChangeLog
 
-### Update #2 (16/12/2016)
+### Update #2 (16/12/2016) (In progress...)
 
 - World Server
     - Player login

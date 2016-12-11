@@ -62,7 +62,7 @@ namespace Hellion.Core.Structures
         {
             return Math.Sqrt(Math.Pow(this.X - otherPosition.X, 2) + Math.Pow(this.Y - otherPosition.Y, 2) + Math.Pow(this.Z - otherPosition.Z, 2));
         }
-        
+
         /// <summary>
         /// Check if the other position is in the circleRadius of this position.
         /// </summary>
@@ -74,7 +74,7 @@ namespace Hellion.Core.Structures
             float xDistance = this.X - otherPosition.X;
             float zDistance = this.Z - otherPosition.Z;
 
-            return (xDistance * xDistance + zDistance * zDistance) <= (circleRadius * circleRadius);
+            return (xDistance * xDistance + zDistance * zDistance) <= circleRadius * circleRadius;
         }
 
         /// <summary>

@@ -99,17 +99,18 @@ namespace Hellion.World.Structures
             // Initialize inventory, quests, guild, friends, skills etc...
         }
 
-        public void SendSpawn(WorldObject worldObject)
+        public void SpawnObject(WorldObject worldObject)
         {
             this.SpawnedObjects.Add(worldObject);
-
+        
             if (worldObject is Player)
                 this.ParentClient.SendPlayerSpawn(worldObject as Player);
         }
 
-        public void SendDespawn(WorldObject worldObject)
+        public void DespawnObject(WorldObject worldObject)
         {
             this.SpawnedObjects.Remove(worldObject);
+            this.ParentClient.SendDespawnObject(worldObject);
         }
     }
 }

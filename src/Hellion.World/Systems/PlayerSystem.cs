@@ -64,7 +64,5 @@ namespace Hellion.World
 
             playerMap.AddObject(this.Player);
         }
-
-
     }
 }

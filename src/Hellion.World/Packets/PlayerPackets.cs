@@ -357,7 +357,7 @@ namespace Hellion.World
                 //#endregion
                 //#endregion
 
-                //// Message hud
+                // Message hud
                 //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.MessageHud);
                 //packet.Write("Welcome to Hellion Emulator!");
 
@@ -438,6 +438,16 @@ namespace Hellion.World
 
                 packet.Write(-1); // pet ?
                 packet.Write(0); // buffs ?
+
+                this.Send(packet);
+            }
+        }
+
+        internal void SendDespawnObject(WorldObject worldObject)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(worldObject.ObjectId, WorldHeaders.Outgoing.ObjectDespawn);
 
                 this.Send(packet);
             }

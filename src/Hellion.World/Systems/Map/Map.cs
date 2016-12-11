@@ -72,13 +72,13 @@ namespace Hellion.World.Systems.Map
 
         public void AddObject(WorldObject worldObject)
         {
+            worldObject.IsSpawned = true;
+
             if (worldObject is Player)
             {
                 lock (syncLockClient)
                     this.players.Add(worldObject as Player);
             }
-
-            worldObject.IsSpawned = true;
         }
 
         public void RemoveObject(WorldObject worldObject)
@@ -123,10 +123,10 @@ namespace Hellion.World.Systems.Map
                         if (player.CanSee(obj))
                         {
                             if (!player.SpawnedObjects.Contains(obj))
-                                player.SendSpawn(obj);
+                                player.SpawnObject(obj);
                         }
                         else
-                            player.SendDespawn(obj);
+                            player.DespawnObject(obj);
                     }
                 }
             }
