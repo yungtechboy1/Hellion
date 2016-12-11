@@ -1,0 +1,1 @@
+dotnet run --project ../src/Hellion.Login/project.json
