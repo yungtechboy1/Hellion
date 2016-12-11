@@ -1,23 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Hellion.Core.Data.Resources
 {
+    /// <summary>
+    /// Represents a C/C++ define file.
+    /// </summary>
     public sealed class DefineFile
     {
         private string file;
 
+        /// <summary>
+        /// Gets the defines dictionary.
+        /// </summary>
         public Dictionary<string, int> Defines { get; private set; }
 
+        /// <summary>
+        /// Creates a new DefineFile instance.
+        /// </summary>
+        /// <param name="file">Define file path</param>
         public DefineFile(string file)
         {
             this.file = file;
             this.Defines = new Dictionary<string, int>();
         }
 
+        /// <summary>
+        /// Parse the define file.
+        /// </summary>
         public void Parse()
         {
             using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))

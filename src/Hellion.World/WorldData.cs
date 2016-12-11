@@ -14,6 +14,8 @@ namespace Hellion.World
 {
     public partial class WorldServer
     {
+        public static MapManager MapManager = new MapManager();
+
         private Dictionary<string, int> defines = new Dictionary<string, int>();
 
         /// <summary>
@@ -78,15 +80,21 @@ namespace Hellion.World
         /// </summary>
         private void LoadMaps()
         {
+            Log.Info("Loading maps...");
+
             IEnumerable<MapConfiguration> maps = this.WorldConfiguration.Maps;
 
             foreach (var map in maps)
             {
-                var newMap = new Map(map.Name);
+                Log.Loading("Loading map '{0}'...", map.Name);
+                var newMap = new Map(map.Id, map.Name);
                 newMap.Load();
+                newMap.StartThread();
 
-                // add map to MapInstance
+                MapManager.AddMap(newMap);
             }
+
+            Log.Done("{0} maps loaded!", MapManager.Count);
         }
     }
 }

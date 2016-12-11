@@ -13,6 +13,8 @@ namespace Hellion.World.Structures
     /// </summary>
     public class Player : Mover
     {
+        public WorldClient ParentClient { get; private set; }
+
         public int Id { get; private set; }
         
         public int AccountId { get; set; }
@@ -65,10 +67,12 @@ namespace Hellion.World.Structures
         /// <summary>
         /// Creates a new Player based on a <see cref="DbCharacter"/> stored in database.
         /// </summary>
+        /// <param name="parentClient">Parent client instance</param>
         /// <param name="dbCharacter">Character stored in database</param>
-        public Player(DbCharacter dbCharacter)
+        public Player(WorldClient parentClient, DbCharacter dbCharacter)
             : base(dbCharacter.Gender == 0 ? 11 : 12)
         {
+            this.ParentClient = parentClient;
             this.Id = dbCharacter.Id;
             this.AccountId = dbCharacter.AccountId;
             this.Name = dbCharacter.Name;
@@ -93,6 +97,19 @@ namespace Hellion.World.Structures
             this.Position = new Vector3(dbCharacter.PosX, dbCharacter.PosY, dbCharacter.PosZ);
 
             // Initialize inventory, quests, guild, friends, skills etc...
+        }
+
+        public void SendSpawn(WorldObject worldObject)
+        {
+            this.SpawnedObjects.Add(worldObject);
+
+            if (worldObject is Player)
+                this.ParentClient.SendPlayerSpawn(worldObject as Player);
+        }
+
+        public void SendDespawn(WorldObject worldObject)
+        {
+            this.SpawnedObjects.Remove(worldObject);
         }
     }
 }

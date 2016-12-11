@@ -33,5 +33,11 @@ namespace Hellion.World.Structures
             this.Speed = 0.1f;
             this.Level = 1;
         }
+
+        public virtual void Update()
+        {
+        }
+
+        
     }
 }

@@ -14,19 +14,40 @@ namespace Hellion.World.Systems.Map
     {
         private Thread thread;
 
+        private ICollection<Player> players;
+        private object syncLockClient = new object();
+
+        /// <summary>
+        /// Gets the map id.
+        /// </summary>
+        public int Id { get; private set; }
+
+        /// <summary>
+        /// Gets the map name.
+        /// </summary>
         public string Name { get; private set; }
 
-        public ICollection<WorldObject> Objects { get; private set; }
+        /// <summary>
+        /// Gets the spawned objects of the map.
+        /// </summary>
+        //public ICollection<WorldObject> Objects { get; private set; }
 
-        public Map(string mapName)
+        /// <summary>
+        /// Creates a new Map instance with a name and id.
+        /// </summary>
+        /// <param name="id">Id of the map</param>
+        /// <param name="mapName">Name of the map</param>
+        public Map(int id, string mapName)
         {
+            this.Id = id;
             this.Name = mapName;
-            this.Objects = new HashSet<WorldObject>();
-
-            this.thread = new Thread(this.Update);
-            //this.thread.Start();
+            this.players = new HashSet<Player>();
+            //this.Objects = new HashSet<WorldObject>();
         }
 
+        /// <summary>
+        /// Load a map.
+        /// </summary>
         public void Load()
         {
             string mapPath = Path.Combine(Global.DataPath, "maps", this.Name);
@@ -37,35 +58,75 @@ namespace Hellion.World.Systems.Map
             // Load .lnd
         }
 
+        /// <summary>
+        /// Start the map update thread.
+        /// </summary>
+        public void StartThread()
+        {
+            if (this.thread == null)
+            {
+                this.thread = new Thread(this.Update);
+                this.thread.Start();
+            }
+        }
+
+        public void AddObject(WorldObject worldObject)
+        {
+            if (worldObject is Player)
+            {
+                lock (syncLockClient)
+                    this.players.Add(worldObject as Player);
+            }
+
+            worldObject.IsSpawned = true;
+        }
+
+        public void RemoveObject(WorldObject worldObject)
+        {
+            if (worldObject is Player)
+            {
+                lock (syncLockClient)
+                    this.players.Remove(worldObject as Player);
+            }
+
+            worldObject.IsSpawned = false;
+        }
+
+        /// <summary>
+        /// Update the map objects.
+        /// </summary>
         public void Update()
         {
-            this.UpdatePlayerVisibility();
+            while (true)
+            {
+                this.UpdatePlayerVisibility();
+
+                Thread.Sleep(50);
+            }
         }
 
         private void UpdatePlayerVisibility()
         {
-            foreach (Player player in this.Objects)
+            lock (syncLockClient)
             {
-                if (!player.IsSpawned)
-                    continue;
-
-                // Update current player timers
-
-                foreach (WorldObject obj in this.Objects)
+                foreach (Player player in this.players)
                 {
-                    if (!obj.IsSpawned || player.GetHashCode() == obj.GetHashCode())
+                    if (!player.IsSpawned)
                         continue;
 
-                    if (player.CanSee(obj))
+                    player.Update();
+                    foreach (WorldObject obj in this.players)
                     {
-                        if (!player.SpawnedObjects.Contains(obj))
+                        if (!obj.IsSpawned || player.GetHashCode() == obj.GetHashCode())
+                            continue;
+
+                        if (player.CanSee(obj))
                         {
-                            // spawn the object because it's not spawn in the client list.
+                            if (!player.SpawnedObjects.Contains(obj))
+                                player.SendSpawn(obj);
                         }
-                    }
-                    else
-                    {
-                        // despawn object because it's not in range of the player
+                        else
+                            player.SendDespawn(obj);
                     }
                 }
             }

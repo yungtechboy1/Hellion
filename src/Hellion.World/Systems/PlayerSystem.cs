@@ -3,6 +3,7 @@ using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
 using Hellion.World.Structures;
+using Hellion.World.Systems.Map;
 
 namespace Hellion.World
 {
@@ -49,8 +50,21 @@ namespace Hellion.World
                 return;
             }
 
-            this.Player = new Player(character);
+            this.Player = new Player(this, character);
             this.SendPlayerSpawn();
+
+            Map playerMap = WorldServer.MapManager[this.Player.MapId];
+
+            if (playerMap == null)
+            {
+                Log.Error("Invalid MapId: {0}", this.Player.MapId);
+                this.Server.RemoveClient(this);
+                return;
+            }
+
+            playerMap.AddObject(this.Player);
         }
+
+
     }
 }

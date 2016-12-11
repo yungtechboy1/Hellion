@@ -9,7 +9,8 @@ namespace Hellion.Core.IO
         Done,
         Warning,
         Error,
-        Debug
+        Debug,
+        Loading
     }
 
     public static class Log
@@ -53,7 +54,13 @@ namespace Hellion.Core.IO
 #endif
         }
 
-        private static void WriteConsole(LogType logType, string text)
+        public static void Loading(string format, params object[] args)
+        {
+            lock (syncLog)
+                WriteConsole(LogType.Loading, string.Format(format, args), false);
+        }
+
+        private static void WriteConsole(LogType logType, string text, bool newLine = true)
         {
             switch (logType)
             {
@@ -62,11 +69,15 @@ namespace Hellion.Core.IO
                 case LogType.Warning: Console.ForegroundColor = ConsoleColor.Yellow; break;
                 case LogType.Error: Console.ForegroundColor = ConsoleColor.Red; break;
                 case LogType.Debug: Console.ForegroundColor = ConsoleColor.Blue; break;
+                case LogType.Loading: Console.ForegroundColor = ConsoleColor.DarkMagenta; break;
             }
 
-            Console.Write("[{0}]: ", logType.ToString());
+            Console.Write("\r[{0}]: ", logType.ToString());
             Console.ResetColor();
-            Console.WriteLine(text);
+            if (newLine)
+                Console.WriteLine(text);
+            else
+                Console.Write(text);
         }
     }
 }
