@@ -14,7 +14,20 @@ namespace Hellion.World
 {
     public partial class WorldServer
     {
-        public static MapManager MapManager = new MapManager();
+        private static MapManager mapManager;
+
+        /// <summary>
+        /// Gets the Map manager.
+        /// </summary>
+        public static MapManager MapManager
+        {
+            get
+            {
+                mapManager = mapManager ?? new MapManager();
+
+                return mapManager;
+            }
+        }
 
         private Dictionary<string, int> defines = new Dictionary<string, int>();
 
