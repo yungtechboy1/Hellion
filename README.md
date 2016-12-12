@@ -31,6 +31,7 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
 - World Server
     - Player login
     - Player visibility with other players
+    - Player moves
     
 ## Todo list
 

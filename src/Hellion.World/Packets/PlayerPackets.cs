@@ -412,7 +412,7 @@ namespace Hellion.World
 
                 packet.Write<byte>(0); // has party
 
-                packet.Write((byte)worldObject.ParentClient.currentUser.Authority);
+                packet.Write((byte)worldObject.Client.currentUser.Authority);
                 packet.Write(0); // mode
                 packet.Write(0); // state mode
                 packet.Write(0x000001F6); // item used ??

@@ -13,7 +13,7 @@ namespace Hellion.World.Structures
     /// </summary>
     public class Player : Mover
     {
-        public WorldClient ParentClient { get; private set; }
+        public WorldClient Client { get; private set; }
 
         public int Id { get; private set; }
         
@@ -72,7 +72,7 @@ namespace Hellion.World.Structures
         public Player(WorldClient parentClient, DbCharacter dbCharacter)
             : base(dbCharacter.Gender == 0 ? 11 : 12)
         {
-            this.ParentClient = parentClient;
+            this.Client = parentClient;
             this.Id = dbCharacter.Id;
             this.AccountId = dbCharacter.AccountId;
             this.Name = dbCharacter.Name;
@@ -95,22 +95,32 @@ namespace Hellion.World.Structures
             this.BankCode = dbCharacter.BankCode;
             this.MapId = dbCharacter.MapId;
             this.Position = new Vector3(dbCharacter.PosX, dbCharacter.PosY, dbCharacter.PosZ);
+            this.DestinationPosition = this.Position.Clone();
 
             // Initialize inventory, quests, guild, friends, skills etc...
         }
 
+        /// <summary>
+        /// Spawn an object around this player.
+        /// </summary>
+        /// <param name="worldObject"></param>
         public void SpawnObject(WorldObject worldObject)
         {
             this.SpawnedObjects.Add(worldObject);
         
             if (worldObject is Player)
-                this.ParentClient.SendPlayerSpawn(worldObject as Player);
+                this.Client.SendPlayerSpawn(worldObject as Player);
         }
 
-        public void DespawnObject(WorldObject worldObject)
+        /// <summary>
+        /// Despawn an object around this player.
+        /// </summary>
+        /// <param name="obj"></param>
+        public override void DespawnObject(WorldObject obj)
         {
-            this.SpawnedObjects.Remove(worldObject);
-            this.ParentClient.SendDespawnObject(worldObject);
+            this.Client.SendDespawnObject(obj);
+
+            base.DespawnObject(obj);
         }
     }
 }

@@ -78,6 +78,15 @@ namespace Hellion.Core.Structures
         }
 
         /// <summary>
+        /// Clones this Vector3 instance.
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 Clone()
+        {
+            return new Vector3(this.X, this.Y, this.Z);
+        }
+
+        /// <summary>
         /// Add two Vecto3.
         /// </summary>
         /// <param name="a"></param>

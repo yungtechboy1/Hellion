@@ -50,6 +50,16 @@ namespace Hellion.World
             this.sessionId = (uint)Global.GenerateRandomNumber();
         }
 
+        public void Disconnected()
+        {
+            Log.Info("Client with id {0} disconnected.", this.Id);
+
+            this.Dispose();
+            
+            WorldServer.MapManager[this.Player.MapId].RemoveObject(this.Player);
+            this.Player.SpawnedObjects.Clear();
+        }
+
         /// <summary>
         /// Send hi to the client.
         /// </summary>
@@ -79,6 +89,7 @@ namespace Hellion.World
             switch (packetHeader)
             {
                 case WorldHeaders.Incoming.Join: this.OnJoin(packet); break;
+                case WorldHeaders.Incoming.MoveByMouse: this.OnMoveByKeyboard(packet); break;
 
                 default: FFPacket.UnknowPacket<WorldHeaders.Incoming>(packetHeaderNumber, 8); break;
             }

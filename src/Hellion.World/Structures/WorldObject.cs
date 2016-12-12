@@ -1,4 +1,5 @@
-﻿using Hellion.Core.Data;
+﻿using Ether.Network.Packets;
+using Hellion.Core.Data;
 using Hellion.Core.Structures;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,17 @@ namespace Hellion.World.Structures
         public bool CanSee(WorldObject otherObject)
         {
             return this.Position.IsInCircle(otherObject.Position, 75f);
+        }
+
+        public virtual void DespawnObject(WorldObject obj)
+        {
+            this.SpawnedObjects.Remove(obj);
+        }
+
+        public void SendToVisible(NetPacketBase packet)
+        {
+            foreach (Player player in this.SpawnedObjects.Where(x => x is Player))
+                player.Client.Send(packet);
         }
     }
 }

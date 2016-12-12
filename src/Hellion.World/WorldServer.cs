@@ -109,7 +109,8 @@ namespace Hellion.World
         /// <param name="client">Client</param>
         protected override void OnClientDisconnected(NetConnection client)
         {
-            Log.Info("Client with id {0} disconnected.", client.Id);
+            if (client is WorldClient)
+                (client as WorldClient).Disconnected();
         }
 
         /// <summary>

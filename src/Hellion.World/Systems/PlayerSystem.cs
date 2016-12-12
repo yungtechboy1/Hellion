@@ -64,5 +64,17 @@ namespace Hellion.World
 
             playerMap.AddObject(this.Player);
         }
+
+        private void OnMoveByKeyboard(NetPacketBase packet)
+        {
+            packet.Position = 24;
+            var posX = packet.Read<float>();
+            var posY = packet.Read<float>();
+            var posZ = packet.Read<float>();
+            var forward = packet.Read<byte>();
+
+            this.Player.DestinationPosition = new Core.Structures.Vector3(posX, posY, posZ);
+            this.Player.SendMoverMoving();
+        }
     }
 }

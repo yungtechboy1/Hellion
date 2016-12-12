@@ -12,7 +12,7 @@ namespace Hellion.World.Systems.Map
 {
     public class Map
     {
-        private Thread thread;
+        private Thread updateThread;
 
         private ICollection<Player> players;
         private object syncLockClient = new object();
@@ -28,11 +28,6 @@ namespace Hellion.World.Systems.Map
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets the spawned objects of the map.
-        /// </summary>
-        //public ICollection<WorldObject> Objects { get; private set; }
-
-        /// <summary>
         /// Creates a new Map instance with a name and id.
         /// </summary>
         /// <param name="id">Id of the map</param>
@@ -42,7 +37,6 @@ namespace Hellion.World.Systems.Map
             this.Id = id;
             this.Name = mapName;
             this.players = new HashSet<Player>();
-            //this.Objects = new HashSet<WorldObject>();
         }
 
         /// <summary>
@@ -63,13 +57,17 @@ namespace Hellion.World.Systems.Map
         /// </summary>
         public void StartThread()
         {
-            if (this.thread == null)
+            if (this.updateThread == null)
             {
-                this.thread = new Thread(this.Update);
-                this.thread.Start();
+                this.updateThread = new Thread(this.Update);
+                this.updateThread.Start();
             }
         }
 
+        /// <summary>
+        /// Adds a new <see cref="WorldObject"/> to this map.
+        /// </summary>
+        /// <param name="worldObject"></param>
         public void AddObject(WorldObject worldObject)
         {
             worldObject.IsSpawned = true;
@@ -81,12 +79,22 @@ namespace Hellion.World.Systems.Map
             }
         }
 
+        /// <summary>
+        /// Remove a <see cref="WorldObject"/> from this map and notify all the players spawned around him.
+        /// </summary>
+        /// <param name="worldObject"></param>
         public void RemoveObject(WorldObject worldObject)
         {
             if (worldObject is Player)
             {
+                var player = worldObject as Player;
+
                 lock (syncLockClient)
-                    this.players.Remove(worldObject as Player);
+                {
+                    this.players.Remove(player);
+                    foreach (var otherPlayer in this.players)
+                        otherPlayer.DespawnObject(player);
+                }
             }
 
             worldObject.IsSpawned = false;
@@ -105,6 +113,9 @@ namespace Hellion.World.Systems.Map
             }
         }
 
+        /// <summary>
+        /// Update the player visibility with other players.
+        /// </summary>
         private void UpdatePlayerVisibility()
         {
             lock (syncLockClient)
