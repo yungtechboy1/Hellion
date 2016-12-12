@@ -3,6 +3,9 @@
 ### Update #2 (16/12/2016) (In progress...)
 
 - World Server
+    - Data loading
+        - Defines loading
+        - Map loading (.dyo / .rgn / .wld)
     - Player login
     - Player visibility with other players
 
