@@ -29,7 +29,23 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     - LoginProtect (On/Off on configuration file)
     - Select character
 - World Server
-    - ...
+    - Player login
+    - Player visibility with other players
+    
+## Todo list
+
+- Player moves
+- Player attributes
+- NPC
+    - Shops
+    - Dialogs
+- Monsters
+- Inventory
+- Battle system
+- Skills
+- Quest system
+- Fly system
+
 
 ## Project architecture
 
