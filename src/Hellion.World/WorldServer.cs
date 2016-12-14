@@ -95,22 +95,20 @@ namespace Hellion.World
         /// On client connected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientConnected(NetConnection client)
+        protected override void OnClientConnected(WorldClient client)
         {
             Log.Info("New client connected from {0}", client.Socket.RemoteEndPoint.ToString());
 
-            if (client is WorldClient)
-                (client as WorldClient).Server = this;
+            client.Server = this;
         }
 
         /// <summary>
         /// On client disconnected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientDisconnected(NetConnection client)
+        protected override void OnClientDisconnected(WorldClient client)
         {
-            if (client is WorldClient)
-                (client as WorldClient).Disconnected();
+            client.Disconnected();
         }
 
         /// <summary>
@@ -135,8 +133,8 @@ namespace Hellion.World
 
             this.WorldConfiguration = ConfigurationManager.Load<WorldConfiguration>(WorldConfigurationFile);
 
-            this.Configuration.Ip = this.WorldConfiguration.Ip;
-            this.Configuration.Port = this.WorldConfiguration.Port;
+            this.ServerConfiguration.Ip = this.WorldConfiguration.Ip;
+            this.ServerConfiguration.Port = this.WorldConfiguration.Port;
 
             if (File.Exists(DatabaseConfigurationFile) == false)
                 ConfigurationManager.Save(new DatabaseConfiguration(), DatabaseConfigurationFile);
