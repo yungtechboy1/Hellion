@@ -106,7 +106,7 @@ namespace Hellion.Login
         /// On client connected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientConnected(NetConnection client)
+        protected override void OnClientConnected(LoginClient client)
         {
             Log.Info("New client connected from {0}", client.Socket.RemoteEndPoint.ToString());
 
@@ -118,7 +118,7 @@ namespace Hellion.Login
         /// On client disconnected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientDisconnected(NetConnection client)
+        protected override void OnClientDisconnected(LoginClient client)
         {
             Log.Info("Client with id {0} disconnected.", client.Id);
         }
@@ -152,8 +152,8 @@ namespace Hellion.Login
 
             this.LoginConfiguration = ConfigurationManager.Load<LoginConfiguration>(LoginConfigurationFile);
 
-            this.Configuration.Ip = this.LoginConfiguration.Ip;
-            this.Configuration.Port = this.LoginConfiguration.Port;
+            this.ServerConfiguration.Ip = this.LoginConfiguration.Ip;
+            this.ServerConfiguration.Port = this.LoginConfiguration.Port;
 
             if (File.Exists(DatabaseConfigurationFile) == false)
                 ConfigurationManager.Save(new DatabaseConfiguration(), DatabaseConfigurationFile);

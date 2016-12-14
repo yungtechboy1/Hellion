@@ -60,12 +60,10 @@ namespace Hellion.World.Structures
 
             if (moveTime2 <= moveTime1 || distance == 0 || this.Position.IsInCircle(this.DestinationPosition, 0.2f))
             {
-                Log.Debug("Player '{0}' stoped moving", this.ObjectId);
                 this.DestinationPosition = this.Position.Clone();
             }
             else
             {
-                Log.Debug("Player '{0}' is moving", this.ObjectId);
                 float moveX = distanceX * ((float)moveTime1 / (float)moveTime2);
                 float moveZ = distanceZ * ((float)moveTime1 / (float)moveTime2);
                 this.Position.X += moveX;

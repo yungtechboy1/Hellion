@@ -83,7 +83,7 @@ namespace Hellion.Login.Client
         /// <returns></returns>
         private bool IsAlreadyConnected(out LoginClient connectedClient)
         {
-            var connectedClients = from x in this.Server.Clients.Cast<LoginClient>()
+            var connectedClients = from x in this.Server.Clients
                                    where x.Socket.Connected
                                    where x.GetHashCode() != this.GetHashCode()
                                    select x;
