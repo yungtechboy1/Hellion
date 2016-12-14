@@ -1,6 +1,6 @@
 # Hellion
 
-[![Build Status](https://travis-ci.org/Eastrall/Hellion.svg?branch=master)](https://travis-ci.org/Eastrall/Hellion)
+[![Build Status](https://travis-ci.org/Eastrall/Hellion.svg?branch=develop)](https://travis-ci.org/Eastrall/Hellion)
 
 Hellion is a FlyForFun V15 emulator built with C# and using the .NET Core 1.0 Framework.
 
