@@ -1,4 +1,5 @@
 ﻿using Ether.Network.Packets;
+using Hellion.Core.Data.Headers;
 using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
@@ -9,6 +10,7 @@ namespace Hellion.World
 {
     public partial class WorldClient
     {
+        [FFIncomingPacket(WorldHeaders.Incoming.Join)]
         private void OnJoin(NetPacketBase packet)
         {
             var worldId = packet.Read<int>();
@@ -65,7 +67,8 @@ namespace Hellion.World
             playerMap.AddObject(this.Player);
         }
 
-        private void OnMoveByKeyboard(NetPacketBase packet)
+        [FFIncomingPacket(WorldHeaders.Incoming.MoveByMouse)]
+        private void OnMoveByMouse(NetPacketBase packet)
         {
             packet.Position = 24;
             var posX = packet.Read<float>();

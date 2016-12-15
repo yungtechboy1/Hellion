@@ -83,6 +83,7 @@ namespace Hellion.World
         /// </summary>
         protected override void Initialize()
         {
+            FFPacketHandler.Initialize<WorldClient>();
             this.LoadConfiguration();
             this.ConnectToDatabase();
             this.LoadData();
