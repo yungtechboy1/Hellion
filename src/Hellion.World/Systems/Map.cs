@@ -1,5 +1,6 @@
 ﻿using Hellion.Core;
 using Hellion.Core.Data;
+using Hellion.Core.Data.Resources;
 using Hellion.World.Structures;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,9 @@ namespace Hellion.World.Systems
 
         private ICollection<Player> players;
         private object syncLockClient = new object();
+
+        private ICollection<Npc> npcs;
+        private object syncLockNpc = new object();
 
         /// <summary>
         /// Gets the map id.
@@ -37,6 +41,7 @@ namespace Hellion.World.Systems
             this.Id = id;
             this.Name = mapName;
             this.players = new HashSet<Player>();
+            this.npcs = new HashSet<Npc>();
         }
 
         /// <summary>
@@ -45,9 +50,25 @@ namespace Hellion.World.Systems
         public void Load()
         {
             string mapPath = Path.Combine(Global.DataPath, "maps", this.Name);
+            string dyoMapPath = Path.Combine(mapPath, this.Name + ".dyo");
             
+            byte[] dyoFileData = File.ReadAllBytes(dyoMapPath);
+            var dyo = new DyoFile(dyoFileData);
+            dyo.Read();
+
+            foreach (NpcDyoElement dyoElement in dyo.Elements.Where(d => d is NpcDyoElement))
+            {
+                var npc = new Npc();
+                npc.MapId = this.Id;
+                npc.ModelId = dyoElement.Index;
+                npc.Position = dyoElement.Position.Clone();
+                npc.DestinationPosition = dyoElement.Position.Clone();
+                npc.Size = (short)(npc.Size * dyoElement.Scale.X);
+                npc.Name = dyoElement.Name;
+                this.npcs.Add(npc);
+            }
+
             // Load .wld
-            // Load .dyo
             // Load .rgn
             // Load .lnd
         }
@@ -138,6 +159,20 @@ namespace Hellion.World.Systems
                         }
                         else
                             player.DespawnObject(obj);
+                    }
+
+                    lock (syncLockNpc)
+                    {
+                        foreach (var npc in this.npcs)
+                        {
+                            if (player.CanSee(npc))
+                            {
+                                if (!player.SpawnedObjects.Contains(npc))
+                                    player.SpawnObject(npc);
+                            }
+                            else
+                                player.DespawnObject(npc);
+                        }
                     }
                 }
             }

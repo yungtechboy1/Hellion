@@ -185,7 +185,14 @@ namespace Hellion.World.Systems
         /// <param name="packet"></param>
         public void Send(NetPacketBase packet)
         {
-            this.Client.Send(packet);
+            try
+            {
+                this.Client.Send(packet);
+            }
+            catch (Exception e)
+            {
+                Log.Warning(e.Message);
+            }
         }
 
         /// <summary>
@@ -205,6 +212,8 @@ namespace Hellion.World.Systems
 
             if (worldObject is Player)
                 this.SendPlayerSpawn(worldObject as Player);
+            if (worldObject is Npc)
+                this.SendNpcSpawn(worldObject as Npc);
 
             if (worldObject is Mover)
             {

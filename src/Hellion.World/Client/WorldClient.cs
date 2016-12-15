@@ -39,7 +39,6 @@ namespace Hellion.World.Client
             : base()
         {
             this.sessionId = (uint)Global.GenerateRandomNumber();
-            this.Player = new Player(this);
         }
 
         /// <summary>
@@ -50,7 +49,6 @@ namespace Hellion.World.Client
             : base(socket)
         {
             this.sessionId = (uint)Global.GenerateRandomNumber();
-            this.Player = new Player(this);
         }
 
         /// <summary>

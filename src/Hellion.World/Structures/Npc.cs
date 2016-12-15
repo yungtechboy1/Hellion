@@ -7,6 +7,8 @@ namespace Hellion.World.Structures
 {
     public class Npc : Mover
     {
+        public string Name { get; set; }
+
         public Npc()
             : base(-1)
         {
