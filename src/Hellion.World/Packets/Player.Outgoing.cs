@@ -6,41 +6,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hellion.World
+namespace Hellion.World.Systems
 {
-    public partial class WorldClient
+    public partial class Player
     {
         internal void SendPlayerSpawn()
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.WeatherAll, 0x0000FF00);
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.WeatherAll, 0x0000FF00);
                 packet.Write(0); // Get weather by season
 
 
-                packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.WorldInformation);
-                packet.Write(this.Player.MapId);
-                packet.Write(this.Player.Position.X);
-                packet.Write(this.Player.Position.Y);
-                packet.Write(this.Player.Position.Z);
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.WorldInformation);
+                packet.Write(this.MapId);
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
 
-                packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
 
                 // Object properties
-                packet.Write((byte)this.Player.Type);
-                packet.Write(this.Player.ModelId);
-                packet.Write((byte)this.Player.Type);
-                packet.Write(this.Player.ModelId);
-                packet.Write(this.Player.Size);
-                packet.Write(this.Player.Position.X);
-                packet.Write(this.Player.Position.Y);
-                packet.Write(this.Player.Position.Z);
+                packet.Write((byte)this.Type);
+                packet.Write(this.ModelId);
+                packet.Write((byte)this.Type);
+                packet.Write(this.ModelId);
+                packet.Write(this.Size);
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
                 packet.Write<short>(0); // angle
-                packet.Write(this.Player.ObjectId);
+                packet.Write(this.ObjectId);
 
                 packet.Write<short>(0);
                 packet.Write<byte>(1); // is player ?
-                packet.Write(this.Player.Hp);
+                packet.Write(this.Hp);
                 packet.Write(0);
                 packet.Write(0);
                 packet.Write<byte>(1);
@@ -48,19 +48,19 @@ namespace Hellion.World
                 // baby buffer
                 packet.Write(-1);
 
-                packet.Write(this.Player.Name);
-                packet.Write(this.Player.Gender);
-                packet.Write((byte)this.Player.SkinSetId);
-                packet.Write((byte)this.Player.HairId);
-                packet.Write((int)this.Player.HairColor);
-                packet.Write((byte)this.Player.FaceId);
-                packet.Write(this.Player.Id);
-                packet.Write((byte)this.Player.ClassId);
-                packet.Write((short)this.Player.Strength);
-                packet.Write((short)this.Player.Stamina);
-                packet.Write((short)this.Player.Dexterity);
-                packet.Write((short)this.Player.Intelligence);
-                packet.Write((short)this.Player.Level);
+                packet.Write(this.Name);
+                packet.Write(this.Gender);
+                packet.Write((byte)this.SkinSetId);
+                packet.Write((byte)this.HairId);
+                packet.Write((int)this.HairColor);
+                packet.Write((byte)this.FaceId);
+                packet.Write(this.Id);
+                packet.Write((byte)this.ClassId);
+                packet.Write((short)this.Strength);
+                packet.Write((short)this.Stamina);
+                packet.Write((short)this.Dexterity);
+                packet.Write((short)this.Intelligence);
+                packet.Write((short)this.Level);
                 packet.Write(-1); // Fuel
                 packet.Write(0); // Actuel fuel
 
@@ -73,7 +73,7 @@ namespace Hellion.World
 
                 packet.Write<byte>(0); // have party or not
 
-                packet.Write((byte)this.currentUser.Authority);
+                packet.Write((byte)this.Authority);
                 packet.Write(0); // mode
                 packet.Write(0); // state mode
                 packet.Write(0x000001F6); // item used ??
@@ -93,12 +93,12 @@ namespace Hellion.World
                 for (int i = 0; i < 26; ++i)
                     packet.Write(0);
 
-                packet.Write((short)this.Player.Mp);
-                packet.Write((short)this.Player.Fp);
+                packet.Write((short)this.Mp);
+                packet.Write((short)this.Fp);
                 packet.Write(0); // tutorial state
                 packet.Write(0); // fly experience
-                packet.Write(this.Player.Gold);
-                packet.Write(this.Player.Experience);
+                packet.Write(this.Gold);
+                packet.Write(this.Experience);
                 packet.Write(0); // skill level
                 packet.Write(0); // skill points
                 packet.Write<long>(0); // death exp
@@ -108,9 +108,9 @@ namespace Hellion.World
                     packet.Write(0); // job in each level
 
                 packet.Write(0); // marking world id
-                packet.Write(this.Player.Position.X);
-                packet.Write(this.Player.Position.Y);
-                packet.Write(this.Player.Position.Z);
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
 
                 // Quests
                 packet.Write<byte>(0);
@@ -136,7 +136,7 @@ namespace Hellion.World
                 packet.Write(42); // next cheer point ?
 
                 // Bank
-                packet.Write((byte)this.Player.Slot);
+                packet.Write((byte)this.Slot);
                 for (int i = 0; i < 3; ++i)
                     packet.Write(0); // gold
                 for (int i = 0; i < 3; ++i)
@@ -208,7 +208,7 @@ namespace Hellion.World
                 packet.Write(0); // count
 
                 // Game time packet
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GameTime);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GameTime);
                 //packet.Write<short>(0);
                 //packet.Write<byte>(0);
                 //packet.Write<byte>(0);
@@ -216,16 +216,16 @@ namespace Hellion.World
 
 
                 //// Wheater
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.WeatherClear);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.WeatherClear);
                 //packet.Write(1);
                 //packet.Write(0);
 
                 //// party
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.PartyDefaultName);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.PartyDefaultName);
                 //packet.Write(0);
 
                 //// total play time
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.AddGameJoin);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.AddGameJoin);
                 //packet.Write(0);  //total play time
 
                 //// server settings
@@ -261,55 +261,55 @@ namespace Hellion.World
                 //    packet.Write<byte>(0);
 
                 //#region unknow end packet
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.Unknow3E);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.Unknow3E);
                 //packet.Write<Int16>(0);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GameRates);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GameRates);
                 //packet.Write<Single>(0f);//Configuration.Rates.ShopCostRate);
                 //packet.Write<Byte>(0);//(byte)RateType.ShopCost);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GameRates);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GameRates);
                 //packet.Write<Single>(0f);//Configuration.Rates.ExpRate);
                 //packet.Write<Byte>(0);//(byte)RateType.MonsterExpRate);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GameRates);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GameRates);
                 //packet.Write<Single>(0f);//Configuration.Rates.DropRate);
                 //packet.Write<Byte>(0);//(byte)RateType.ItemDropRate);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GameRates);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GameRates);
                 //packet.Write<Single>(0f);//Configuration.Rates.GoldRate);
                 //packet.Write<Byte>(0);//(byte)RateType.GoldDropRate);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GameRates);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GameRates);
                 //packet.Write<Single>(0f);//Configuration.Rates.MonsterHitRate);
                 //packet.Write<Byte>(0);//(byte)RateType.MonsterHitRate);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GameRates);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GameRates);
                 //packet.Write<Single>(0f);//Configuration.Rates.MonsterHPRate);
                 //packet.Write<Byte>(0);//(byte)RateType.MonsterHitpoint);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.MonsterProp);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MonsterProp);
                 //packet.Write<Int64>(0);
                 //#region new unknow from v14
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.AllAction);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.AllAction);
                 //packet.Write<Int64>(1);
                 //#region GUILD COMBAT INFOS
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GuildCombat);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GuildCombat);
                 //packet.Write<Byte>(0x08);
                 //packet.Write<Int32>(0);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GuildCombat);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GuildCombat);
                 //packet.Write<Byte>(0x30);
                 //packet.Write<Int32>(1);
                 //packet.Write<Int32>(0x69);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GuildCombat);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GuildCombat);
                 //packet.Write<Byte>(0x31);
                 //packet.Write<Int32>(Int32.MaxValue);//0xEDDE880F);
                 //packet.Write<Int32>(0x00);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GuildCombat);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GuildCombat);
                 //packet.Write<Byte>(0);
                 //packet.Write<Int32>(1);
                 //packet.Write<Int32>(0);
                 //packet.Write<Int32>(0);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GuildCombat);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GuildCombat);
                 //packet.Write<Byte>(7);
                 //packet.Write<Int32>(1);
                 //#endregion
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.SECRETROOM_MNG_STATE);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.SECRETROOM_MNG_STATE);
                 //packet.Write<Int64>(1);
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.TaxAllInformations);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.TaxAllInformations);
                 //packet.Write<Int32>(3);
                 //packet.Write<Byte>(0x0F);
                 //packet.Write<Int32>(-1);
@@ -337,7 +337,7 @@ namespace Hellion.World
                 //packet.Write<Byte>(2);
                 //packet.Write<Int32>(0);
                 //#region Maisons de guildes
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.GuildHouseAllInformations);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.GuildHouseAllInformations);
                 //packet.Write<Int32>(1); //bSetFurnitureChannel
                 //packet.Write<Int32>(0); //bHaveGuildHouse
                 //                        /*
@@ -349,7 +349,7 @@ namespace Hellion.World
                 //                        }*/
                 //#endregion
                 //#region Maisons
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.HousingAllInformations);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.HousingAllInformations);
                 //packet.Write<Int32>(0); //size infos housing
                 //packet.Write<Int32>(0); //size info ami autorisé
                 //#endregion
@@ -358,7 +358,7 @@ namespace Hellion.World
                 //#endregion
 
                 // Message hud
-                //packet.StartNewMergedPacket(this.Player.ObjectId, WorldHeaders.Outgoing.MessageHud);
+                //packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MessageHud);
                 //packet.Write("Welcome to Hellion Emulator!");
 
                 this.Send(packet);
@@ -412,7 +412,7 @@ namespace Hellion.World
 
                 packet.Write<byte>(0); // has party
 
-                packet.Write((byte)worldObject.Client.currentUser.Authority);
+                packet.Write((byte)worldObject.Authority);
                 packet.Write(0); // mode
                 packet.Write(0); // state mode
                 packet.Write(0x000001F6); // item used ??
@@ -423,8 +423,7 @@ namespace Hellion.World
                 packet.Write(0); // fame
                 packet.Write<byte>(0); // duel
                 packet.Write(-1); // titles
-
-                Int32 _count = 0;
+                
                 for (int i = 0x2A; i < 0x49; i++)
                 {
                     packet.Write(0);

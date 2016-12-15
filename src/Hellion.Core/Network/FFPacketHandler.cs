@@ -7,13 +7,20 @@ namespace Hellion.Core.Network
 {
     public static class FFPacketHandler
     {
-        public static Dictionary<object, MethodInfo> RegisteredPackets;
+        private static Dictionary<object, MethodInfo> registeredPackets;
 
+        /// <summary>
+        /// Initialize the FFPacketHeadler fields and properties.
+        /// </summary>
         static FFPacketHandler()
         {
-            RegisteredPackets = new Dictionary<object, MethodInfo>();
+            registeredPackets = new Dictionary<object, MethodInfo>();
         }
 
+        /// <summary>
+        /// Load the methods of the T object containing all methods with the FFIncomingPacketAttribute using reflection.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         public static void Initialize<T>()
         {
             var typeInfo = typeof(T).GetTypeInfo();
@@ -27,19 +34,27 @@ namespace Hellion.Core.Network
             {
                 var attribute = method.GetCustomAttribute<FFIncomingPacketAttribute>();
 
-                if (RegisteredPackets.ContainsKey(attribute.Header))
+                if (registeredPackets.ContainsKey(attribute.Header))
                     throw new Exception("The key " + attribute.Header.ToString() + " already exists");
 
-                RegisteredPackets.Add(attribute.Header, method);
+                registeredPackets.Add(attribute.Header, method);
             }
         }
 
+        /// <summary>
+        /// Invoke the right method corresponding to the header passed as parameter.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="instance">Object instance</param>
+        /// <param name="header">Packet header</param>
+        /// <param name="parameter">Packet parameter</param>
+        /// <returns></returns>
         public static bool Invoke<T>(T instance, object header, object parameter)
         {
-            if (!RegisteredPackets.ContainsKey(header))
+            if (!registeredPackets.ContainsKey(header))
                 return false;
 
-            RegisteredPackets[header].Invoke(instance, new object[] { parameter });
+            registeredPackets[header].Invoke(instance, new object[] { parameter });
 
             return true;
         }

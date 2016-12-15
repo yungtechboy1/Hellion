@@ -1,7 +1,11 @@
 {
+  "title": "Hellion.World",
+  "description": "Hellion WorldServer",
+  "language": "en",
   "version": "1.0.0-*",
   "buildOptions": {
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "optimize": true
   },
 
   "dependencies": {

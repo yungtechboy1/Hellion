@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Hellion.World.Systems.Map
+namespace Hellion.World.Systems
 {
     public class Map
     {

@@ -1,10 +1,9 @@
 ﻿using Ether.Network.Packets;
 using Hellion.Core.Data;
 using Hellion.Core.Structures;
-using System;
+using Hellion.World.Systems;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using EHelper = Ether.Network.Helpers;
 
 namespace Hellion.World.Structures
@@ -53,7 +52,7 @@ namespace Hellion.World.Structures
         public void SendToVisible(NetPacketBase packet)
         {
             foreach (Player player in this.SpawnedObjects.Where(x => x is Player))
-                player.Client.Send(packet);
+                player.Send(packet);
         }
     }
 }

@@ -2,13 +2,15 @@
 
 ### Update #2 (16/12/2016) (In progress...)
 
+
 - Common
   - New incoming packet management using attributes
+  - Change folder structure
 
 - World Server
     - Data loading
         - Defines loading
-        - Map loading (.dyo / .rgn / .wld)
+        - Map loading (.dyo / .rgn)
     - Player login
     - Player visibility with other players
     - Player moves

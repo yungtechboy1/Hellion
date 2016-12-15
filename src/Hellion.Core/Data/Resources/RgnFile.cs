@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hellion.Core.Data
+namespace Hellion.Core.Data.Resources
 {
     public sealed class RgnFile
     {
@@ -24,6 +24,7 @@ namespace Hellion.Core.Data
             using (var memoryStream = new MemoryStream(this.fileData))
             using (var memoryReader = new BinaryReader(memoryStream))
             {
+
             }
         }
     }

@@ -2,18 +2,18 @@
 using Hellion.Core.Configuration;
 using Hellion.Core.Data.Resources;
 using Hellion.Core.IO;
-using Hellion.World.Systems.Map;
+using Hellion.World.Managers;
+using Hellion.World.Systems;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Hellion.World
 {
     public partial class WorldServer
     {
+        private Dictionary<string, int> defines = new Dictionary<string, int>();
         private static MapManager mapManager;
 
         /// <summary>
@@ -21,15 +21,9 @@ namespace Hellion.World
         /// </summary>
         public static MapManager MapManager
         {
-            get
-            {
-                mapManager = mapManager ?? new MapManager();
-
-                return mapManager;
-            }
+            get { return mapManager = mapManager ?? new MapManager(); }
         }
 
-        private Dictionary<string, int> defines = new Dictionary<string, int>();
 
         /// <summary>
         /// Loads the world server data like resources, maps, quests, dialogs, etc...

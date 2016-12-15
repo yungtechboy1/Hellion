@@ -4,13 +4,12 @@ using Hellion.Core.Configuration;
 using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
+using Hellion.World.Client;
 using Hellion.World.ISC;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Hellion.World
 {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hellion.Core.Data
+namespace Hellion.Core.Data.Resources
 {
     public sealed class DyoFile
     {
