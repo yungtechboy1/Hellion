@@ -50,6 +50,9 @@ namespace Hellion.World
             this.sessionId = (uint)Global.GenerateRandomNumber();
         }
 
+        /// <summary>
+        /// Disconnectes the current client.
+        /// </summary>
         public void Disconnected()
         {
             Log.Info("Client with id {0} disconnected.", this.Id);
@@ -86,19 +89,8 @@ namespace Hellion.World
 
             Log.Debug("Recieve packet: {0}", packetHeader);
 
-            if (FFPacketHandler.Invoke(this, packetHeader, packet) == false)
+            if (!FFPacketHandler.Invoke(this, packetHeader, packet))
                 FFPacket.UnknowPacket<WorldHeaders.Incoming>(packetHeaderNumber, 8);
-
-            // Old code...
-            //switch (packetHeader)
-            //{
-            //    case WorldHeaders.Incoming.Join: this.OnJoin(packet); break;
-            //    case WorldHeaders.Incoming.MoveByMouse: this.OnMoveByMouse(packet); break;
-
-            //    default: FFPacket.UnknowPacket<WorldHeaders.Incoming>(packetHeaderNumber, 8); break;
-            //}
-
-            base.HandleMessage(packet);
         }
     }
 }

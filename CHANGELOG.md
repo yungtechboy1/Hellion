@@ -2,6 +2,9 @@
 
 ### Update #2 (16/12/2016) (In progress...)
 
+- Common
+  - New incoming packet management using attributes
+
 - World Server
     - Data loading
         - Defines loading

@@ -66,14 +66,8 @@ namespace Hellion.Login.Client
             var packetHeader = (LoginHeaders.Incoming)packetHeaderNumber;
             var pak = packet as FFPacket;
 
-            switch (packetHeader)
-            {
-                case LoginHeaders.Incoming.LoginRequest: this.OnLoginRequest(pak); break;
-
-
-
-                default: FFPacket.UnknowPacket<LoginHeaders.Incoming>((uint)packetHeaderNumber, 2); break;
-            }
+            if (!FFPacketHandler.Invoke(this, packetHeader, packet))
+                FFPacket.UnknowPacket<LoginHeaders.Incoming>(packetHeaderNumber, 2);
         }
 
         /// <summary>

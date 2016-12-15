@@ -61,18 +61,8 @@ namespace Hellion.Cluster.Client
             var packetHeaderNumber = packet.Read<uint>();
             var packetHeader = (ClusterHeaders.Incoming)packetHeaderNumber;
 
-            switch (packetHeader)
-            {
-                case ClusterHeaders.Incoming.Ping: this.OnPing(packet); break;
-                case ClusterHeaders.Incoming.CreateCharacter: this.OnCreateCharacter(packet); break;
-                case ClusterHeaders.Incoming.DeleteCharacter: this.OnDeleteCharacter(packet); break;
-                case ClusterHeaders.Incoming.CharacterListRequest: this.OnCharacterListRequest(packet); break;
-                case ClusterHeaders.Incoming.PreJoin: this.OnPreJoin(packet); break;
-
-                default: FFPacket.UnknowPacket<ClusterHeaders.Incoming>((uint)packetHeaderNumber, 2); break;
-            }
-
-            base.HandleMessage(packet);
+            if (!FFPacketHandler.Invoke(this, packetHeader, packet))
+                FFPacket.UnknowPacket<ClusterHeaders.Incoming>(packetHeaderNumber, 2);
         }
 
         /// <summary>

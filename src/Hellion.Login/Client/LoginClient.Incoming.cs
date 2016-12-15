@@ -11,6 +11,7 @@ namespace Hellion.Login.Client
         /// Login request.
         /// </summary>
         /// <param name="packet"></param>
+        [FFIncomingPacket(LoginHeaders.Incoming.LoginRequest)]
         private void OnLoginRequest(FFPacket packet)
         {
             var buildVersion = packet.Read<string>();

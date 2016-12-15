@@ -30,8 +30,6 @@ namespace Hellion.Login.ISC
             var packetHeaderNumber = packet.Read<int>();
             var packetHeader = (InterHeaders)packetHeaderNumber;
 
-            Log.Debug("Recieved: {0}", packetHeader);
-
             switch (packetHeader)
             {
                 case InterHeaders.CanAuthticate: this.Authenticate(); break;

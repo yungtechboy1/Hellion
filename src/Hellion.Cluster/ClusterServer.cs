@@ -79,6 +79,7 @@ namespace Hellion.Cluster
         /// </summary>
         protected override void Initialize()
         {
+            FFPacketHandler.Initialize<ClusterClient>();
             this.LoadConfiguration();
             this.ConnectToDatabase();
             this.ConnectToISC();

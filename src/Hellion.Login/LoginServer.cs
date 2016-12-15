@@ -95,6 +95,7 @@ namespace Hellion.Login
         /// </summary>
         protected override void Initialize()
         {
+            FFPacketHandler.Initialize<LoginClient>();
             this.LoadConfiguration();
             this.ConnectToDatabase();
             this.ConnectToISC();
