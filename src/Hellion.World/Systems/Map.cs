@@ -97,6 +97,8 @@ namespace Hellion.World.Systems
 
             // Load .rgn
             byte[] rgnFileData = File.ReadAllBytes(rgnMapPath);
+            var rgn = new RgnFile(rgnFileData);
+            rgn.Read();
             
             // Load .lnd
         }

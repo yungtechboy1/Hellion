@@ -40,7 +40,7 @@ namespace Hellion.World.Systems
 
                 packet.Write<short>(0);
                 packet.Write<byte>(1); // is player ?
-                packet.Write(this.Hp);
+                packet.Write(this.Attributes[DefineAttributes.HP]);
                 packet.Write(0);
                 packet.Write(0);
                 packet.Write<byte>(1);
@@ -56,10 +56,10 @@ namespace Hellion.World.Systems
                 packet.Write((byte)this.FaceId);
                 packet.Write(this.Id);
                 packet.Write((byte)this.ClassId);
-                packet.Write((short)this.Strength);
-                packet.Write((short)this.Stamina);
-                packet.Write((short)this.Dexterity);
-                packet.Write((short)this.Intelligence);
+                packet.Write((short)this.Attributes[DefineAttributes.STR]);
+                packet.Write((short)this.Attributes[DefineAttributes.STA]);
+                packet.Write((short)this.Attributes[DefineAttributes.DEX]);
+                packet.Write((short)this.Attributes[DefineAttributes.INT]);
                 packet.Write((short)this.Level);
                 packet.Write(-1); // Fuel
                 packet.Write(0); // Actuel fuel
@@ -93,8 +93,8 @@ namespace Hellion.World.Systems
                 for (int i = 0; i < 26; ++i)
                     packet.Write(0);
 
-                packet.Write((short)this.Mp);
-                packet.Write((short)this.Fp);
+                packet.Write((short)this.Attributes[DefineAttributes.MP]);
+                packet.Write((short)this.Attributes[DefineAttributes.FP]);
                 packet.Write(0); // tutorial state
                 packet.Write(0); // fly experience
                 packet.Write(this.Gold);
@@ -384,7 +384,7 @@ namespace Hellion.World.Systems
 
                 packet.Write<short>(0);
                 packet.Write<byte>(1); // is player?
-                packet.Write(worldObject.Hp);
+                packet.Write(worldObject.Attributes[DefineAttributes.HP]);
                 packet.Write(0); // moving flags
                 packet.Write(0); // motion flags
                 packet.Write<byte>(0);
@@ -398,10 +398,10 @@ namespace Hellion.World.Systems
                 packet.Write((byte)worldObject.FaceId);
                 packet.Write(worldObject.Id);
                 packet.Write((byte)worldObject.ClassId);
-                packet.Write((short)worldObject.Strength);
-                packet.Write((short)worldObject.Stamina);
-                packet.Write((short)worldObject.Dexterity);
-                packet.Write((short)worldObject.Intelligence);
+                packet.Write((short)worldObject.Attributes[DefineAttributes.STR]);
+                packet.Write((short)worldObject.Attributes[DefineAttributes.STA]);
+                packet.Write((short)worldObject.Attributes[DefineAttributes.DEX]);
+                packet.Write((short)worldObject.Attributes[DefineAttributes.INT]);
                 packet.Write((short)worldObject.Level);
 
                 packet.Write(-1);

@@ -11,6 +11,7 @@ using Hellion.Core.Network;
 using Hellion.World.Structures;
 using Hellion.World.Modules;
 using Hellion.World.Client;
+using Hellion.Core.Data.Headers;
 
 namespace Hellion.World.Systems
 {
@@ -69,23 +70,10 @@ namespace Hellion.World.Systems
         /// </summary>
         public int Authority { get; set; }
 
-        // Create attributes
-
-        public int Strength { get; set; }
-
-        public int Stamina { get; set; }
-
-        public int Dexterity { get; set; }
-
-        public int Intelligence { get; set; }
-
-        public int Hp { get; set; }
-
-        public int Mp { get; set; }
-
-        public int Fp { get; set; }
-
-        // End create attributes
+        /// <summary>
+        /// Gets the player's attributes.
+        /// </summary>
+        public Attributes Attributes { get; private set; }
 
         /// <summary>
         /// Gets the player's skin set id.
@@ -134,6 +122,7 @@ namespace Hellion.World.Systems
             : base(dbCharacter?.Gender == 0 ? 11 : 12)
         {
             this.Client = parentClient;
+            this.Attributes = new Attributes();
             this.Inventory = new Inventory();
 
             this.Id = dbCharacter.Id;
@@ -144,13 +133,13 @@ namespace Hellion.World.Systems
             this.Gold = dbCharacter.Gold;
             this.Slot = dbCharacter.Slot;
             this.Authority = this.Client.CurrentUser.Authority;
-            this.Strength = dbCharacter.Strength;
-            this.Stamina = dbCharacter.Stamina;
-            this.Dexterity = dbCharacter.Dexterity;
-            this.Intelligence = dbCharacter.Intelligence;
-            this.Hp = dbCharacter.Hp;
-            this.Mp = dbCharacter.Mp;
-            this.Fp = dbCharacter.Fp;
+            this.Attributes[DefineAttributes.STR] = dbCharacter.Strength;
+            this.Attributes[DefineAttributes.STA] = dbCharacter.Stamina;
+            this.Attributes[DefineAttributes.DEX] = dbCharacter.Dexterity;
+            this.Attributes[DefineAttributes.INT] = dbCharacter.Intelligence;
+            this.Attributes[DefineAttributes.HP] = dbCharacter.Hp;
+            this.Attributes[DefineAttributes.MP] = dbCharacter.Mp;
+            this.Attributes[DefineAttributes.FP] = dbCharacter.Fp;
             this.Experience = dbCharacter.Experience;
             this.SkinSetId = dbCharacter.SkinSetId;
             this.HairId = dbCharacter.HairId;
@@ -163,7 +152,7 @@ namespace Hellion.World.Systems
 
             // Initialize inventory, quests, guild, friends, skills etc...
         }
-        
+
         /// <summary>
         /// Disconnect the current player from the world.
         /// </summary>
