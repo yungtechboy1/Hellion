@@ -20,6 +20,8 @@ namespace Hellion.World.Structures
 
         public int MapId { get; set; }
 
+        public float Angle { get; set; }
+
         public Vector3 Position { get; set; }
 
         public ICollection<WorldObject> SpawnedObjects { get; set; }
@@ -36,6 +38,7 @@ namespace Hellion.World.Structures
             this.Size = 100;
             this.MapId = -1;
             this.Position = new Vector3();
+            this.Angle = 0;
             this.SpawnedObjects = new List<WorldObject>();
         }
 

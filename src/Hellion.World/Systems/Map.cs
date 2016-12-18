@@ -61,6 +61,7 @@ namespace Hellion.World.Systems
                 var npc = new Npc();
                 npc.MapId = this.Id;
                 npc.ModelId = dyoElement.Index;
+                npc.Angle = dyoElement.Angle;
                 npc.Position = dyoElement.Position.Clone();
                 npc.DestinationPosition = dyoElement.Position.Clone();
                 npc.Size = (short)(npc.Size * dyoElement.Scale.X);

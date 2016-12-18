@@ -80,9 +80,9 @@ namespace Hellion.Core.Data.Resources
             this.Axis.X = reader.ReadSingle();
             this.Axis.Y = reader.ReadSingle();
             this.Axis.Z = reader.ReadSingle();
-            this.Position.X = reader.ReadSingle();
+            this.Position.X = reader.ReadSingle() * 4f;
             this.Position.Y = reader.ReadSingle();
-            this.Position.Z = reader.ReadSingle();
+            this.Position.Z = reader.ReadSingle() * 4f;
             this.Scale.X = reader.ReadSingle();
             this.Scale.Y = reader.ReadSingle();
             this.Scale.Z = reader.ReadSingle();

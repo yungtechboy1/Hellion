@@ -2,6 +2,7 @@
 using Hellion.Core.Configuration;
 using Hellion.Core.Data.Resources;
 using Hellion.Core.IO;
+using Hellion.Data;
 using Hellion.World.Managers;
 using Hellion.World.Systems;
 using System;
@@ -32,8 +33,9 @@ namespace Hellion.World
         {
             var startTime = DateTime.Now;
             Log.Info("Loading world data...");
-            
+
             this.LoadDefines();
+            this.LoadNpc();
             this.LoadMaps();
             this.Clear();
 
@@ -78,6 +80,33 @@ namespace Hellion.World
                 {
                     if (!this.defines.ContainsKey(define.Key))
                         this.defines.Add(define.Key, define.Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Load all flyff npcs.
+        /// </summary>
+        private void LoadNpc()
+        {
+            Log.Info("Loading NPC data...");
+
+            string[] files = {
+                                  "data//res//dataSub1//character.inc",
+                                  "data//res//dataSub1//character-etc.inc",
+                                  "data//res//dataSub1//character-school.inc"
+                              };
+
+            foreach (var npcFile in files)
+            {
+                string path = Path.Combine(Global.DataPath, npcFile);
+                var npcGroupFile = new ResourceGroup(npcFile);
+
+                npcGroupFile.Parse();
+
+                foreach (var npc in npcGroupFile.Groups)
+                {
+                    // Add npc here
                 }
             }
         }

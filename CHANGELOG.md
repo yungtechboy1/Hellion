@@ -14,6 +14,7 @@
     - Player login
     - Player visibility with other players
     - Player moves
+    - NPC
 
 ### Update #1 (09/12/2016)
 

@@ -35,7 +35,7 @@ namespace Hellion.World.Systems
                 packet.Write(this.Position.X);
                 packet.Write(this.Position.Y);
                 packet.Write(this.Position.Z);
-                packet.Write<short>(0); // angle
+                packet.Write((short)(this.Angle * 10f));
                 packet.Write(this.ObjectId);
 
                 packet.Write<short>(0);
@@ -379,7 +379,7 @@ namespace Hellion.World.Systems
                 packet.Write(worldObject.Position.X);
                 packet.Write(worldObject.Position.Y);
                 packet.Write(worldObject.Position.Z);
-                packet.Write<short>(0); // angle
+                packet.Write((short)(worldObject.Angle * 10f));
                 packet.Write(worldObject.ObjectId);
 
                 packet.Write<short>(0);
@@ -446,7 +446,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
+                packet.StartNewMergedPacket(npc.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
 
                 packet.Write((byte)npc.Type);
                 packet.Write(npc.ModelId);
@@ -456,7 +456,7 @@ namespace Hellion.World.Systems
                 packet.Write(npc.Position.X);
                 packet.Write(npc.Position.Y);
                 packet.Write(npc.Position.Z);
-                packet.Write<short>(0); // angle
+                packet.Write((short)(npc.Angle * 10f));
                 packet.Write(npc.ObjectId);
 
                 packet.Write<short>(1);
@@ -467,7 +467,7 @@ namespace Hellion.World.Systems
                 packet.Write<byte>(1);
                 packet.Write(-1);
                 packet.Write<byte>(0);//packet.Write((byte)npc.Data.HairId);
-                packet.Write(0);//packet.Write(npc.Data.HairColor);
+                packet.Write(-1);//packet.Write(npc.Data.HairColor);
                 packet.Write<byte>(0);//packet.Write((byte)npc.Data.FaceId);
                 packet.Write(npc.Name);
                 packet.Write<byte>(0); // item equiped count
