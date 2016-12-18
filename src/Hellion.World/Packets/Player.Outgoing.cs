@@ -467,7 +467,7 @@ namespace Hellion.World.Systems
                 packet.Write<byte>(1);
                 packet.Write(-1);
                 packet.Write<byte>(0);//packet.Write((byte)npc.Data.HairId);
-                packet.Write(-1);//packet.Write(npc.Data.HairColor);
+                packet.Write(0);//packet.Write(npc.Data.HairColor);
                 packet.Write<byte>(0);//packet.Write((byte)npc.Data.FaceId);
                 packet.Write(npc.Name);
                 packet.Write<byte>(0); // item equiped count

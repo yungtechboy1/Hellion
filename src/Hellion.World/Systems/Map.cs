@@ -32,6 +32,21 @@ namespace Hellion.World.Systems
         public string Name { get; private set; }
 
         /// <summary>
+        /// Gets the map width.
+        /// </summary>
+        public int Width { get; private set; }
+
+        /// <summary>
+        /// Gets the map length.
+        /// </summary>
+        public int Length { get; private set; }
+
+        /// <summary>
+        /// Get the map heights.
+        /// </summary>
+        public float[] Heights { get; private set; }
+
+        /// <summary>
         /// Creates a new Map instance with a name and id.
         /// </summary>
         /// <param name="id">Id of the map</param>
@@ -50,8 +65,19 @@ namespace Hellion.World.Systems
         public void Load()
         {
             string mapPath = Path.Combine(Global.DataPath, "maps", this.Name);
+            string wldMapPath = Path.Combine(mapPath, this.Name + ".wld");
             string dyoMapPath = Path.Combine(mapPath, this.Name + ".dyo");
-            
+            string rgnMapPath = Path.Combine(mapPath, this.Name + ".rgn");
+
+            // Load .wld
+            byte[] wldFileData = File.ReadAllBytes(wldMapPath);
+            var wld = new WldFile(wldFileData);
+            wld.Read();
+
+            this.Width = wld.Width;
+            this.Length = wld.Length;
+
+            // Load .dyo
             byte[] dyoFileData = File.ReadAllBytes(dyoMapPath);
             var dyo = new DyoFile(dyoFileData);
             dyo.Read();
@@ -69,8 +95,9 @@ namespace Hellion.World.Systems
                 this.npcs.Add(npc);
             }
 
-            // Load .wld
             // Load .rgn
+            byte[] rgnFileData = File.ReadAllBytes(rgnMapPath);
+            
             // Load .lnd
         }
 
