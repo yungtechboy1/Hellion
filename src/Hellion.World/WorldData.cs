@@ -4,6 +4,7 @@ using Hellion.Core.Data.Resources;
 using Hellion.Core.IO;
 using Hellion.Data;
 using Hellion.World.Managers;
+using Hellion.World.Structures;
 using Hellion.World.Systems;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace Hellion.World
     public partial class WorldServer
     {
         private Dictionary<string, int> defines = new Dictionary<string, int>();
+        private Dictionary<string, string> texts = new Dictionary<string, string>();
+        private static Dictionary<int, ItemData> itemsData = new Dictionary<int, ItemData>();
         private static MapManager mapManager;
 
         /// <summary>
@@ -25,6 +28,13 @@ namespace Hellion.World
             get { return mapManager = mapManager ?? new MapManager(); }
         }
 
+        /// <summary>
+        /// Gets the items data.
+        /// </summary>
+        public static Dictionary<int, ItemData> ItemsData
+        {
+            get { return itemsData; }
+        }
 
         /// <summary>
         /// Loads the world server data like resources, maps, quests, dialogs, etc...
@@ -35,6 +45,8 @@ namespace Hellion.World
             Log.Info("Loading world data...");
 
             this.LoadDefines();
+            this.LoadTexts();
+            this.LoadItems();
             this.LoadNpc();
             this.LoadMaps();
             this.Clear();
@@ -48,6 +60,7 @@ namespace Hellion.World
         private void Clear()
         {
             this.defines.Clear();
+            this.texts.Clear();
         }
 
         /// <summary>
@@ -85,6 +98,22 @@ namespace Hellion.World
         }
 
         /// <summary>
+        /// Load all FlyFF texts files.
+        /// </summary>
+        private void LoadTexts()
+        {
+            string[] texts =
+            {
+                "dataSub1/propItem.txt.txt",
+            };
+
+            foreach (var textFile in texts)
+            {
+                // Load texts
+            }
+        }
+
+        /// <summary>
         /// Load all flyff npcs.
         /// </summary>
         private void LoadNpc()
@@ -107,6 +136,7 @@ namespace Hellion.World
                 foreach (var npc in npcGroupFile.Groups)
                 {
                     // Add npc here
+                    // Load shops
                 }
             }
         }
@@ -131,6 +161,43 @@ namespace Hellion.World
             }
 
             Log.Done("{0} maps loaded!", MapManager.Count);
+        }
+
+        /// <summary>
+        /// Load all FlyFF items.
+        /// </summary>
+        private void LoadItems()
+        {
+            try
+            {
+                string propItemPath = Path.Combine(Global.DataPath, "res", "dataSub2", "propItem.txt");
+                var propItemTable = new ResourceTable(propItemPath);
+
+                propItemTable.AddTexts(texts);
+                propItemTable.AddDefines(defines);
+                propItemTable.SetTableHeaders("dwVersion", "dwID", "szName", "dwNum", "dwPackMax", "dwItemKind1", "dwItemKind2", "dwItemKind3", "dwItemJob", "bPermanence", "dwUseable", "dwItemSex", "dwCost", "dwEndurance", "nAbrasion", "nMaxRepair", "dwHanded", "dwFlag", "dwParts", "dwPartsub", "bPartFile", "dwExclusive", "dwBasePartsIgnore", "dwItemLV", "dwItemRare", "dwShopAble", "bLog", "bCharged", "dwLinkKindBullet", "dwLinkKind", "dwAbilityMin", "dwAbilityMax", "eItemType", "wItemEAtk", "dwParry", "dwBlockRating", "dwAddSkillMin", "dwAddSkillMax", "dwAtkStyle", "dwWeaponType", "dwItemAtkOrder1", "dwItemAtkOrder2", "dwItemAtkOrder3", "dwItemAtkOrder4", "bContinnuousPain", "dwShellQuantity", "dwRecoil", "dwLoadingTime", "nAdjHitRate", "fAttackSpeed", "dwDmgShift", "dwAttackRange", "dwProbability", "dwDestParam1", "dwDestParam2", "dwDestParam3", "nAdjParamVal1", "nAdjParamVal2", "nAdjParamVal3", "dwChgParamVal1", "dwChgParamVal2", "dwChgParamVal3", "dwDestData1", "dwDestData2", "dwDestData3", "dwActiveSkill", "dwActiveSkillLv", "dwActiveSkillPer", "dwReqMp", "dwReqFp", "dwReqDisLV", "dwReSkill1", "dwReSkillLevel1", "dwReSkill2", "dwReSkillLevel2", "dwSkillReadyType", "dwSkillReady", "dwSkillRange", "dwSfxElemental", "dwSfxObj", "dwSfxObj2", "dwSfxObj3", "dwSfxObj4", "dwSfxObj5", "dwUseMotion", "dwCircleTime", "dwSkillTime", "dwExeTarget", "dwUseChance", "dwSpellRegion", "dwSpellType", "dwReferStat1", "dwReferStat2", "dwReferTarget1", "dwReferTarget2", "dwReferValue1", "dwReferValue2", "dwSkillType", "fItemResistElecricity", "fItemResistFire", "fItemResistWind", "fItemResistWater", "fItemResistEarth", "nEvildoing", "dwExpertLV", "ExpertMax", "dwSubDefine", "dwExp", "dwComboStyle", "fFlightSpeed", "fFlightLRAngle", "fFlightTBAngle", "dwFlightLimit", "dwFFuelReMax", "dwAFuelReMax", "dwFuelRe", "dwLimitLevel1", "dwReflect", "dwSndAttack1", "dwSndAttack2", "szIcon", "dwQuestID", "szTextFile", "szComment");
+
+                Log.Info("Loading items...");
+
+                propItemTable.Parse();
+                while (propItemTable.Read())
+                {
+                    var itemData = new ItemData(propItemTable);
+
+                    if (itemsData.ContainsKey(itemData.ID))
+                        itemsData[itemData.ID] = itemData;
+                    else
+                        itemsData.Add(itemData.ID, itemData);
+
+                    Log.Loading("Loading {0}/{1} items...", propItemTable.ReadingIndex, propItemTable.Count);
+                }
+
+                Log.Done("{0} items loaded!");
+            }
+            catch (Exception e)
+            {
+                Log.Error("Cannot load items: {0}", e.Message);
+            }
         }
     }
 }

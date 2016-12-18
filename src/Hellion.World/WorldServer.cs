@@ -8,6 +8,7 @@ using Hellion.World.Client;
 using Hellion.World.ISC;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 
@@ -53,6 +54,10 @@ namespace Hellion.World
         public WorldServer()
             : base()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
             Console.Title = "Hellion WorldServer";
             Log.Info("Starting WorldServer...");
         }

@@ -32,11 +32,11 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     - Player login
     - Player visibility with other players
     - Player moves
+    - Player attributes
+    - NPC visibility
     
 ## Todo list
 
-- Player moves
-- Player attributes
 - NPC
     - Shops
     - Dialogs
