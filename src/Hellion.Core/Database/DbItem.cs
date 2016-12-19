@@ -25,6 +25,9 @@ namespace Hellion.Core.Database
         [Column("itemSlot")]
         public int ItemSlot { get; set; }
 
+        [Column("itemCreatorId")]
+        public int CreatorId { get; set; }
+
         public DbCharacter Character { get; set; }
     }
 }

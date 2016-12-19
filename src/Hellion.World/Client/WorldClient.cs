@@ -58,7 +58,6 @@ namespace Hellion.World.Client
         {
             Log.Info("Client with id {0} disconnected.", this.Id);
 
-            this.Dispose();
             this.Player.Disconnect();
         }
 

@@ -47,7 +47,7 @@ namespace Hellion.Core.Data.Resources
         public ResourceTable(byte[] fileData)
         {
             this.fileData = fileData;
-            this.ReadingIndex = 0;
+            this.ReadingIndex = -1;
             this.headers = new List<string>();
             this.defines = new Dictionary<string, int>();
             this.texts = new Dictionary<string, string>();
@@ -165,7 +165,7 @@ namespace Hellion.Core.Data.Resources
                 if (value.StartsWith("0x"))
                 {
                     value = value.Remove(0, 2);
-                    value = uint.Parse(value, System.Globalization.NumberStyles.HexNumber).ToString();
+                    value = uint.Parse(value, NumberStyles.HexNumber).ToString();
                 }
 
                 return (T)Convert.ChangeType(value, typeof(T));

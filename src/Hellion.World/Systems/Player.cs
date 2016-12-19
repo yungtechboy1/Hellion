@@ -123,7 +123,7 @@ namespace Hellion.World.Systems
         {
             this.Client = parentClient;
             this.Attributes = new Attributes();
-            this.Inventory = new Inventory();
+            this.Inventory = new Inventory(dbCharacter.Items);
 
             this.Id = dbCharacter.Id;
             this.AccountId = dbCharacter.AccountId;

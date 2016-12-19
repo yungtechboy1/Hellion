@@ -1,6 +1,17 @@
 ## Hellion ChangeLog
 
-### Update #2 (16/12/2016) (In progress...)
+### Update #3 (23/12/2016) (In progress...)
+
+- Common
+  - Add ResourceTable reader (to read files like propItem.txt, propSkills.txt, etc...)
+  - Add WldFile structure
+
+- WorldServer
+  - Data loading
+    - Items (propItem.txt)
+
+
+### Update #2 (16/12/2016)
 
 
 - Common

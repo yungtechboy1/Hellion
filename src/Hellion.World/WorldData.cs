@@ -192,7 +192,7 @@ namespace Hellion.World
                     Log.Loading("Loading {0}/{1} items...", propItemTable.ReadingIndex, propItemTable.Count);
                 }
 
-                Log.Done("{0} items loaded!");
+                Log.Done("{0} items loaded!", itemsData.Count);
             }
             catch (Exception e)
             {

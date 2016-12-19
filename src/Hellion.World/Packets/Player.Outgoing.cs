@@ -150,14 +150,7 @@ namespace Hellion.World.Systems
                 packet.Write(42); //ar << m_nAngelLevel;
 
                 // Inventory
-
-                for (int i = 0; i < 73; ++i)
-                    packet.Write(i);
-
-                packet.Write<byte>(0); // item count
-
-                for (int i = 0; i < 73; ++i)
-                    packet.Write(i);
+                this.Inventory.Serialize(packet);
 
                 // Bank
 

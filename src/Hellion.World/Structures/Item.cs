@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hellion.Core.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,11 @@ namespace Hellion.World.Structures
 
         public Item()
             : this(-1, -1, -1, -1)
+        {
+        }
+
+        public Item(DbItem item)
+            : this(item.ItemId, item.ItemCount, item.CreatorId, item.ItemSlot)
         {
         }
 
