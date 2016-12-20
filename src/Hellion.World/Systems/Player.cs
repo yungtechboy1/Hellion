@@ -187,6 +187,40 @@ namespace Hellion.World.Systems
         /// </summary>
         public void Save()
         {
+            var dbCharacter = DatabaseService.Characters.Get(c => c.Id == this.Id);
+
+            if (dbCharacter == null)
+                Log.Error("Save: Cannot save character with id: {0}", this.Id);
+            else
+            {
+                dbCharacter.BankCode = this.BankCode;
+                dbCharacter.Experience = this.Experience;
+                dbCharacter.FaceId = this.FaceId;
+                dbCharacter.Fp = this.Attributes[DefineAttributes.FP];
+                dbCharacter.Gender = this.Gender;
+                dbCharacter.Gold = this.Gold;
+                dbCharacter.HairColor = this.HairColor;
+                dbCharacter.HairId = this.HairId;
+                dbCharacter.Hp = this.Attributes[DefineAttributes.HP];
+                dbCharacter.Intelligence = this.Attributes[DefineAttributes.INT];
+                dbCharacter.Level = this.Level;
+                dbCharacter.MapId = this.MapId;
+                dbCharacter.Mp = this.Attributes[DefineAttributes.MP];
+                dbCharacter.Name = this.Name;
+                dbCharacter.PosX = this.Position.X;
+                dbCharacter.PosY = this.Position.Y;
+                dbCharacter.PosZ = this.Position.Z;
+                dbCharacter.SkinSetId = this.SkinSetId;
+                dbCharacter.Slot = this.Slot;
+                dbCharacter.Stamina = this.Attributes[DefineAttributes.STA];
+                dbCharacter.Strength = this.Attributes[DefineAttributes.STR];
+                
+                // TODO: save inventory
+                // TODO: save skills
+                // TODO: save quest states
+
+                DatabaseService.Characters.Update(dbCharacter);
+            }
         }
 
         /// <summary>

@@ -33,11 +33,20 @@ namespace Hellion.World.Modules
             }
         }
 
+        /// <summary>
+        /// Gets the equiped item list.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Item> GetEquipedItems()
         {
             return this.items.ToList().GetRange(EquipOffset, MaxItems - EquipOffset);
         }
 
+        /// <summary>
+        /// Get an item by a slot.
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
         public Item GetItemBySlot(int slot)
         {
             return this.items.Where(i => i.Slot == slot).FirstOrDefault();

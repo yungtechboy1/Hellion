@@ -87,7 +87,7 @@ namespace Hellion.World.Systems
                 
                 foreach (var item in this.Inventory.GetEquipedItems())
                 {
-                    if (item == null || item.Id <= 0)
+                    if (item == null || item.Id < 0)
                         packet.Write(0);
                     else
                     {
@@ -447,7 +447,7 @@ namespace Hellion.World.Systems
 
                 IEnumerable<Item> equipedItems = worldObject.Inventory.GetEquipedItems();
 
-                packet.Write((byte)equipedItems.Count());
+                packet.Write((byte)equipedItems.Count(x => x.Id != -1));
 
                 foreach (var item in equipedItems)
                 {

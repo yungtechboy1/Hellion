@@ -92,6 +92,7 @@ namespace Hellion.World.Systems
                 npc.DestinationPosition = dyoElement.Position.Clone();
                 npc.Size = (short)(npc.Size * dyoElement.Scale.X);
                 npc.Name = dyoElement.Name;
+                
                 this.npcs.Add(npc);
             }
 
