@@ -176,12 +176,10 @@ namespace Hellion.World.Systems
         {
             try
             {
-                this.Client.Send(packet);
+                if (this.Client.Socket != null && this.Client.Socket.Connected)
+                    this.Client.Send(packet);
             }
-            catch (Exception e)
-            {
-                Log.Warning(e.Message);
-            }
+            catch { }
         }
 
         /// <summary>

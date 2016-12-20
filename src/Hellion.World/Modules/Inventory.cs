@@ -35,7 +35,7 @@ namespace Hellion.World.Modules
 
         public IEnumerable<Item> GetEquipedItems()
         {
-            return this.items.Where(i => i.Slot >= EquipOffset && i.Slot < MaxItems);
+            return this.items.ToList().GetRange(EquipOffset, MaxItems - EquipOffset);
         }
 
         public Item GetItemBySlot(int slot)

@@ -84,9 +84,19 @@ namespace Hellion.World.Systems
                 packet.Write(0); // fame
                 packet.Write<byte>(0); // duel
                 packet.Write(-1); // titles
-
-                for (int i = 0; i < 31; i++)
-                    packet.Write(0);
+                
+                foreach (var item in this.Inventory.GetEquipedItems())
+                {
+                    if (item == null || item.Id <= 0)
+                        packet.Write(0);
+                    else
+                    {
+                        packet.Write<byte>(0); // Refine
+                        packet.Write<byte>(0);
+                        packet.Write<byte>(0); // element (fire, water, elec...)
+                        packet.Write<byte>(0); // Refine element
+                    }
+                }
 
                 packet.Write(0); // guild war state
 
@@ -132,8 +142,8 @@ namespace Hellion.World.Systems
                     packet.Write(0); // skill level
                 }
 
-                packet.Write<byte>(41); // cheer point
-                packet.Write(42); // next cheer point ?
+                packet.Write<byte>(0); // cheer point
+                packet.Write(0); // next cheer point ?
 
                 // Bank
                 packet.Write((byte)this.Slot);
@@ -142,12 +152,12 @@ namespace Hellion.World.Systems
                 for (int i = 0; i < 3; ++i)
                     packet.Write(0); // player bank ?
 
-                packet.Write(0x00000001); //ar << m_nPlusMaxHitPoint;
+                packet.Write(1); //ar << m_nPlusMaxHitPoint;
                 packet.Write<byte>(0);  //ar << m_nAttackResistLeft;				
                 packet.Write<byte>(0);  //ar << m_nAttackResistRight;				
                 packet.Write<byte>(0);  //ar << m_nDefenseResist;
-                packet.Write<long>(0x00000002); //ar << m_nAngelExp;
-                packet.Write(42); //ar << m_nAngelLevel;
+                packet.Write<long>(0); //ar << m_nAngelExp;
+                packet.Write(0); //ar << m_nAngelLevel;
 
                 // Inventory
                 this.Inventory.Serialize(packet);
@@ -416,7 +426,7 @@ namespace Hellion.World.Systems
                 packet.Write(0); // fame
                 packet.Write<byte>(0); // duel
                 packet.Write(-1); // titles
-
+                
                 for (int i = Modules.Inventory.EquipOffset; i < Modules.Inventory.MaxItems; ++i)
                 {
                     var item = worldObject.Inventory.GetItemBySlot(i);
@@ -425,26 +435,25 @@ namespace Hellion.World.Systems
                         packet.Write(0);
                     else
                     {
-                        packet.Write(0); // Refine
-                        packet.Write(0);
-                        packet.Write(0); // Element (fire, water, elec, ect...)
-                        packet.Write(0); // Element refine
+                        packet.Write<byte>(0); // Refine
+                        packet.Write<byte>(0);
+                        packet.Write<byte>(0); // Element (fire, water, elec, ect...)
+                        packet.Write<byte>(0); // Element refine
                     }
                 }
+
                 for (int i = 0; i < 28; i++)
-                {
                     packet.Write(0);
-                }
 
                 IEnumerable<Item> equipedItems = worldObject.Inventory.GetEquipedItems();
-                
+
                 packet.Write((byte)equipedItems.Count());
 
                 foreach (var item in equipedItems)
                 {
                     if (item != null && item.Id > 0)
                     {
-                        packet.Write((byte)item.Slot - Modules.Inventory.EquipOffset);
+                        packet.Write((byte)(item.Slot - Modules.Inventory.EquipOffset));
                         packet.Write((short)item.Id);
                         packet.Write<byte>(0);
                     }
