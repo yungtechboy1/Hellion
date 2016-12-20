@@ -416,17 +416,39 @@ namespace Hellion.World.Systems
                 packet.Write(0); // fame
                 packet.Write<byte>(0); // duel
                 packet.Write(-1); // titles
-                
-                for (int i = 0x2A; i < 0x49; i++)
+
+                for (int i = Modules.Inventory.EquipOffset; i < Modules.Inventory.MaxItems; ++i)
                 {
-                    packet.Write(0);
+                    var item = worldObject.Inventory.GetItemBySlot(i);
+
+                    if (item == null || item.Id < 0)
+                        packet.Write(0);
+                    else
+                    {
+                        packet.Write(0); // Refine
+                        packet.Write(0);
+                        packet.Write(0); // Element (fire, water, elec, ect...)
+                        packet.Write(0); // Element refine
+                    }
                 }
                 for (int i = 0; i < 28; i++)
                 {
                     packet.Write(0);
                 }
 
-                packet.Write<byte>(0);
+                IEnumerable<Item> equipedItems = worldObject.Inventory.GetEquipedItems();
+                
+                packet.Write((byte)equipedItems.Count());
+
+                foreach (var item in equipedItems)
+                {
+                    if (item != null && item.Id > 0)
+                    {
+                        packet.Write((byte)item.Slot - Modules.Inventory.EquipOffset);
+                        packet.Write((short)item.Id);
+                        packet.Write<byte>(0);
+                    }
+                }
 
                 packet.Write(-1); // pet ?
                 packet.Write(0); // buffs ?

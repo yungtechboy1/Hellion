@@ -33,6 +33,20 @@ namespace Hellion.World.Modules
             }
         }
 
+        public IEnumerable<Item> GetEquipedItems()
+        {
+            return this.items.Where(i => i.Slot >= EquipOffset && i.Slot < MaxItems);
+        }
+
+        public Item GetItemBySlot(int slot)
+        {
+            return this.items.Where(i => i.Slot == slot).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Serialize the inventory.
+        /// </summary>
+        /// <param name="packet"></param>
         public void Serialize(NetPacketBase packet)
         {
             for (int i = 0; i < MaxItems; ++i)
@@ -51,28 +65,7 @@ namespace Hellion.World.Modules
                 {
                     packet.Write((byte)i);
                     packet.Write(i);
-                    
-                    // Item structure
-                    packet.Write(this.items[i].Id);
-                    packet.Write(0);
-                    packet.Write(0);
-                    packet.Write((short)this.items[i].Quantity);
-                    packet.Write<byte>(0);
-                    packet.Write(0);
-                    packet.Write(0);
-                    packet.Write<byte>(0);
-                    packet.Write(0);
-                    packet.Write(0);
-                    packet.Write<byte>(0);
-                    packet.Write(0);
-                    packet.Write(0);
-                    packet.Write(0);
-                    packet.Write(0);
-                    packet.Write(0);
-                    packet.Write<long>(0);
-                    packet.Write<long>(0);
-                    packet.Write<byte>(0);
-                    packet.Write(0);
+                    this.items[i].Serialize(packet);
                 }
             }
 
