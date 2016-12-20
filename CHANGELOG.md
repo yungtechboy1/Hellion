@@ -9,6 +9,10 @@
 - WorldServer
   - Data loading
     - Items (propItem.txt)
+  - Inventory
+    - Viewable equiped items (Current player and others)
+  - Player
+    - Save informations in database at logout
 
 
 ### Update #2 (16/12/2016)
