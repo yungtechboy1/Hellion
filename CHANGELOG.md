@@ -11,6 +11,7 @@
     - Items (propItem.txt)
   - Inventory
     - Viewable equiped items (Current player and others)
+    - Item move
   - Player
     - Save informations in database at logout
 

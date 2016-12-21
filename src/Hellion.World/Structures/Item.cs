@@ -29,6 +29,14 @@ namespace Hellion.World.Structures
         public int Slot { get; set; }
 
         /// <summary>
+        /// Gets the item data informations.
+        /// </summary>
+        public ItemData Data
+        {
+            get { return WorldServer.ItemsData[this.Id]; }
+        }
+
+        /// <summary>
         /// Creates an empty item.
         /// </summary>
         /// <remarks>

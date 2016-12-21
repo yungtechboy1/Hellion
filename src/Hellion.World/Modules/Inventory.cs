@@ -12,6 +12,7 @@ namespace Hellion.World.Modules
     {
         public const int EquipOffset = 42;
         public const int MaxItems = 73;
+        public const int InventorySize = EquipOffset;
 
         private Item[] items;
 
@@ -53,6 +54,29 @@ namespace Hellion.World.Modules
         }
 
         /// <summary>
+        /// Move an item in the inventory.
+        /// </summary>
+        /// <param name="sourceSlot"></param>
+        /// <param name="destinationSlot"></param>
+        /// <returns></returns>
+        public bool Move(int sourceSlot, int destinationSlot)
+        {
+            if (sourceSlot == destinationSlot || sourceSlot >= InventorySize || destinationSlot >= InventorySize)
+                return false;
+            if (this.items[sourceSlot].Id < 0)
+                return false;
+            
+            var sourceItem = this.items[sourceSlot];
+            var destItem = this.items[destinationSlot];
+            var tempItem = sourceItem;
+
+            this.items[sourceSlot] = destItem;
+            this.items[destinationSlot] = tempItem;
+
+            return true;
+        }
+
+        /// <summary>
         /// Serialize the inventory.
         /// </summary>
         /// <param name="packet"></param>
@@ -86,6 +110,5 @@ namespace Hellion.World.Modules
                     packet.Write(-1);
             }
         }
-
     }
 }
