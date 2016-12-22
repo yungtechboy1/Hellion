@@ -123,7 +123,7 @@ namespace Hellion.World.Systems
         {
             this.Client = parentClient;
             this.Attributes = new Attributes();
-            this.Inventory = new Inventory(dbCharacter.Items);
+            this.Inventory = new Inventory(this, dbCharacter.Items);
 
             this.Id = dbCharacter.Id;
             this.AccountId = dbCharacter.AccountId;
@@ -180,6 +180,12 @@ namespace Hellion.World.Systems
                     this.Client.Send(packet);
             }
             catch { }
+        }
+
+        public override void SendToVisible(NetPacketBase packet)
+        {
+            this.Send(packet);
+            base.SendToVisible(packet);
         }
 
         /// <summary>

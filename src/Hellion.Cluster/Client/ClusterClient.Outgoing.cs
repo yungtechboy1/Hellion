@@ -137,9 +137,9 @@ namespace Hellion.Cluster.Client
                     packet.Write(character.Dexterity);
                     packet.Write(character.Intelligence);
                     packet.Write(0); // Mode ??
-                    packet.Write(character.Items.Count);
+                    packet.Write(character.Items.Count(i => i.ItemSlot > 42));
 
-                    foreach (var item in character.Items)
+                    foreach (var item in character.Items.Where(i => i.ItemSlot > 42))
                         packet.Write(item.ItemId);
                 }
 

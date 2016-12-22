@@ -52,7 +52,7 @@ namespace Hellion.World.Structures
             this.SpawnedObjects.Remove(obj);
         }
 
-        public void SendToVisible(NetPacketBase packet)
+        public virtual void SendToVisible(NetPacketBase packet)
         {
             foreach (Player player in this.SpawnedObjects.Where(x => x is Player))
                 player.Send(packet);
