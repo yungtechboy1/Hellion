@@ -9,10 +9,10 @@ namespace Hellion.ISC
     public partial class InterClient
     {
         /// <summary>
-        /// Send the authentification result.
+        /// Send the authentication result.
         /// </summary>
         /// <param name="result"></param>
-        private void SendAuthentificationResult(bool result)
+        private void SendAuthenticationResult(bool result)
         {
             var packet = new NetPacket();
 

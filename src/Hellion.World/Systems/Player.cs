@@ -182,6 +182,10 @@ namespace Hellion.World.Systems
             catch { }
         }
 
+        /// <summary>
+        /// Send packets to every visible players around this player.
+        /// </summary>
+        /// <param name="packet"></param>
         public override void SendToVisible(NetPacketBase packet)
         {
             this.Send(packet);

@@ -21,7 +21,7 @@ namespace Hellion.World.Modules
 
         private Item[] items;
         private Player player;
-  
+
         /// <summary>
         /// Creates and initialize the inventory from the items stored in database.
         /// </summary>
@@ -33,12 +33,21 @@ namespace Hellion.World.Modules
             this.items = new Item[MaxItems];
 
             for (int i = 0; i < MaxItems; ++i)
+            {
                 this.items[i] = new Item();
+                this.items[i].UniqueId = i;
+            }
 
             if (dbItems != null && dbItems.Count > 0)
             {
                 foreach (var item in dbItems)
                     this.items[item.ItemSlot] = new Item(item);
+            }
+
+            for (int i = EquipOffset; i < MaxItems; ++i)
+            {
+                if (this.items[i].Id == -1)
+                    this.items[i].UniqueId = -1;
             }
         }
 
@@ -88,41 +97,78 @@ namespace Hellion.World.Modules
         /// <param name="sourceSlot"></param>
         /// <param name="destSlot"></param>
         /// <returns></returns>
-        public bool Move(int sourceSlot, int destSlot)
+        public void Move(int sourceSlot, int destSlot)
         {
-            if (sourceSlot == destSlot || sourceSlot >= MaxItems || destSlot >= MaxItems)
-                return false;
-            if (this.items[sourceSlot].Id < 0 || this.items[sourceSlot].UniqueId < 0)
-                return false;
+            if (sourceSlot < 0 || sourceSlot >= MaxItems || destSlot < 0 || destSlot >= MaxItems)
+                return;
+            if (this.items[sourceSlot].Id == -1 || this.items[sourceSlot].UniqueId == -1 || this.items[destSlot].UniqueId == -1)
+                return;
             
-            this.items[sourceSlot].Slot = destSlot;
+            var sourceItem = this.items[sourceSlot];
+            var destItem = this.items[destSlot];
 
-            if (this.items[destSlot].Slot != -1)
-                this.items[destSlot].Slot = sourceSlot;
+            bool stackable = sourceItem.Id == destItem.Id && sourceItem.Data.PackMax > 1;
 
-            this.items.Swap(sourceSlot, destSlot);
+            if (stackable)
+            {
+                // TODO: stack items
+            }
+            else
+            {
+                sourceItem.Slot = destSlot;
+                if (destItem.Slot != -1)
+                    destItem.Slot = sourceSlot;
 
-            return true;
+                this.items.Swap(sourceSlot, destSlot);
+
+                this.player.SendItemMove((byte)sourceSlot, (byte)destSlot);
+            }
         }
 
         public void Equip(Item item)
         {
-            Log.Debug("Equip(item)");
-            int destSlot = item.Data.Parts + EquipOffset;
+            // TODO: Add some verifications before equip.
+            // Sex, level, job, ride, etc...
+
+            int equipParts = item.Data.Parts;
+            int destSlot = equipParts + EquipOffset;
             int sourceSlot = item.Slot;
 
             if (this.items[destSlot].Id != -1)
                 this.Unequip(this.items[destSlot]);
 
-            this.items[sourceSlot].Slot = destSlot;
+            item.Slot = destSlot;
             this.items.Swap(sourceSlot, destSlot);
-            
-            this.player.SendItemEquip(item, item.Data.Parts, true);
+
+            this.player.SendItemEquip(item, equipParts, true);
         }
 
         public void Unequip(Item item)
         {
-            
+            int sourceSlot = item.Slot;
+            int destSlot = this.GetFreeSlot();
+
+            // TODO: add more verifications
+            if (destSlot == -1)
+            {
+                Log.Error("No more space in inventory");
+                return;
+            }
+
+            if (item != null && item.Id > 0 && item.Slot < EquipOffset)
+            {
+                this.Equip(item);
+                return;
+            }
+            if (item.Id > 0 && item.Slot > EquipOffset)
+            {
+                int parts = Math.Abs(sourceSlot - EquipOffset);
+
+                item.Slot = destSlot;
+                this.items.Swap(sourceSlot, destSlot);
+
+                this.player.SendItemEquip(item, parts, false);
+            }
         }
 
         /// <summary>
@@ -133,7 +179,7 @@ namespace Hellion.World.Modules
         {
             for (int i = 0; i < MaxItems; ++i)
                 packet.Write(this.items[i].UniqueId);
-            
+
             packet.Write((byte)this.items.Count(x => x.Id != -1));
 
             for (int i = 0; i < MaxItems; ++i)

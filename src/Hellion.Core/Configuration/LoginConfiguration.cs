@@ -24,7 +24,7 @@ namespace Hellion.Core.Configuration
         /// Gets or sets the client build version.
         /// </summary>
         /// <remarks>
-        /// During the authentification process, if this build version doesn't match the client build version
+        /// During the authentication process, if this build version doesn't match the client build version
         /// you will not be allowed to connect to the Login Server.
         /// </remarks>
         [DataMember(Name = "buildVersion")]

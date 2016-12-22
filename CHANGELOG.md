@@ -12,6 +12,7 @@
   - Inventory
     - Viewable equiped items (Current player and others)
     - Item move
+    - Equip/Unequip
   - Player
     - Save informations in database at logout
 

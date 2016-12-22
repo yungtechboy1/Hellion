@@ -2,7 +2,7 @@
 
 ## Incoming Packets
 
-### Authentification
+### Authentication
 
 _Description:_
 
@@ -12,14 +12,14 @@ _Structure:_
 
 **Login**
 ```c#
-[int] header: InterHeaders.Authentification (0x01)
+[int] header: InterHeaders.Authentication (0x01)
 [int] serverType
 [string] interPassword
 ```
 
 **Cluster**
 ```c#
-[int] header: InterHeaders.Authentification (0x01)
+[int] header: InterHeaders.Authentication (0x01)
 [int] serverType
 [string] interPassword
 [int] clusterId
@@ -29,7 +29,7 @@ _Structure:_
 
 **World**
 ```c#
-[int] header: InterHeaders.Authentification (0x01)
+[int] header: InterHeaders.Authentication (0x01)
 [int] serverType
 [string] interPassword
 [int] clusterId
@@ -54,16 +54,16 @@ _Structure:_
 [int] header: InterHeaders.CanAuthentificate (0x00)
 ```
 
-### Authentification Result
+### Authentication Result
 
 _Description:_
 
-Sends the authentification result.
+Sends the authentication result.
 
 _Structure:_
 
 ```c#
-[int] header: InterHeaders.AuthentificationResult (0x02)
+[int] header: InterHeaders.AuthenticationResult (0x02)
 [bool] result
 ```
 

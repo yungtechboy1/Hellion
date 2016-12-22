@@ -34,6 +34,8 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     - Player moves
     - Player attributes
     - NPC visibility
+    - Inventory
+      - Move / Equip / Unequip
     
 ## Todo list
 

@@ -23,10 +23,7 @@ namespace Hellion.World.Client
             var sourceSlot = packet.Read<byte>();
             var destSlot = packet.Read<byte>();
 
-            Log.Debug("Moving item from {0} to {1}", sourceSlot, destSlot);
-
-            if (this.Player.Inventory.Move(sourceSlot, destSlot))
-                this.Player.SendItemMove(sourceSlot, destSlot);
+            this.Player.Inventory.Move(sourceSlot, destSlot);
         }
 
         [FFIncomingPacket(WorldHeaders.Incoming.ItemUnequip)]
@@ -48,18 +45,14 @@ namespace Hellion.World.Client
             var objectId = packet.Read<int>();
             var equipPart = packet.Read<int>();
 
-            Log.Debug("OnItemUsage: itemUniqueId: {0} ; objectId: {1} ; equipPart: {2}", itemUniqueId, objectId, equipPart);
-
-            if (equipPart >= Modules.Inventory.MaxHumanParts)
-                return;
-
             var item = this.Player.Inventory.GetItemByUniqueId(itemUniqueId);
 
-            if (item?.Data.Parts > 0)
-                this.Player.Inventory.Equip(item);
-            else
+            if (item != null && item.Id > 0)
             {
-                // Use items
+                if (item.Data.Parts > 0)
+                    this.Player.Inventory.Equip(item);
+                //else
+                //    this.Player.Inventory.UseItem(item);
             }
         }
     }
