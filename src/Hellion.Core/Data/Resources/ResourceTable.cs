@@ -69,8 +69,7 @@ namespace Hellion.Core.Data.Resources
         /// <param name="definesToAdd"></param>
         public void AddDefines(Dictionary<string, int> definesToAdd)
         {
-            foreach (var definesKeyValue in definesToAdd)
-                this.defines.Add(definesKeyValue.Key, definesKeyValue.Value);
+            this.defines = definesToAdd;
         }
 
         /// <summary>
@@ -79,8 +78,7 @@ namespace Hellion.Core.Data.Resources
         /// <param name="textsToAdd"></param>
         public void AddTexts(Dictionary<string, string> textsToAdd)
         {
-            foreach (var textsKeyValue in textsToAdd)
-                this.texts.Add(textsKeyValue.Key, textsKeyValue.Value);
+            this.texts = textsToAdd;
         }
 
         /// <summary>

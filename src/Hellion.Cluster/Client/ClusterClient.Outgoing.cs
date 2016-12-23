@@ -13,12 +13,13 @@ namespace Hellion.Cluster.Client
         /// </summary>
         private void SendSessionId()
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.Write(0);
+                packet.Write((int)this.sessionId);
 
-            packet.Write(0);
-            packet.Write((int)this.sessionId);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         /// <summary>
@@ -27,12 +28,13 @@ namespace Hellion.Cluster.Client
         /// <param name="time"></param>
         private void SendPong(int time)
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(ClusterHeaders.Outgoing.Pong);
+                packet.Write(time);
 
-            packet.WriteHeader(ClusterHeaders.Outgoing.Pong);
-            packet.Write(time);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         /// <summary>
@@ -50,22 +52,24 @@ namespace Hellion.Cluster.Client
         /// <param name="code"></param>
         private void SendClusterMessage(int code)
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(ClusterHeaders.Outgoing.LoginMessage);
+                packet.Write(code);
 
-            packet.WriteHeader(ClusterHeaders.Outgoing.LoginMessage);
-            packet.Write(code);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         private void SendWorldIp(string ip)
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(ClusterHeaders.Outgoing.GameServerIP);
+                packet.Write(ip);
 
-            packet.WriteHeader(ClusterHeaders.Outgoing.GameServerIP);
-            packet.Write(ip);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         /// <summary>
@@ -73,12 +77,13 @@ namespace Hellion.Cluster.Client
         /// </summary>
         private void SendLoginNumPad()
         {
-            var packet = new FFPacket();
-            
-            packet.Write(0x88100200);
-            packet.Write(this.loginProtectValue);
+            using (var packet = new FFPacket())
+            {
+                packet.Write(0x88100200);
+                packet.Write(this.loginProtectValue);
 
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         /// <summary>
@@ -86,13 +91,14 @@ namespace Hellion.Cluster.Client
         /// </summary>
         private void SendLoginProtect()
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.Write(0x88100201);
+                packet.Write(0);
+                packet.Write(this.loginProtectValue);
 
-            packet.Write(0x88100201);
-            packet.Write(0);
-            packet.Write(this.loginProtectValue);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         /// <summary>
@@ -102,54 +108,55 @@ namespace Hellion.Cluster.Client
         /// <param name="characters"></param>
         private void SendCharacterList(int authKey, IEnumerable<DbCharacter> characters)
         {
-            var packet = new FFPacket();
-
-            packet.WriteHeader(ClusterHeaders.Outgoing.CharacterList);
-            packet.Write(authKey);
-
-            if (characters.Any())
+            using (var packet = new FFPacket())
             {
-                packet.Write(characters.Count());
-                foreach (var character in characters)
+                packet.WriteHeader(ClusterHeaders.Outgoing.CharacterList);
+                packet.Write(authKey);
+
+                if (characters.Any())
                 {
-                    packet.Write(character.Slot);
-                    packet.Write(1); // this number represents the selected character in the window
-                    packet.Write(character.MapId);
-                    packet.Write(0x0B + character.Gender); // Model id
-                    packet.Write(character.Name);
-                    packet.Write(character.PosX);
-                    packet.Write(character.PosY);
-                    packet.Write(character.PosZ);
-                    packet.Write(character.Id);
-                    packet.Write(0); // Party id
-                    packet.Write(0); // Guild id
-                    packet.Write(0); // War Id
-                    packet.Write(character.SkinSetId); // SkinSet Id
-                    packet.Write(character.HairId);
-                    packet.Write(character.HairColor);
-                    packet.Write(character.FaceId);
-                    packet.Write(character.Gender);
-                    packet.Write(character.ClassId);
-                    packet.Write(character.Level);
-                    packet.Write(0); // Job Level (Maybe master of hero ?)
-                    packet.Write(character.Strength);
-                    packet.Write(character.Stamina);
-                    packet.Write(character.Dexterity);
-                    packet.Write(character.Intelligence);
-                    packet.Write(0); // Mode ??
-                    packet.Write(character.Items.Count(i => i.ItemSlot > 42));
+                    packet.Write(characters.Count());
+                    foreach (var character in characters)
+                    {
+                        packet.Write(character.Slot);
+                        packet.Write(1); // this number represents the selected character in the window
+                        packet.Write(character.MapId);
+                        packet.Write(0x0B + character.Gender); // Model id
+                        packet.Write(character.Name);
+                        packet.Write(character.PosX);
+                        packet.Write(character.PosY);
+                        packet.Write(character.PosZ);
+                        packet.Write(character.Id);
+                        packet.Write(0); // Party id
+                        packet.Write(0); // Guild id
+                        packet.Write(0); // War Id
+                        packet.Write(character.SkinSetId); // SkinSet Id
+                        packet.Write(character.HairId);
+                        packet.Write(character.HairColor);
+                        packet.Write(character.FaceId);
+                        packet.Write(character.Gender);
+                        packet.Write(character.ClassId);
+                        packet.Write(character.Level);
+                        packet.Write(0); // Job Level (Maybe master of hero ?)
+                        packet.Write(character.Strength);
+                        packet.Write(character.Stamina);
+                        packet.Write(character.Dexterity);
+                        packet.Write(character.Intelligence);
+                        packet.Write(0); // Mode ??
+                        packet.Write(character.Items.Count(i => i.ItemSlot > 42));
 
-                    foreach (var item in character.Items.Where(i => i.ItemSlot > 42))
-                        packet.Write(item.ItemId);
+                        foreach (var item in character.Items.Where(i => i.ItemSlot > 42))
+                            packet.Write(item.ItemId);
+                    }
+
+                    // Messenger?
+                    packet.Write(0);
                 }
+                else
+                    packet.Write<long>(0);
 
-                // Messenger?
-                packet.Write(0);
+                this.Send(packet);
             }
-            else
-                packet.Write<long>(0);
-
-            this.Send(packet);
         }
 
         /// <summary>
@@ -157,11 +164,12 @@ namespace Hellion.Cluster.Client
         /// </summary>
         public void SendJoinWorld()
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(ClusterHeaders.Outgoing.JoinWorld);
 
-            packet.WriteHeader(ClusterHeaders.Outgoing.JoinWorld);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
     }
 }
