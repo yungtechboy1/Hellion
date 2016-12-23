@@ -16,6 +16,7 @@ namespace Hellion.Login.Client
     public partial class LoginClient : NetConnection
     {
         private uint sessionId;
+        private int accountId;
         private string username;
 
         /// <summary>
@@ -79,6 +80,7 @@ namespace Hellion.Login.Client
         {
             var connectedClients = from x in this.Server.Clients
                                    where x.Socket.Connected
+                                   where x.accountId == this.accountId
                                    where x.GetHashCode() != this.GetHashCode()
                                    select x;
 

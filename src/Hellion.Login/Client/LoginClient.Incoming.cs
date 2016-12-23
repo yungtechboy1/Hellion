@@ -35,6 +35,8 @@ namespace Hellion.Login.Client
             }
             else
             {
+                this.accountId = user.Id;
+
                 if (buildVersion.ToLower() != this.Server.LoginConfiguration.BuildVersion?.ToLower())
                 {
                     Log.Info($"User '{username}' logged in with bad build version.");

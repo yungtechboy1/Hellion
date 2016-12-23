@@ -21,6 +21,9 @@ namespace Hellion.World.Systems
         private ICollection<Npc> npcs;
         private object syncLockNpc = new object();
 
+        private ICollection<Monster> monsters;
+        private object syncLockMonster;
+
         /// <summary>
         /// Gets the map id.
         /// </summary>
@@ -57,6 +60,7 @@ namespace Hellion.World.Systems
             this.Name = mapName;
             this.players = new HashSet<Player>();
             this.npcs = new HashSet<Npc>();
+            this.monsters = new HashSet<Monster>();
         }
 
         /// <summary>

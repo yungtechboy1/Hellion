@@ -330,6 +330,7 @@
 #define QUEST_TEACHER03       5007 // 신학기 적응하기 이벤트용(인자한 교장선생님)
 #define QUEST_COOKER01	      5008 // 화이트 데이 이벤트용(수습 요리사)
 #define QUEST_COOKER02	      5009 // 화이트 데이 이벤트용(부장 요리사)
+#define QUEST_COOKER02	      5009 // 화이트 데이 이벤트용(부장 요리사)
 #define QUEST_ARBORDAY01  	  5010 // 식목일 이벤트(푸른숲 파수꾼)
 #define QUEST_ARBORDAY02      5011 // 식목일 이벤트(묘목 관리자)
 #define QUEST_ARBORDAY03	  5012 // 식목일 이벤트(환경운동가)
@@ -488,6 +489,8 @@
 #define	QUEST_LEPRECHAUN02	5109
 
 #define	QUEST_WHITE2010		5110
+
+#define	QUEST_SKELETON01	5111
 
 // 사용 불가 define 상수: 1800 ~ 4500이상
 // SetHeadQuest()의 인자값

@@ -61,6 +61,8 @@ namespace Hellion.World
         {
             this.defines.Clear();
             this.texts.Clear();
+
+            GC.Collect();
         }
 
         /// <summary>
@@ -102,14 +104,41 @@ namespace Hellion.World
         /// </summary>
         private void LoadTexts()
         {
-            string[] texts =
+            string[] textPaths =
             {
-                "dataSub1/propItem.txt.txt",
+                "data/propCtrl.txt.txt",
+                "data/propItemEtc.txt.txt",
+                "data/propKarma.txt.txt",
+                "data/propMotion.txt.txt",
+                "data/propMover.txt.txt",
+                "data/propSkill.txt.txt",
+                "data/propTroupeSkill.txt.txt",
+                "data/textEmotion.txt.txt",
+                "data/world.txt.txt",
+                "dataSub1/lordskill.txt.txt",
+                "dataSub1/propQuest.txt.txt",
+                "dataSub1/propQuest-Scenario.txt.txt",
+                "dataSub1/propQuest-DungeonandPK.txt.txt",
+                "dataSub1/etc.txt.txt",
+                "dataSub1/character.txt.txt",
+                "dataSub1/character-etc.txt.txt",
+                "dataSub1/character-school.txt.txt",
+                "dataSub2/propItem.txt.txt",
             };
 
-            foreach (var textFile in texts)
+            foreach (var textFilePath in textPaths)
             {
-                // Load texts
+                var textFile = new TextFile(Path.Combine(Global.DataPath, "res", textFilePath));
+
+                textFile.Parse();
+
+                foreach (var text in textFile.Texts)
+                {
+                    if (this.texts.ContainsKey(text.Key))
+                        Log.Warning("The text key '{0}' already exists.", text.Key);
+                    else
+                        this.texts.Add(text.Key, text.Value);
+                }
             }
         }
 

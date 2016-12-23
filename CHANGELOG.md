@@ -6,6 +6,9 @@
   - Add ResourceTable reader (to read files like propItem.txt, propSkills.txt, etc...)
   - Add WldFile structure
 
+- LoginServer
+  - Fix bug "Account already connected"
+
 - WorldServer
   - Data loading
     - Items (propItem.txt)
