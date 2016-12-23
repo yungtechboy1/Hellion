@@ -16,6 +16,7 @@ namespace Hellion.Login.Client
     public partial class LoginClient : NetConnection
     {
         private uint sessionId;
+        private int accountId;
         private string username;
 
         /// <summary>
@@ -66,14 +67,8 @@ namespace Hellion.Login.Client
             var packetHeader = (LoginHeaders.Incoming)packetHeaderNumber;
             var pak = packet as FFPacket;
 
-            switch (packetHeader)
-            {
-                case LoginHeaders.Incoming.LoginRequest: this.OnLoginRequest(pak); break;
-
-
-
-                default: FFPacket.UnknowPacket<LoginHeaders.Incoming>((uint)packetHeaderNumber, 2); break;
-            }
+            if (!FFPacketHandler.Invoke(this, packetHeader, packet))
+                FFPacket.UnknowPacket<LoginHeaders.Incoming>(packetHeaderNumber, 2);
         }
 
         /// <summary>
@@ -83,8 +78,9 @@ namespace Hellion.Login.Client
         /// <returns></returns>
         private bool IsAlreadyConnected(out LoginClient connectedClient)
         {
-            var connectedClients = from x in this.Server.Clients.Cast<LoginClient>()
+            var connectedClients = from x in this.Server.Clients
                                    where x.Socket.Connected
+                                   where x.accountId == this.accountId
                                    where x.GetHashCode() != this.GetHashCode()
                                    select x;
 

@@ -21,7 +21,7 @@ namespace Hellion.Core.Configuration
         /// Gets or sets the inter password.
         /// </summary>
         /// <remarks>
-        /// This password will be used during the authentification process.
+        /// This password will be used during the authentication process.
         /// It will allow only the servers that have the this password to authentificate them selfs.
         /// </remarks>
         [DataMember(Name = "interPassword")]

@@ -1970,6 +1970,9 @@
 #define	MI_PET_WHITERABBIT		1155
 #define	MI_PET_WHITETIGER02		1156
 
+#define	MI_MaFl_Babario			1164
+#define	MI_PET_SKEL01			1165
+
 // 값이 2000이 되는 순간 프로그래머에게 통보 바랍니다.	// 康
 // 13차 개발 하면서 1000에서 2000으로 확장함(강현민 책임)
 // MAX_PROPMOVER	1000

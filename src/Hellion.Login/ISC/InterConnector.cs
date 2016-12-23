@@ -30,8 +30,6 @@ namespace Hellion.Login.ISC
             var packetHeaderNumber = packet.Read<int>();
             var packetHeader = (InterHeaders)packetHeaderNumber;
 
-            Log.Debug("Recieved: {0}", packetHeader);
-
             switch (packetHeader)
             {
                 case InterHeaders.CanAuthticate: this.Authenticate(); break;
@@ -55,13 +53,14 @@ namespace Hellion.Login.ISC
         /// </summary>
         private void Authenticate()
         {
-            var packet = new NetPacket();
+            using (var packet = new NetPacket())
+            {
+                packet.Write((int)InterHeaders.Authentication);
+                packet.Write((int)InterServerType.Login);
+                packet.Write(this.loginServer.LoginConfiguration.ISC.Password);
 
-            packet.Write((int)InterHeaders.Authentication);
-            packet.Write((int)InterServerType.Login);
-            packet.Write(this.loginServer.LoginConfiguration.ISC.Password);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         /// <summary>

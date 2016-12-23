@@ -1,5 +1,6 @@
 ﻿using Hellion.Core;
 using Hellion.Core.Data;
+using Hellion.Core.Data.Resources;
 using Hellion.World.Structures;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Hellion.World.Systems.Map
+namespace Hellion.World.Systems
 {
     public class Map
     {
@@ -16,6 +17,12 @@ namespace Hellion.World.Systems.Map
 
         private ICollection<Player> players;
         private object syncLockClient = new object();
+
+        private ICollection<Npc> npcs;
+        private object syncLockNpc = new object();
+
+        private ICollection<Monster> monsters;
+        private object syncLockMonster;
 
         /// <summary>
         /// Gets the map id.
@@ -28,6 +35,21 @@ namespace Hellion.World.Systems.Map
         public string Name { get; private set; }
 
         /// <summary>
+        /// Gets the map width.
+        /// </summary>
+        public int Width { get; private set; }
+
+        /// <summary>
+        /// Gets the map length.
+        /// </summary>
+        public int Length { get; private set; }
+
+        /// <summary>
+        /// Get the map heights.
+        /// </summary>
+        public float[] Heights { get; private set; }
+
+        /// <summary>
         /// Creates a new Map instance with a name and id.
         /// </summary>
         /// <param name="id">Id of the map</param>
@@ -37,6 +59,8 @@ namespace Hellion.World.Systems.Map
             this.Id = id;
             this.Name = mapName;
             this.players = new HashSet<Player>();
+            this.npcs = new HashSet<Npc>();
+            this.monsters = new HashSet<Monster>();
         }
 
         /// <summary>
@@ -45,10 +69,42 @@ namespace Hellion.World.Systems.Map
         public void Load()
         {
             string mapPath = Path.Combine(Global.DataPath, "maps", this.Name);
-            
+            string wldMapPath = Path.Combine(mapPath, this.Name + ".wld");
+            string dyoMapPath = Path.Combine(mapPath, this.Name + ".dyo");
+            string rgnMapPath = Path.Combine(mapPath, this.Name + ".rgn");
+
             // Load .wld
+            byte[] wldFileData = File.ReadAllBytes(wldMapPath);
+            var wld = new WldFile(wldFileData);
+            wld.Read();
+
+            this.Width = wld.Width;
+            this.Length = wld.Length;
+
             // Load .dyo
+            byte[] dyoFileData = File.ReadAllBytes(dyoMapPath);
+            var dyo = new DyoFile(dyoFileData);
+            dyo.Read();
+
+            foreach (NpcDyoElement dyoElement in dyo.Elements.Where(d => d is NpcDyoElement))
+            {
+                var npc = new Npc();
+                npc.MapId = this.Id;
+                npc.ModelId = dyoElement.Index;
+                npc.Angle = dyoElement.Angle;
+                npc.Position = dyoElement.Position.Clone();
+                npc.DestinationPosition = dyoElement.Position.Clone();
+                npc.Size = (short)(npc.Size * dyoElement.Scale.X);
+                npc.Name = dyoElement.Name;
+                
+                this.npcs.Add(npc);
+            }
+
             // Load .rgn
+            byte[] rgnFileData = File.ReadAllBytes(rgnMapPath);
+            var rgn = new RgnFile(rgnFileData);
+            rgn.Read();
+            
             // Load .lnd
         }
 
@@ -138,6 +194,20 @@ namespace Hellion.World.Systems.Map
                         }
                         else
                             player.DespawnObject(obj);
+                    }
+
+                    lock (syncLockNpc)
+                    {
+                        foreach (var npc in this.npcs)
+                        {
+                            if (player.CanSee(npc))
+                            {
+                                if (!player.SpawnedObjects.Contains(npc))
+                                    player.SpawnObject(npc);
+                            }
+                            else
+                                player.DespawnObject(npc);
+                        }
                     }
                 }
             }

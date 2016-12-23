@@ -1,18 +1,18 @@
-IDS_LORDSKILL_TXT_0000	Acclamation du Souverain
-IDS_LORDSKILL_TXT_0001	Augmente le taux d'EXP et de butin des personnages de 10%
-IDS_LORDSKILL_TXT_0002	Benediction du Souverain
-IDS_LORDSKILL_TXT_0003	Augmente la puissance d'attaque et la defense des personnages de 10% 
-IDS_LORDSKILL_TXT_0004	Bienveillance du Souverain
-IDS_LORDSKILL_TXT_0005	Augmente chaque statistique de 15
-IDS_LORDSKILL_TXT_0006	Hurlement du souverain
-IDS_LORDSKILL_TXT_0007	Change la couleur des hurlement du Souverain
-IDS_LORDSKILL_TXT_0008	Courroux du Souverain
-IDS_LORDSKILL_TXT_0009	Enleve l'usage de la parole a un personnage
-IDS_LORDSKILL_TXT_0010	Cri du Souverain
-IDS_LORDSKILL_TXT_0011	Autorise le Souverain à crier en texte couleur.
-IDS_LORDSKILL_TXT_0012	Convocation du Souverain
-IDS_LORDSKILL_TXT_0013	Invoque un personnage aux cotes du Souverain
-IDS_LORDSKILL_TXT_0014	Teleportation du Souverain
-IDS_LORDSKILL_TXT_0015	Teleporte le souverain aux cotes d'un personnage
-IDS_LORDSKILL_TXT_0016	Escorte du souverain
-IDS_LORDSKILL_TXT_0017	La duree des competences de groupe est augmentee de 400% (seulement si le souverain est le chef de groupe)
+IDS_LORDSKILL_TXT_0000	Lord's Cheer
+IDS_LORDSKILL_TXT_0001	Increases the EXP and item-drop rate of the character by up to 110%
+IDS_LORDSKILL_TXT_0002	Lord's Blessing
+IDS_LORDSKILL_TXT_0003	Increases the attack power and defense power of the character by up to 110%
+IDS_LORDSKILL_TXT_0004	Lord's Love
+IDS_LORDSKILL_TXT_0005	Increases every stat of the character by as much as 15
+IDS_LORDSKILL_TXT_0006	Lord's Shout
+IDS_LORDSKILL_TXT_0007	Color of your shouting message is changed
+IDS_LORDSKILL_TXT_0008	Lord's Anger
+IDS_LORDSKILL_TXT_0009	Ban a character from sending chat messages
+IDS_LORDSKILL_TXT_0010	
+IDS_LORDSKILL_TXT_0011	
+IDS_LORDSKILL_TXT_0012	Lord's Call
+IDS_LORDSKILL_TXT_0013	Summon a character to the Lord
+IDS_LORDSKILL_TXT_0014	Lord's Teleport
+IDS_LORDSKILL_TXT_0015	Teleport to a character
+IDS_LORDSKILL_TXT_0016	Lord's Party
+IDS_LORDSKILL_TXT_0017	Duration of party skills increases by up to 400% (only when the Lord uses the party skills as a party leader)

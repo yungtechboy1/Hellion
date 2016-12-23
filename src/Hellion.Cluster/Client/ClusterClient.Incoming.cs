@@ -3,6 +3,7 @@ using Hellion.Core.Configuration;
 using Hellion.Core.Data.Headers;
 using Hellion.Core.Database;
 using Hellion.Core.IO;
+using Hellion.Core.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace Hellion.Cluster.Client
         /// Recieves the ping request and send the pong.
         /// </summary>
         /// <param name="packet"></param>
+        [FFIncomingPacket(ClusterHeaders.Incoming.Ping)]
         private void OnPing(NetPacketBase packet)
         {
             var time = packet.Read<int>();
@@ -26,6 +28,7 @@ namespace Hellion.Cluster.Client
         /// Retrieves all character of the current account and send them to the client.
         /// </summary>
         /// <param name="packet"></param>
+        [FFIncomingPacket(ClusterHeaders.Incoming.CharacterListRequest)]
         private void OnCharacterListRequest(NetPacketBase packet)
         {
             var buildDate = packet.Read<string>();
@@ -59,6 +62,7 @@ namespace Hellion.Cluster.Client
         /// Creates a new character.
         /// </summary>
         /// <param name="packet"></param>
+        [FFIncomingPacket(ClusterHeaders.Incoming.CreateCharacter)]
         private void OnCreateCharacter(NetPacketBase packet)
         {
             var username = packet.Read<string>();
@@ -140,6 +144,7 @@ namespace Hellion.Cluster.Client
         /// Delete a character.
         /// </summary>
         /// <param name="packet"></param>
+        [FFIncomingPacket(ClusterHeaders.Incoming.DeleteCharacter)]
         private void OnDeleteCharacter(NetPacketBase packet)
         {
             var username = packet.Read<string>();
@@ -185,6 +190,7 @@ namespace Hellion.Cluster.Client
         /// On character pre join the world.
         /// </summary>
         /// <param name="packet"></param>
+        [FFIncomingPacket(ClusterHeaders.Incoming.PreJoin)]
         private void OnPreJoin(NetPacketBase packet)
         {
             var username = packet.Read<string>();

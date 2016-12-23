@@ -11,6 +11,7 @@ namespace Hellion.Login.Client
         /// Login request.
         /// </summary>
         /// <param name="packet"></param>
+        [FFIncomingPacket(LoginHeaders.Incoming.LoginRequest)]
         private void OnLoginRequest(FFPacket packet)
         {
             var buildVersion = packet.Read<string>();
@@ -34,6 +35,8 @@ namespace Hellion.Login.Client
             }
             else
             {
+                this.accountId = user.Id;
+
                 if (buildVersion.ToLower() != this.Server.LoginConfiguration.BuildVersion?.ToLower())
                 {
                     Log.Info($"User '{username}' logged in with bad build version.");

@@ -1,10 +1,9 @@
 ﻿using Ether.Network.Packets;
 using Hellion.Core.Data;
 using Hellion.Core.Structures;
-using System;
+using Hellion.World.Systems;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using EHelper = Ether.Network.Helpers;
 
 namespace Hellion.World.Structures
@@ -20,6 +19,8 @@ namespace Hellion.World.Structures
         public short Size { get; set; }
 
         public int MapId { get; set; }
+
+        public float Angle { get; set; }
 
         public Vector3 Position { get; set; }
 
@@ -37,6 +38,7 @@ namespace Hellion.World.Structures
             this.Size = 100;
             this.MapId = -1;
             this.Position = new Vector3();
+            this.Angle = 0;
             this.SpawnedObjects = new List<WorldObject>();
         }
 
@@ -50,10 +52,10 @@ namespace Hellion.World.Structures
             this.SpawnedObjects.Remove(obj);
         }
 
-        public void SendToVisible(NetPacketBase packet)
+        public virtual void SendToVisible(NetPacketBase packet)
         {
             foreach (Player player in this.SpawnedObjects.Where(x => x is Player))
-                player.Client.Send(packet);
+                player.Send(packet);
         }
     }
 }

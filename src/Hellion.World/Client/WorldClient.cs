@@ -1,25 +1,26 @@
 ﻿using Ether.Network;
-using Hellion.Core.Database;
-using Hellion.Core.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 using Ether.Network.Packets;
 using Hellion.Core;
 using Hellion.Core.Data.Headers;
+using Hellion.Core.Database;
+using Hellion.Core.IO;
 using Hellion.Core.Network;
-using Hellion.World.Structures;
+using Hellion.World.Systems;
+using System.Net.Sockets;
 
-namespace Hellion.World
+namespace Hellion.World.Client
 {
+    /// <summary>
+    /// Represents a world client connected to the world server.
+    /// </summary>
     public partial class WorldClient : NetConnection
     {
         private uint sessionId;
 
-        private DbUser currentUser;
+        /// <summary>
+        /// Gets the player account informations.
+        /// </summary>
+        public DbUser CurrentUser { get; set; }
 
         /// <summary>
         /// Gets or sets the current player.
@@ -50,14 +51,14 @@ namespace Hellion.World
             this.sessionId = (uint)Global.GenerateRandomNumber();
         }
 
+        /// <summary>
+        /// Disconnectes the current client.
+        /// </summary>
         public void Disconnected()
         {
             Log.Info("Client with id {0} disconnected.", this.Id);
 
-            this.Dispose();
-            
-            WorldServer.MapManager[this.Player.MapId].RemoveObject(this.Player);
-            this.Player.SpawnedObjects.Clear();
+            this.Player.Disconnect();
         }
 
         /// <summary>
@@ -86,15 +87,8 @@ namespace Hellion.World
 
             Log.Debug("Recieve packet: {0}", packetHeader);
 
-            switch (packetHeader)
-            {
-                case WorldHeaders.Incoming.Join: this.OnJoin(packet); break;
-                case WorldHeaders.Incoming.MoveByMouse: this.OnMoveByKeyboard(packet); break;
-
-                default: FFPacket.UnknowPacket<WorldHeaders.Incoming>(packetHeaderNumber, 8); break;
-            }
-
-            base.HandleMessage(packet);
+            if (!FFPacketHandler.Invoke(this, packetHeader, packet))
+                FFPacket.UnknowPacket<WorldHeaders.Incoming>(packetHeaderNumber, 8);
         }
     }
 }

@@ -21,12 +21,13 @@ namespace Hellion.Login.Client
         /// <param name="code"></param>
         private void SendLoginMessage(int code)
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.WriteHeader(LoginHeaders.Outgoing.LoginMessage);
+                packet.Write(code);
 
-            packet.WriteHeader(LoginHeaders.Outgoing.LoginMessage);
-            packet.Write(code);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         /// <summary>
@@ -34,39 +35,40 @@ namespace Hellion.Login.Client
         /// </summary>
         private void SendServerList()
         {
-            var packet = new FFPacket();
-
-            packet.WriteHeader(LoginHeaders.Outgoing.ServerList);
-            packet.Write(0);
-            packet.Write<byte>(1);
-            packet.Write(this.username);
-            packet.Write(this.GetServerCount());
-
-            foreach (ClusterServerInfo cluster in LoginServer.Clusters)
+            using (var packet = new FFPacket())
             {
-                packet.Write(-1);
-                packet.Write(cluster.Id);
-                packet.Write(cluster.Name);
-                packet.Write(cluster.Ip);
+                packet.WriteHeader(LoginHeaders.Outgoing.ServerList);
                 packet.Write(0);
-                packet.Write(0);
-                packet.Write(1);
-                packet.Write(0);
+                packet.Write<byte>(1);
+                packet.Write(this.username);
+                packet.Write(this.GetServerCount());
 
-                foreach (WorldServerInfo world in cluster.Worlds)
+                foreach (ClusterServerInfo cluster in LoginServer.Clusters)
                 {
+                    packet.Write(-1);
                     packet.Write(cluster.Id);
-                    packet.Write(world.Id);
-                    packet.Write(world.Name);
-                    packet.Write(world.Ip);
+                    packet.Write(cluster.Name);
+                    packet.Write(cluster.Ip);
                     packet.Write(0);
                     packet.Write(0);
                     packet.Write(1);
-                    packet.Write(world.Capacity);
-                }
-            }
+                    packet.Write(0);
 
-            this.Send(packet);
+                    foreach (WorldServerInfo world in cluster.Worlds)
+                    {
+                        packet.Write(cluster.Id);
+                        packet.Write(world.Id);
+                        packet.Write(world.Name);
+                        packet.Write(world.Ip);
+                        packet.Write(0);
+                        packet.Write(0);
+                        packet.Write(1);
+                        packet.Write(world.Capacity);
+                    }
+                }
+
+                this.Send(packet);
+            }
         }
     }
 }

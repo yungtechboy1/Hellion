@@ -1,11 +1,15 @@
 {
+  "title": "Hellion.World",
+  "description": "Hellion WorldServer",
+  "language": "en-US",
   "version": "1.0.0-*",
   "buildOptions": {
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "optimize": true
   },
 
   "dependencies": {
-    "Ether.Network": "1.1.4",
+    "Ether.Network": "1.1.5",
     "Hellion.Core": "1.0.0-*",
     "Microsoft.NETCore.App": "1.0.1"
   },

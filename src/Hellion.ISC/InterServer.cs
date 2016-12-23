@@ -37,7 +37,7 @@ namespace Hellion.ISC
         /// </summary>
         protected override void Idle()
         {
-            Log.Info("ISC Server listening on port {0}", this.Configuration.Port);
+            Log.Info("ISC Server listening on port {0}", this.ServerConfiguration.Port);
 
             while (this.IsRunning)
             {
@@ -57,7 +57,7 @@ namespace Hellion.ISC
         /// On client connected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientConnected(NetConnection client)
+        protected override void OnClientConnected(InterClient client)
         {
             Log.Info("New inter client connected from {0}.", client.Socket.RemoteEndPoint.ToString());
 
@@ -69,7 +69,7 @@ namespace Hellion.ISC
         /// On client disconnected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientDisconnected(NetConnection client)
+        protected override void OnClientDisconnected(InterClient client)
         {
             if (client is InterClient)
                 (client as InterClient).Disconnected();
@@ -98,8 +98,8 @@ namespace Hellion.ISC
 
             this.IscConfiguration = ConfigurationManager.Load<ISCConfiguration>(IscConfigurationFile);
 
-            this.Configuration.Ip = this.IscConfiguration.Ip;
-            this.Configuration.Port = this.IscConfiguration.Port;
+            this.ServerConfiguration.Ip = this.IscConfiguration.Ip;
+            this.ServerConfiguration.Port = this.IscConfiguration.Port;
 
             Log.Done("Configuration loaded!");
         }
@@ -121,7 +121,7 @@ namespace Hellion.ISC
         /// <returns></returns>
         internal IEnumerable<ClusterServerInfo> GetClusters()
         {
-            return from x in this.Clients.Cast<InterClient>()
+            return from x in this.Clients
                    where x.ServerType == InterServerType.Cluster
                    where x.Socket.Connected
                    select x.ServerInfo as ClusterServerInfo;
@@ -142,7 +142,7 @@ namespace Hellion.ISC
         /// <returns></returns>
         internal InterClient GetLoginServer()
         {
-            return (from x in this.Clients.Cast<InterClient>()
+            return (from x in this.Clients
                     where x.ServerType == InterServerType.Login
                     select x).FirstOrDefault();
         }
@@ -154,7 +154,7 @@ namespace Hellion.ISC
         /// <returns></returns>
         internal IEnumerable<WorldServerInfo> GetWorldsByClusterId(int clusterId)
         {
-            return from x in this.Clients.Cast<InterClient>()
+            return from x in this.Clients
                    where x.ServerType == InterServerType.World
                    where (x.ServerInfo as WorldServerInfo).ClusterId == clusterId
                    where x.Socket.Connected
@@ -168,7 +168,7 @@ namespace Hellion.ISC
         /// <returns></returns>
         internal InterClient GetClusterById(int clusterId)
         {
-            return (from x in this.Clients.Cast<InterClient>()
+            return (from x in this.Clients
                     where x.ServerType == InterServerType.Cluster
                     where (x.ServerInfo as ClusterServerInfo).Id == clusterId
                     select x).FirstOrDefault();
@@ -181,7 +181,7 @@ namespace Hellion.ISC
         /// <returns></returns>
         internal InterClient GetWorldById(int worldId)
         {
-            return (from x in this.Clients.Cast<InterClient>()
+            return (from x in this.Clients
                     where x.ServerType == InterServerType.World
                     where (x.ServerInfo as WorldServerInfo).Id == worldId
                     select x).FirstOrDefault();

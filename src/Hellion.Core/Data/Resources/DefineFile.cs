@@ -9,7 +9,9 @@ namespace Hellion.Core.Data.Resources
     /// </summary>
     public sealed class DefineFile
     {
-        private string file;
+        private const string DefineDirective = "#define";
+
+        private string filePath;
 
         /// <summary>
         /// Gets the defines dictionary.
@@ -19,10 +21,10 @@ namespace Hellion.Core.Data.Resources
         /// <summary>
         /// Creates a new DefineFile instance.
         /// </summary>
-        /// <param name="file">Define file path</param>
-        public DefineFile(string file)
+        /// <param name="filePath">Define file path</param>
+        public DefineFile(string filePath)
         {
-            this.file = file;
+            this.filePath = filePath;
             this.Defines = new Dictionary<string, int>();
         }
 
@@ -31,7 +33,7 @@ namespace Hellion.Core.Data.Resources
         /// </summary>
         public void Parse()
         {
-            using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))
+            using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             using (var reader = new StreamReader(fileStream))
             {
                 while (!reader.EndOfStream)
@@ -49,7 +51,7 @@ namespace Hellion.Core.Data.Resources
                     if (line.Contains(Global.SingleLineComment))
                         line = line.Remove(line.IndexOf('/'));
 
-                    if (line.StartsWith("#define"))
+                    if (line.StartsWith(DefineDirective))
                     {
                         string[] splitLine = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 

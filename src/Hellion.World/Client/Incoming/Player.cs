@@ -1,14 +1,25 @@
 ﻿using Ether.Network.Packets;
+using Hellion.Core.Data.Headers;
 using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
-using Hellion.World.Structures;
-using Hellion.World.Systems.Map;
+using Hellion.Core.Structures;
+using Hellion.World.Systems;
 
-namespace Hellion.World
+/*
+ * This file contains only the incoming packets realated with the Player.
+ * Packets as the moves, duels, chat, etc...
+ */
+
+namespace Hellion.World.Client
 {
     public partial class WorldClient
     {
+        /// <summary>
+        /// The client sended the Join request to join the world as a player.
+        /// </summary>
+        /// <param name="packet"></param>
+        [FFIncomingPacket(WorldHeaders.Incoming.Join)]
         private void OnJoin(NetPacketBase packet)
         {
             var worldId = packet.Read<int>();
@@ -26,12 +37,12 @@ namespace Hellion.World
             var messengerCount = packet.Read<int>();
             // Not using messenger yet
 
-            this.currentUser = DatabaseService.Users.Get(x =>
+            this.CurrentUser = DatabaseService.Users.Get(x =>
                 x.Username.ToLower() == username.ToLower() &&
                 x.Password.ToLower() == password.ToLower() &&
                 x.Authority > 0);
 
-            if (this.currentUser == null)
+            if (this.CurrentUser == null)
             {
                 Log.Warning("Unknow account: '{0}'.", username);
                 this.Server.RemoveClient(this);
@@ -39,19 +50,19 @@ namespace Hellion.World
             }
 
             DbCharacter character = DatabaseService.Characters.Get(x =>
-                x.AccountId == this.currentUser.Id &&
+                x.AccountId == this.CurrentUser.Id &&
                 x.Name.ToLower() == playerName.ToLower() &&
                 x.Id == playerId, includes => includes.Items); // TODO: include more
 
             if (character == null)
             {
-                Log.Warning("Cannot find character '{0}' with id {1} for account '{2}'.", playerName, playerId, this.currentUser.Id);
+                Log.Warning("Cannot find character '{0}' with id {1} for account '{2}'.", playerName, playerId, this.CurrentUser.Id);
                 this.Server.RemoveClient(this);
                 return;
             }
 
             this.Player = new Player(this, character);
-            this.SendPlayerSpawn();
+            this.Player.SendPlayerSpawn();
 
             Map playerMap = WorldServer.MapManager[this.Player.MapId];
 
@@ -65,7 +76,12 @@ namespace Hellion.World
             playerMap.AddObject(this.Player);
         }
 
-        private void OnMoveByKeyboard(NetPacketBase packet)
+        /// <summary>
+        /// The client has send a request to move in the world.
+        /// </summary>
+        /// <param name="packet"></param>
+        [FFIncomingPacket(WorldHeaders.Incoming.MoveByMouse)]
+        private void OnMoveByMouse(NetPacketBase packet)
         {
             packet.Position = 24;
             var posX = packet.Read<float>();
@@ -73,7 +89,7 @@ namespace Hellion.World
             var posZ = packet.Read<float>();
             var forward = packet.Read<byte>();
 
-            this.Player.DestinationPosition = new Core.Structures.Vector3(posX, posY, posZ);
+            this.Player.DestinationPosition = new Vector3(posX, posY, posZ);
             this.Player.SendMoverMoving();
         }
     }

@@ -29,7 +29,7 @@ namespace Hellion.ISC
                 if (this.Server.HasLoginServerConnected())
                 {
                     Log.Warning("A login server is already connected to the ISC.");
-                    this.SendAuthentificationResult(false);
+                    this.SendAuthenticationResult(false);
                     this.Server.RemoveClient(this);
                     return;
                 }
@@ -46,7 +46,7 @@ namespace Hellion.ISC
                 if (this.Server.HasClusterWithId(clusterId))
                 {
                     Log.Warning("A cluster server with same id is already connected to the ISC.");
-                    this.SendAuthentificationResult(false);
+                    this.SendAuthenticationResult(false);
                     this.Server.RemoveClient(this);
                     return;
                 }
@@ -68,7 +68,7 @@ namespace Hellion.ISC
                 if (this.Server.HasClusterWithId(clusterId) == false)
                 {
                     Log.Warning("WorldServer '{0}' tried to connect to an unknown cluster.", worldName);
-                    this.SendAuthentificationResult(false);
+                    this.SendAuthenticationResult(false);
                     this.Server.RemoveClient(this);
                     return;
                 }
@@ -76,7 +76,7 @@ namespace Hellion.ISC
                 if (this.Server.HasWorldInCluster(clusterId, worldId))
                 {
                     Log.Warning("A WorldServer with id {0} already exists in Cluster {1}", worldId, clusterId);
-                    this.SendAuthentificationResult(false);
+                    this.SendAuthenticationResult(false);
                     this.Server.RemoveClient(this);
                     return;
                 }
@@ -86,7 +86,7 @@ namespace Hellion.ISC
             }
 
             this.ServerType = serverType;
-            this.SendAuthentificationResult(true);
+            this.SendAuthenticationResult(true);
             this.SendServersList();
             
             foreach (var cluster in this.Server.GetClusters())

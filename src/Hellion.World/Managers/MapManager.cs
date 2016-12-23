@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Hellion.World.Systems;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace Hellion.World.Systems.Map
+namespace Hellion.World.Managers
 {
     public class MapManager
     {
@@ -18,10 +17,7 @@ namespace Hellion.World.Systems.Map
 
         public Map this[int id]
         {
-            get
-            {
-                return this.maps.Where(x => x.Id == id).FirstOrDefault();
-            }
+            get { return this.maps.Where(x => x.Id == id).FirstOrDefault(); }
         }
 
         public MapManager()

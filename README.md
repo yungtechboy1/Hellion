@@ -1,6 +1,6 @@
 # Hellion
 
-[![Build Status](https://travis-ci.org/Eastrall/Hellion.svg?branch=master)](https://travis-ci.org/Eastrall/Hellion)
+[![Build Status](https://travis-ci.org/Eastrall/Hellion.svg?branch=develop)](https://travis-ci.org/Eastrall/Hellion)
 
 Hellion is a FlyForFun V15 emulator built with C# and using the .NET Core 1.0 Framework.
 
@@ -32,11 +32,13 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     - Player login
     - Player visibility with other players
     - Player moves
+    - Player attributes
+    - NPC visibility
+    - Inventory
+      - Move / Equip / Unequip
     
 ## Todo list
 
-- Player moves
-- Player attributes
 - NPC
     - Shops
     - Dialogs

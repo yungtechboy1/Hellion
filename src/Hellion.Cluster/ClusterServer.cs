@@ -79,6 +79,7 @@ namespace Hellion.Cluster
         /// </summary>
         protected override void Initialize()
         {
+            FFPacketHandler.Initialize<ClusterClient>();
             this.LoadConfiguration();
             this.ConnectToDatabase();
             this.ConnectToISC();
@@ -90,7 +91,7 @@ namespace Hellion.Cluster
         /// On client connected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientConnected(NetConnection client)
+        protected override void OnClientConnected(ClusterClient client)
         {
             Log.Info("New client connected from {0}", client.Socket.RemoteEndPoint.ToString());
 
@@ -102,7 +103,7 @@ namespace Hellion.Cluster
         /// On client disconnected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientDisconnected(NetConnection client)
+        protected override void OnClientDisconnected(ClusterClient client)
         {
             Log.Info("Client with id {0} disconnected.", client.Id);
         }
@@ -129,8 +130,8 @@ namespace Hellion.Cluster
 
             this.ClusterConfiguration = ConfigurationManager.Load<ClusterConfiguration>(ClusterConfigurationFile);
 
-            this.Configuration.Ip = this.ClusterConfiguration.Ip;
-            this.Configuration.Port = this.ClusterConfiguration.Port;
+            this.ServerConfiguration.Ip = this.ClusterConfiguration.Ip;
+            this.ServerConfiguration.Port = this.ClusterConfiguration.Port;
 
             if (File.Exists(DatabaseConfigurationFile) == false)
                 ConfigurationManager.Save(new DatabaseConfiguration(), DatabaseConfigurationFile);

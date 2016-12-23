@@ -4,13 +4,13 @@ using Hellion.Core.Configuration;
 using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
+using Hellion.World.Client;
 using Hellion.World.ISC;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Hellion.World
 {
@@ -54,6 +54,10 @@ namespace Hellion.World
         public WorldServer()
             : base()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
             Console.Title = "Hellion WorldServer";
             Log.Info("Starting WorldServer...");
         }
@@ -83,6 +87,7 @@ namespace Hellion.World
         /// </summary>
         protected override void Initialize()
         {
+            FFPacketHandler.Initialize<WorldClient>();
             this.LoadConfiguration();
             this.ConnectToDatabase();
             this.LoadData();
@@ -95,22 +100,20 @@ namespace Hellion.World
         /// On client connected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientConnected(NetConnection client)
+        protected override void OnClientConnected(WorldClient client)
         {
             Log.Info("New client connected from {0}", client.Socket.RemoteEndPoint.ToString());
 
-            if (client is WorldClient)
-                (client as WorldClient).Server = this;
+            client.Server = this;
         }
 
         /// <summary>
         /// On client disconnected.
         /// </summary>
         /// <param name="client">Client</param>
-        protected override void OnClientDisconnected(NetConnection client)
+        protected override void OnClientDisconnected(WorldClient client)
         {
-            if (client is WorldClient)
-                (client as WorldClient).Disconnected();
+            client.Disconnected();
         }
 
         /// <summary>
@@ -135,8 +138,8 @@ namespace Hellion.World
 
             this.WorldConfiguration = ConfigurationManager.Load<WorldConfiguration>(WorldConfigurationFile);
 
-            this.Configuration.Ip = this.WorldConfiguration.Ip;
-            this.Configuration.Port = this.WorldConfiguration.Port;
+            this.ServerConfiguration.Ip = this.WorldConfiguration.Ip;
+            this.ServerConfiguration.Port = this.WorldConfiguration.Port;
 
             if (File.Exists(DatabaseConfigurationFile) == false)
                 ConfigurationManager.Save(new DatabaseConfiguration(), DatabaseConfigurationFile);
