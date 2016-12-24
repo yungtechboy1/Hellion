@@ -29,11 +29,17 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     - LoginProtect (On/Off on configuration file)
     - Select character
 - World Server
+    - Data loading
+      - Defines / Texts
+      - Items
+      - Maps
+      - Npc
     - Player login
     - Player visibility with other players
     - Player moves
     - Player attributes
-    - NPC visibility
+    - NPC
+      - Visibility
     - Inventory
       - Move / Equip / Unequip
     
@@ -44,6 +50,8 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     - Dialogs
 - Monsters
 - Inventory
+  - Use items
+  - Create items
 - Battle system
 - Skills
 - Quest system

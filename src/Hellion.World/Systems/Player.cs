@@ -158,14 +158,22 @@ namespace Hellion.World.Systems
         /// </summary>
         public void Disconnect()
         {
-            this.Save();
+            try
+            {
+                this.Save();
 
-            var map = WorldServer.MapManager[this.MapId];
+                var map = WorldServer.MapManager[this.MapId];
 
-            if (map != null)
-                map.RemoveObject(this);
+                if (map != null)
+                    map.RemoveObject(this);
 
-            this.SpawnedObjects.Clear();
+                this.SpawnedObjects.Clear();
+            }
+            catch (Exception e)
+            {
+                Log.Error("An error occured while disconnecting the player. {0}", e.Message);
+                Log.Debug("StackTrace: {0}", e.StackTrace);
+            }
         }
 
         /// <summary>
