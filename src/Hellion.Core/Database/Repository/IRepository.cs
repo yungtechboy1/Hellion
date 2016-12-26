@@ -12,7 +12,6 @@ namespace Hellion.Core.Database.Repository
         T Get(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes);
         void Add(T value);
         void Update(T value);
-        void Delete(int id);
         void Delete(T value);
     }
 }

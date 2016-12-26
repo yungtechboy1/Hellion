@@ -1,6 +1,14 @@
 ## Hellion ChangeLog
 
-### Update #3 (23/12/2016) (In progress...)
+### Update #4 (30/12/2016) (In progress...)
+
+- Common
+  - Update to .NET Core 1.1
+  - Remove unused dependencies
+
+
+
+### Update #3 (23/12/2016)
 
 - Common
   - Add ResourceTable reader (to read files like propItem.txt, propSkills.txt, etc...)
