@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Ether.Network.Packets;
+using Hellion.Core.Data.Headers;
+using Hellion.Core.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,5 +15,19 @@ namespace Hellion.World.Client
 {
     public partial class WorldClient
     {
+        [FFIncomingPacket(WorldHeaders.Incoming.Chat)]
+        private void OnChat(NetPacketBase packet)
+        {
+            var chatMessage = packet.Read<string>();
+
+            if (chatMessage.StartsWith("/"))
+            {
+                // GM command
+            }
+            else
+            {
+                // Normal chat
+            }
+        }
     }
 }
