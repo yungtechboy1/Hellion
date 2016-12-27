@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hellion.Core.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -54,7 +55,15 @@ namespace Hellion.Core.Network
             if (!registeredPackets.ContainsKey(header))
                 return false;
 
-            registeredPackets[header].Invoke(instance, new object[] { parameter });
+            try
+            {
+                registeredPackets[header].Invoke(instance, new object[] { parameter });
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return false;
+            }
 
             return true;
         }

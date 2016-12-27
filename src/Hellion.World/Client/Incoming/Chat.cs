@@ -20,14 +20,13 @@ namespace Hellion.World.Client
         {
             var chatMessage = packet.Read<string>();
 
+            if (string.IsNullOrEmpty(chatMessage))
+                return;
+
             if (chatMessage.StartsWith("/"))
-            {
-                // GM command
-            }
+                this.Player.Chat.CommandChat(chatMessage);
             else
-            {
-                // Normal chat
-            }
+                this.Player.SendNormalChat(chatMessage);
         }
     }
 }

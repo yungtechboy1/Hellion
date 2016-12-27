@@ -101,6 +101,11 @@ namespace Hellion.World.Systems
         public int BankCode { get; set; }
 
         /// <summary>
+        /// Gets the player's chat module.
+        /// </summary>
+        public Chat Chat { get; private set; }
+
+        /// <summary>
         /// Gets the player's inventory.
         /// </summary>
         public Inventory Inventory { get; private set; }
@@ -123,6 +128,7 @@ namespace Hellion.World.Systems
         {
             this.Client = parentClient;
             this.Attributes = new Attributes();
+            this.Chat = new Chat(this);
             this.Inventory = new Inventory(this, dbCharacter.Items);
 
             this.Id = dbCharacter.Id;
