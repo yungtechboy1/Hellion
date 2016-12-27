@@ -45,6 +45,7 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     
 ## Todo list
 
+- Chat
 - NPC
     - Shops
     - Dialogs
@@ -52,10 +53,13 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
 - Inventory
   - Use items
   - Create items
+  - Sets bonus
 - Battle system
 - Skills
 - Quest system
-- Fly system
+- Friends
+- Mails
+- Guilds
 
 
 ## Project architecture
