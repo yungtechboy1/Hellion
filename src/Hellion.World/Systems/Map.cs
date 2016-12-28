@@ -104,6 +104,10 @@ namespace Hellion.World.Systems
             byte[] rgnFileData = File.ReadAllBytes(rgnMapPath);
             var rgn = new RgnFile(rgnFileData);
             rgn.Read();
+
+            foreach (RgnRespawn7 rgnElement in rgn.Elements.Where(r => r is RgnRespawn7))
+            {
+            }
             
             // Load .lnd
         }

@@ -7,20 +7,36 @@ namespace Hellion.Core.Structures
     /// </summary>
     public class Vector3
     {
+        private float x;
+        private float y;
+        private float z;
+
         /// <summary>
         /// Gets or sets the X position in the world.
         /// </summary>
-        public float X { get; set; }
+        public float X
+        {
+            get { return this.x; }
+            set { this.x = value; }
+        }
 
         /// <summary>
         /// Gets or sets the Y position in the world.
         /// </summary>
-        public float Y { get; set; }
+        public float Y
+        {
+            get { return this.y; }
+            set { this.y = value; }
+        }
 
         /// <summary>
         /// Gets or sets the Z position in the world.
         /// </summary>
-        public float Z { get; set; }
+        public float Z
+        {
+            get { return this.z; }
+            set { this.z = value; }
+        }
 
         /// <summary>
         /// Creates a new Vector3 initialized to 0.
@@ -41,6 +57,19 @@ namespace Hellion.Core.Structures
             this.X = x;
             this.Y = y;
             this.Z = z;
+        }
+
+        /// <summary>
+        /// Creates a new Vector3 with specific string values.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public Vector3(string x, string y, string z)
+        {
+            float.TryParse(x, out this.x);
+            float.TryParse(y, out this.y);
+            float.TryParse(z, out this.z);
         }
 
         /// <summary>

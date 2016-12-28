@@ -5,6 +5,7 @@
 - Common
   - Update to .NET Core 1.1
   - Remove unused dependencies
+  - Rgn file structure
 
 - Tools
   - DefineToConst : Converts a flyff header file (.h) to a C# const file.
@@ -40,7 +41,7 @@
 - World Server
     - Data loading
         - Defines loading
-        - Map loading (.dyo / .rgn)
+        - Map loading (.dyo)
     - Player login
     - Player visibility with other players
     - Player moves
