@@ -83,7 +83,7 @@ namespace Hellion.World.Systems
                 packet.Write(0); // fame
                 packet.Write<byte>(0); // duel
                 packet.Write(-1); // titles
-                
+
                 foreach (var item in this.Inventory.GetEquipedItems())
                 {
                     if (item == null || item.Id < 0)
@@ -425,8 +425,8 @@ namespace Hellion.World.Systems
                 packet.Write(0); // fame
                 packet.Write<byte>(0); // duel
                 packet.Write(-1); // titles
-                
-                for (int i = Modules.Inventory.EquipOffset; i < Modules.Inventory.MaxItems; ++i)
+
+                for (int i = Inventory.EquipOffset; i < Inventory.MaxItems; ++i)
                 {
                     var item = worldObject.Inventory.GetItemBySlot(i);
 
@@ -452,7 +452,7 @@ namespace Hellion.World.Systems
                 {
                     if (item != null && item.Id > 0)
                     {
-                        packet.Write((byte)(item.Slot - Modules.Inventory.EquipOffset));
+                        packet.Write((byte)(item.Slot - Inventory.EquipOffset));
                         packet.Write((short)item.Id);
                         packet.Write<byte>(0);
                     }

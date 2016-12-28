@@ -6,6 +6,8 @@
   - Update to .NET Core 1.1
   - Remove unused dependencies
 
+- Tools
+  - DefineToConst : Converts a flyff header file (.h) to a C# const file.
 
 
 ### Update #3 (23/12/2016)

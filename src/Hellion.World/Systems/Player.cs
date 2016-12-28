@@ -1,17 +1,11 @@
-﻿using Hellion.Core.Database;
-using Hellion.Core.Structures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Hellion.Core.Data;
-using Hellion.Core.IO;
-using Ether.Network.Packets;
-using Hellion.Core.Network;
-using Hellion.World.Structures;
-using Hellion.World.Modules;
-using Hellion.World.Client;
+﻿using Ether.Network.Packets;
 using Hellion.Core.Data.Headers;
+using Hellion.Core.Database;
+using Hellion.Core.IO;
+using Hellion.Core.Structures;
+using Hellion.World.Client;
+using Hellion.World.Structures;
+using System;
 
 namespace Hellion.World.Systems
 {

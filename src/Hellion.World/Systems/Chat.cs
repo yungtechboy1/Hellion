@@ -1,9 +1,8 @@
 ﻿using Hellion.Core.IO;
-using Hellion.World.Systems;
 using System;
 using System.Linq;
 
-namespace Hellion.World.Modules
+namespace Hellion.World.Systems
 {
     public class Chat
     {

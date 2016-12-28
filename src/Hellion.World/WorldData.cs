@@ -93,8 +93,8 @@ namespace Hellion.World
 
                 foreach (var define in defineFileContent.Defines)
                 {
-                    if (!this.defines.ContainsKey(define.Key))
-                        this.defines.Add(define.Key, define.Value);
+                    if (!this.defines.ContainsKey(define.Key) && define.Value is int)
+                        this.defines.Add(define.Key, int.Parse(define.Value.ToString()));
                 }
             }
         }
