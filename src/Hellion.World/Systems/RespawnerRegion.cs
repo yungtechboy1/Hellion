@@ -1,4 +1,5 @@
-﻿using Hellion.World.Structures;
+﻿using Hellion.Core.Structures;
+using Hellion.World.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,8 @@ namespace Hellion.World.Systems
 {
     public class RespawnerRegion : Region
     {
-        public RespawnerRegion()
-            : base()
+        public RespawnerRegion(Vector3 middle, Vector3 northEast, Vector3 southWest, int respawnTime)
+            : base(middle, northEast, southWest)
         {
         }
 

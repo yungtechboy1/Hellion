@@ -505,6 +505,53 @@ namespace Hellion.World.Systems
             }
         }
 
+        internal void SendMonsterSpawn(Monster monster)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
+
+                packet.Write((byte)monster.Type);
+                packet.Write(monster.ModelId);
+                packet.Write((byte)monster.Type);
+                packet.Write(monster.ModelId);
+                packet.Write(monster.Size);
+                packet.Write(monster.Position.X);
+                packet.Write(monster.Position.Y);
+                packet.Write(monster.Position.Z);
+                packet.Write((short)(monster.Angle * 10f));
+                packet.Write(monster.ObjectId);
+
+                packet.Write<Int16>(5);
+                packet.Write<Byte>(0);
+                packet.Write<Int32>(this.Attributes[DefineAttributes.HP]);
+                packet.Write<Int32>(1);
+                packet.Write<Int32>(0);
+                packet.Write<Byte>((Byte)0);
+                packet.Write<Int32>(-1);
+                packet.Write<Byte>(0);
+                packet.Write<Int32>(-1);
+                packet.Write<Byte>(0);
+                packet.Write<Int32>(0);
+                packet.Write<Byte>(0);
+                if (this.ModelId == 1021)
+                {
+                    packet.Write<Byte>(0);
+                }
+                else
+                {
+                    packet.Write<Byte>(false ? (Byte)1 : (Byte)0);
+                }
+                packet.Write<Byte>(0);
+                packet.Write<Byte>(0);
+                packet.Write<Int32>(0);
+                packet.Write<Single>(1);
+                packet.Write<Int32>(0);
+
+                this.Send(packet);
+            }
+        }
+
         internal void SendDespawnObject(WorldObject worldObject)
         {
             using (var packet = new FFPacket())

@@ -110,7 +110,14 @@ namespace Hellion.World.Systems
 
             foreach (RgnRespawn7 rgnElement in rgn.Elements.Where(r => r is RgnRespawn7))
             {
-                var respawner = new RespawnerRegion();
+                var respawner = new RespawnerRegion(rgnElement.Position, rgnElement.StartPosition, rgnElement.EndPosition, rgnElement.Time);
+
+                if (rgnElement.Type == 5)
+                {
+                    var monster = new Monster(rgnElement.Model, this.Id, respawner);
+
+                    this.monsters.Add(monster);
+                }
 
                 this.regions.Add(respawner);
             }
@@ -218,6 +225,20 @@ namespace Hellion.World.Systems
                             }
                             else
                                 player.DespawnObject(npc);
+                        }
+                    }
+
+                    lock (syncLockMonster)
+                    {
+                        foreach (var monster in this.monsters)
+                        {
+                            if (player.CanSee(monster))
+                            {
+                                if (!player.SpawnedObjects.Contains(monster))
+                                    player.SpawnObject(monster);
+                            }
+                            else
+                                player.DespawnObject(monster);
                         }
                     }
                 }

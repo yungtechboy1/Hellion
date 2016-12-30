@@ -253,6 +253,8 @@ namespace Hellion.World.Systems
                 this.SendPlayerSpawn(worldObject as Player);
             if (worldObject is Npc)
                 this.SendNpcSpawn(worldObject as Npc);
+            if (worldObject is Monster)
+                this.SendMonsterSpawn(worldObject as Monster);
 
             if (worldObject is Mover)
             {
