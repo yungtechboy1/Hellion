@@ -1,11 +1,6 @@
-﻿using Hellion.Core.Network;
+﻿using Ether.Network.Packets;
 using Hellion.Core.Data.Headers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Ether.Network.Packets;
-using Hellion.Core.IO;
+using Hellion.Core.Network;
 
 /*
  * This file contains only the incoming packets realated with the inventory.

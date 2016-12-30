@@ -1,10 +1,6 @@
 ﻿using Ether.Network.Packets;
 using Hellion.Core.Data.Headers;
 using Hellion.Core.Network;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 /*
  * This file contains only the incoming packets realated with the chat.

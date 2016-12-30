@@ -24,6 +24,8 @@ namespace Hellion.World.Systems
         private ICollection<Monster> monsters;
         private object syncLockMonster;
 
+        private ICollection<Region> regions;
+
         /// <summary>
         /// Gets the map id.
         /// </summary>
@@ -58,6 +60,7 @@ namespace Hellion.World.Systems
         {
             this.Id = id;
             this.Name = mapName;
+            this.regions = new List<Region>();
             this.players = new HashSet<Player>();
             this.npcs = new HashSet<Npc>();
             this.monsters = new HashSet<Monster>();
@@ -107,6 +110,9 @@ namespace Hellion.World.Systems
 
             foreach (RgnRespawn7 rgnElement in rgn.Elements.Where(r => r is RgnRespawn7))
             {
+                var respawner = new RespawnerRegion();
+
+                this.regions.Add(respawner);
             }
             
             // Load .lnd
@@ -168,6 +174,7 @@ namespace Hellion.World.Systems
             while (true)
             {
                 this.UpdatePlayerVisibility();
+                this.UpdateRegions();
 
                 Thread.Sleep(50);
             }
@@ -215,6 +222,15 @@ namespace Hellion.World.Systems
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Update all the regions.
+        /// </summary>
+        private void UpdateRegions()
+        {
+            foreach (var region in this.regions)
+                region.Update();
         }
     }
 }
