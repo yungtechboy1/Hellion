@@ -1,6 +1,10 @@
 ## Hellion ChangeLog
 
-### Update #4 (30/12/2016) (In progress...)
+### Update #5 (06/01/2017)
+
+...
+
+### Update #4 (30/12/2016)
 
 - Common
   - Update to .NET Core 1.1
@@ -9,6 +13,14 @@
 
 - Tools
   - DefineToConst : Converts a flyff header file (.h) to a C# const file.
+  
+- Cluster
+  - FIX: HP/MP/FP at character creation
+  
+- World
+  - Chat system (normal chat)
+  - Load region from .rgn files
+  - Begin of monster respawner
 
 
 ### Update #3 (23/12/2016)
