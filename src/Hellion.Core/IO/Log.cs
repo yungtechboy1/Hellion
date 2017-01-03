@@ -72,7 +72,8 @@ namespace Hellion.Core.IO
                 case LogType.Loading: Console.ForegroundColor = ConsoleColor.DarkMagenta; break;
             }
 
-            Console.Write("\r[{0}]: ", logType.ToString());
+            Console.Write("\r");
+            Console.Write("[{0}]: ", logType.ToString());
             Console.ResetColor();
             if (newLine)
                 Console.WriteLine(text);

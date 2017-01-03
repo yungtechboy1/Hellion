@@ -17,7 +17,9 @@ namespace Hellion.World
     {
         private Dictionary<string, int> defines = new Dictionary<string, int>();
         private Dictionary<string, string> texts = new Dictionary<string, string>();
+
         private static Dictionary<int, ItemData> itemsData = new Dictionary<int, ItemData>();
+        private static Dictionary<int, MonsterData> monstersData = new Dictionary<int, MonsterData>();
         private static MapManager mapManager;
 
         /// <summary>
@@ -48,6 +50,7 @@ namespace Hellion.World
             this.LoadTexts();
             this.LoadItems();
             this.LoadNpc();
+            this.LoadMonsters();
             this.LoadMaps();
             this.Clear();
 
@@ -168,6 +171,45 @@ namespace Hellion.World
                     // Load shops
                 }
             }
+
+            Log.Done("{0} npcs loaded!", -1);
+        }
+
+        /// <summary>
+        /// Load all flyff monsters.
+        /// </summary>
+        private void LoadMonsters()
+        {
+            Log.Info("Loading Monsters data...");
+
+            try
+            {
+                string propMoverPath = Path.Combine(Global.DataPath, "res", "data", "propMover.txt");
+                var propMover = new ResourceTable(propMoverPath);
+
+                propMover.AddDefines(defines);
+                propMover.AddTexts(texts);
+                propMover.SetTableHeaders("dwID", "szName", "dwAI", "dwStr", "dwSta", "dwDex", "dwInt", "dwHR", "dwER", "dwRace", "dwBelligerence", "dwGender", "dwLevel", "dwFlightLevel", "dwSize", "dwClass", "bIfPart", "dwKarma", "dwUseable", "dwActionRadius", "dwAtkMin", "dwAtkMax", "dwAtk1", "dwAtk2", "dwAtk3", "dwHorizontalRate", "dwVerticalRate", "dwDiagonalRate", "dwThrustRate", "dwChestRate", "dwHeadRate", "dwArmRate", "dwLegRate", "dwAttackSpeed", "dwReAttackDelay", "dwAddHp", "dwAddMp", "dwNaturealArmor", "nAbrasion", "nHardness", "dwAdjAtkDelay", "eElementType", "wElementAtk", "dwHideLevel", "fSpeed", "dwShelter", "bFlying", "dwJumping", "dwAirJump", "bTaming", "dwResistMagic", "fResistElectricity", "fResistFire", "fResistWind", "fResistWater", "fResistEarth", "dwCash", "dwSourceMaterial", "dwMaterialAmount", "dwCohesion", "dwHoldingTime", "dwCorrectionValue", "dwExpValue", "nFxpValue", "nBodyState", "dwAddAbility", "bKillable", "dwVirtItem1", "dwVirtType1", "dwVirtItem2", "dwVirtType2", "dwVirtItem3", "dwVirtType3", "dwSndAtk1", "dwSndAtk2", "dwSndDie1", "dwSndDie2", "dwSndDmg1", "dwSndDmg2", "dwSndDmg3", "dwSndIdle1", "dwSndIdle2", "szComment");
+                propMover.Parse();
+
+                while (propMover.Read())
+                {
+                    var monsterData = new MonsterData(propMover);
+
+                    if (monstersData.ContainsKey(monsterData.Id))
+                        monstersData[monsterData.Id] = monsterData;
+                    else
+                        monstersData.Add(monsterData.Id, monsterData);
+
+                    Log.Loading("Loading {0}/{1} monsters...", propMover.ReadingIndex, propMover.Count);
+                }
+
+                Log.Done("{0} monsters loaded!", monstersData.Count);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Cannot load monsters: {0}", e.Message);
+            }
         }
 
         /// <summary>
@@ -199,6 +241,7 @@ namespace Hellion.World
         {
             try
             {
+                Log.Info("Loading items...");
                 string propItemPath = Path.Combine(Global.DataPath, "res", "dataSub2", "propItem.txt");
                 var propItemTable = new ResourceTable(propItemPath);
 
@@ -206,17 +249,16 @@ namespace Hellion.World
                 propItemTable.AddDefines(defines);
                 propItemTable.SetTableHeaders("dwVersion", "dwID", "szName", "dwNum", "dwPackMax", "dwItemKind1", "dwItemKind2", "dwItemKind3", "dwItemJob", "bPermanence", "dwUseable", "dwItemSex", "dwCost", "dwEndurance", "nAbrasion", "nMaxRepair", "dwHanded", "dwFlag", "dwParts", "dwPartsub", "bPartFile", "dwExclusive", "dwBasePartsIgnore", "dwItemLV", "dwItemRare", "dwShopAble", "bLog", "bCharged", "dwLinkKindBullet", "dwLinkKind", "dwAbilityMin", "dwAbilityMax", "eItemType", "wItemEAtk", "dwParry", "dwBlockRating", "dwAddSkillMin", "dwAddSkillMax", "dwAtkStyle", "dwWeaponType", "dwItemAtkOrder1", "dwItemAtkOrder2", "dwItemAtkOrder3", "dwItemAtkOrder4", "bContinnuousPain", "dwShellQuantity", "dwRecoil", "dwLoadingTime", "nAdjHitRate", "fAttackSpeed", "dwDmgShift", "dwAttackRange", "dwProbability", "dwDestParam1", "dwDestParam2", "dwDestParam3", "nAdjParamVal1", "nAdjParamVal2", "nAdjParamVal3", "dwChgParamVal1", "dwChgParamVal2", "dwChgParamVal3", "dwDestData1", "dwDestData2", "dwDestData3", "dwActiveSkill", "dwActiveSkillLv", "dwActiveSkillPer", "dwReqMp", "dwReqFp", "dwReqDisLV", "dwReSkill1", "dwReSkillLevel1", "dwReSkill2", "dwReSkillLevel2", "dwSkillReadyType", "dwSkillReady", "dwSkillRange", "dwSfxElemental", "dwSfxObj", "dwSfxObj2", "dwSfxObj3", "dwSfxObj4", "dwSfxObj5", "dwUseMotion", "dwCircleTime", "dwSkillTime", "dwExeTarget", "dwUseChance", "dwSpellRegion", "dwSpellType", "dwReferStat1", "dwReferStat2", "dwReferTarget1", "dwReferTarget2", "dwReferValue1", "dwReferValue2", "dwSkillType", "fItemResistElecricity", "fItemResistFire", "fItemResistWind", "fItemResistWater", "fItemResistEarth", "nEvildoing", "dwExpertLV", "ExpertMax", "dwSubDefine", "dwExp", "dwComboStyle", "fFlightSpeed", "fFlightLRAngle", "fFlightTBAngle", "dwFlightLimit", "dwFFuelReMax", "dwAFuelReMax", "dwFuelRe", "dwLimitLevel1", "dwReflect", "dwSndAttack1", "dwSndAttack2", "szIcon", "dwQuestID", "szTextFile", "szComment");
 
-                Log.Info("Loading items...");
 
                 propItemTable.Parse();
                 while (propItemTable.Read())
                 {
                     var itemData = new ItemData(propItemTable);
 
-                    if (itemsData.ContainsKey(itemData.ID))
-                        itemsData[itemData.ID] = itemData;
+                    if (itemsData.ContainsKey(itemData.Id))
+                        itemsData[itemData.Id] = itemData;
                     else
-                        itemsData.Add(itemData.ID, itemData);
+                        itemsData.Add(itemData.Id, itemData);
 
                     Log.Loading("Loading {0}/{1} items...", propItemTable.ReadingIndex, propItemTable.Count);
                 }
