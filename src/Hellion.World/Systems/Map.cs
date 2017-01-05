@@ -22,7 +22,7 @@ namespace Hellion.World.Systems
         private object syncLockNpc = new object();
 
         private ICollection<Monster> monsters;
-        private object syncLockMonster;
+        private object syncLockMonster = new object();
 
         private ICollection<Region> regions;
 
@@ -114,9 +114,12 @@ namespace Hellion.World.Systems
 
                 if (rgnElement.Type == 5)
                 {
-                    var monster = new Monster(rgnElement.Model, this.Id, respawner);
+                    for (int i = 0; i < rgnElement.Count; ++i)
+                    {
+                        var monster = new Monster(rgnElement.Model, this.Id, respawner);
 
-                    this.monsters.Add(monster);
+                        this.monsters.Add(monster);
+                    }
                 }
 
                 this.regions.Add(respawner);

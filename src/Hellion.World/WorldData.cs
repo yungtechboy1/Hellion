@@ -39,6 +39,14 @@ namespace Hellion.World
         }
 
         /// <summary>
+        /// Gets the monsters data.
+        /// </summary>
+        public static Dictionary<int, MonsterData> MonstersData
+        {
+            get { return monstersData; }
+        }
+
+        /// <summary>
         /// Loads the world server data like resources, maps, quests, dialogs, etc...
         /// </summary>
         private void LoadData()

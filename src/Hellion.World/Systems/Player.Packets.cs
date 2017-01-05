@@ -509,7 +509,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
+                packet.StartNewMergedPacket(monster.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
 
                 packet.Write((byte)monster.Type);
                 packet.Write(monster.ModelId);
@@ -524,10 +524,10 @@ namespace Hellion.World.Systems
 
                 packet.Write<Int16>(5);
                 packet.Write<Byte>(0);
-                packet.Write<Int32>(this.Attributes[DefineAttributes.HP]);
+                packet.Write<Int32>(monster.Attributes[DefineAttributes.HP]);
                 packet.Write<Int32>(1);
                 packet.Write<Int32>(0);
-                packet.Write<Byte>((Byte)0);
+                packet.Write<Byte>((Byte)monster.Data.Belligerence);
                 packet.Write<Int32>(-1);
                 packet.Write<Byte>(0);
                 packet.Write<Int32>(-1);

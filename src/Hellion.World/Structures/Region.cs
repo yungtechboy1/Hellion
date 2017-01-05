@@ -1,4 +1,5 @@
-﻿using Hellion.Core.Structures;
+﻿using Hellion.Core;
+using Hellion.Core.Structures;
 
 namespace Hellion.World.Structures
 {
@@ -19,7 +20,13 @@ namespace Hellion.World.Structures
 
         public Vector3 GetRandomPosition()
         {
-            return new Vector3();
+            var position = new Vector3();
+            
+            position.X = CRandom.FloatRandom(this.SouthWest.X, this.NorthEast.X);
+            position.Y = this.Middle.Y;
+            position.Z = CRandom.FloatRandom(this.SouthWest.Z, this.NorthEast.Z);
+
+            return position;
         }
 
         public abstract void Update();
