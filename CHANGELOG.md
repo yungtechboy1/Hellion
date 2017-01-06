@@ -1,8 +1,13 @@
 ## Hellion ChangeLog
 
-### Update #5 (06/01/2017)
+### Update #6 (13/01/2017)
 
 ...
+
+### Update #5 (06/01/2017)
+
+- World
+  - Monster visibility
 
 ### Update #4 (30/12/2016)
 

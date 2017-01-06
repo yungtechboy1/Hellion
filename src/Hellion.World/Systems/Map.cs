@@ -153,6 +153,12 @@ namespace Hellion.World.Systems
                 lock (syncLockClient)
                     this.players.Add(worldObject as Player);
             }
+
+            if (worldObject is Monster)
+            {
+                lock (syncLockMonster)
+                    this.monsters.Add(worldObject as Monster);
+            }
         }
 
         /// <summary>
@@ -172,6 +178,17 @@ namespace Hellion.World.Systems
                         otherPlayer.DespawnObject(player);
                 }
             }
+            else if (worldObject is Monster)
+            {
+                var monster = worldObject as Monster;
+
+                lock (syncLockMonster)
+                {
+                    this.monsters.Remove(monster);
+                    foreach (var player in monster.SpawnedObjects.Where(o => o is Player))
+                        player.DespawnObject(monster);
+                }
+            }
 
             worldObject.IsSpawned = false;
         }
@@ -183,7 +200,8 @@ namespace Hellion.World.Systems
         {
             while (true)
             {
-                this.UpdatePlayerVisibility();
+                this.UpdatePlayers();
+                this.UpdateMonsters();
                 this.UpdateRegions();
 
                 Thread.Sleep(50);
@@ -193,7 +211,7 @@ namespace Hellion.World.Systems
         /// <summary>
         /// Update the player visibility with other players.
         /// </summary>
-        private void UpdatePlayerVisibility()
+        private void UpdatePlayers()
         {
             lock (syncLockClient)
             {
@@ -242,6 +260,34 @@ namespace Hellion.World.Systems
                             }
                             else
                                 player.DespawnObject(monster);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update the monsters and their visibility.
+        /// </summary>
+        private void UpdateMonsters()
+        {
+            lock (syncLockMonster)
+            {
+                foreach (var monster in this.monsters)
+                {
+                    monster.Update();
+
+                    lock (syncLockClient)
+                    {
+                        foreach (var player in this.players)
+                        {
+                            if (monster.CanSee(player))
+                            {
+                                if (monster.SpawnedObjects.Contains(player))
+                                    monster.SpawnedObjects.Add(player);
+                            }
+                            else
+                                monster.DespawnObject(player);
                         }
                     }
                 }

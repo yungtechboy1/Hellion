@@ -61,5 +61,10 @@ namespace Hellion.World.Structures
             this.DestinationPosition = this.Position.Clone();
             this.Angle = CRandom.Random(0, 360);
         }
+
+        public override void Update()
+        {
+            base.Update();
+        }
     }
 }
