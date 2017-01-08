@@ -2,7 +2,9 @@
 
 ### Update #6 (13/01/2017)
 
-...
+- World
+  - Add all GM and admin commands verification
+  - Monster moves
 
 ### Update #5 (06/01/2017)
 

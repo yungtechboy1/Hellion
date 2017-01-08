@@ -116,6 +116,15 @@ namespace Hellion.Core.Structures
         }
 
         /// <summary>
+        /// Returns a vector3 under string format.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("Vector3: {0}:{1}:{2}", this.x, this.y, this.z);
+        }
+
+        /// <summary>
         /// Add two Vecto3.
         /// </summary>
         /// <param name="a"></param>
@@ -171,6 +180,33 @@ namespace Hellion.Core.Structures
         public static Vector3 operator /(Vector3 a, Vector3 b)
         {
             return new Vector3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+        }
+
+        /// <summary>
+        /// Get the angle between two vectors.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static float AngleBetween(Vector3 a, Vector3 b)
+        {
+            float deltaX = a.x - b.x;
+            float deltaZ = a.z - b.z;
+
+            float angle = (float)((Math.Atan2(deltaZ, deltaX) * 180 / Math.PI) + 90D);
+
+            if (angle < 0)
+                angle += 360;
+            
+            if (a.X >= b.X)
+                angle += 180;
+            else
+                angle -= 180;
+
+            if (angle >= 360)
+                angle -= 360;
+
+            return angle;
         }
     }
 }

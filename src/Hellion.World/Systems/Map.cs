@@ -119,6 +119,7 @@ namespace Hellion.World.Systems
                         var monster = new Monster(rgnElement.Model, this.Id, respawner);
 
                         this.monsters.Add(monster);
+                        monster.IsSpawned = true;
                     }
                 }
 
@@ -202,6 +203,7 @@ namespace Hellion.World.Systems
             {
                 this.UpdatePlayers();
                 this.UpdateMonsters();
+                this.UpdateNpc();
                 this.UpdateRegions();
 
                 Thread.Sleep(50);
@@ -275,21 +277,43 @@ namespace Hellion.World.Systems
             {
                 foreach (var monster in this.monsters)
                 {
-                    monster.Update();
+                    if (!monster.IsSpawned)
+                        return;
+
+                    if (!monster.IsDead)
+                        monster.Update();
+                    else
+                    {
+                        // monster is dead, check respawn
+                    }
 
                     lock (syncLockClient)
                     {
                         foreach (var player in this.players)
                         {
-                            if (monster.CanSee(player))
+                            if (monster.CanSee(player) && monster.IsSpawned)
                             {
-                                if (monster.SpawnedObjects.Contains(player))
+                                if (!monster.SpawnedObjects.Contains(player))
                                     monster.SpawnedObjects.Add(player);
                             }
                             else
                                 monster.DespawnObject(player);
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update the npcs.
+        /// </summary>
+        private void UpdateNpc()
+        {
+            lock (syncLockNpc)
+            {
+                foreach (var npc in this.npcs)
+                {
+                    npc.Update();
                 }
             }
         }

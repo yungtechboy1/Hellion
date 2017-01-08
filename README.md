@@ -42,6 +42,9 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
       - Visibility
     - Inventory
       - Move / Equip / Unequip
+    - Monsters
+      - Visibility
+      - Moves
     
 ## Todo list
 
@@ -49,7 +52,6 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
 - NPC
     - Shops
     - Dialogs
-- Monsters
 - Inventory
   - Use items
   - Create items
@@ -113,5 +115,6 @@ Don't worry, tutorials will follow once the World Server can be started.
    - Start Cluster Server
    - Start World Server
 6. You are now ready to play!
+
 
 [ethernetwork]: https://github.com/Eastrall/Ether.Network

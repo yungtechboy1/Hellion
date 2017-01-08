@@ -1,5 +1,7 @@
 ﻿using Hellion.Core;
 using Hellion.Core.Data.Headers;
+using Hellion.Core.IO;
+using Hellion.Core.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace Hellion.World.Structures
 {
     public class Monster : Mover
     {
+        private long moveTimer;
         private Region region;
 
         /// <summary>
@@ -60,11 +63,31 @@ namespace Hellion.World.Structures
             this.Position = this.region.GetRandomPosition();
             this.DestinationPosition = this.Position.Clone();
             this.Angle = CRandom.Random(0, 360);
+            this.moveTimer = Time.TimeInSeconds();
         }
 
+        /// <summary>
+        /// Update the monster.
+        /// </summary>
         public override void Update()
         {
+            this.ProcessMoves();
+
             base.Update();
+        }
+
+        /// <summary>
+        /// Process the monster's moves
+        /// </summary>
+        private void ProcessMoves()
+        {
+            if (this.moveTimer <= Time.TimeInSeconds())
+            {
+                this.moveTimer = Time.TimeInSeconds() + CRandom.Random(15, 30);
+                this.DestinationPosition = this.region.GetRandomPosition();
+                this.Angle = Vector3.AngleBetween(this.Position, this.DestinationPosition);
+                this.SendMoverMoving();
+            }
         }
     }
 }
