@@ -262,7 +262,7 @@ namespace Hellion.World.Systems
                 case "/CreateLayer":
                 case "/DeleteLayer":
                 case "/Layer":
-                case "/RRapp":
+                case "/RRApp":
                 case "/RROpen":
                 case "/RRNext":
                 case "/RRPass":
