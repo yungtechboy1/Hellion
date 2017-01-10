@@ -80,6 +80,7 @@ namespace Hellion.World.Systems
                 case "/talk":
                 case "/notalk":
                 case "/ip":
+                case "/mute":
                 case "/GuildRanking":
                 case "/FallSnow":
                 case "/StopSnow":
