@@ -315,6 +315,8 @@ namespace Hellion.World.Systems
                 case "/party":
                 case "/g":
                 case "/guild":
+                case "/partyinvite":
+                case "/guildinvite":
                     return true;
                 default: return false;
             }
