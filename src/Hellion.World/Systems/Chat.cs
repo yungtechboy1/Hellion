@@ -31,9 +31,9 @@ namespace Hellion.World.Systems
 
                 if (this.IsNormalCommand(chatCommand))
                     this.NormalCommandChat(chatCommand, chatMessage);
-                else if (this.IsGMCommand(chatCommand, chatCommandArray) & this.player.Authority >= 80)
+                else if (this.IsGMCommand(chatCommand, chatCommandArray) && this.player.Authority >= 80)
                     this.GMCommand(chatCommand, chatCommandArray);
-                else if (this.IsADMINCommand(chatCommand, chatCommandArray) & this.player.Authority >= 100)
+                else if (this.IsADMINCommand(chatCommand, chatCommandArray) && this.player.Authority >= 100)
                     this.GMCommand(chatCommand, chatCommandArray);
             }
         }
