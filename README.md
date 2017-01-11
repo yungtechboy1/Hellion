@@ -107,14 +107,14 @@ Don't worry, tutorials will follow once the World Server can be started.
 
 1. Clone this repository
 2. Install MySQL Server on your computer/server
-3. Execute the sql/hellion.sql file in your MySQL server to setup the database.
+3. Execute the `sql/hellion.sql` file in your MySQL server to setup the database.
 4. Configure the 4 servers (ISC, Login, Cluster, World)
 5. Restore all dependencies using `restore.bat`
 6. Start the servers
-   - Start ISC
-   - Start Login Server
-   - Start Cluster Server
-   - Start World Server
+   - Start `binar/ISC.bat`
+   - Start `binary/LoginServer.bat`
+   - Start `binary/ClusterServer.bat`
+   - Start `binary/WorldServer.bat`
 7. You are now ready to play!
 
 [ethernetwork]: https://github.com/Eastrall/Ether.Network
