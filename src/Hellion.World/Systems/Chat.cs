@@ -31,9 +31,9 @@ namespace Hellion.World.Systems
 
                 if (this.IsNormalCommand(chatCommand))
                     this.NormalCommandChat(chatCommand, chatMessage);
-                else if (this.IsGMCommand(chatCommand, chatCommandArray) & this.player.Authority >= 80)
+                else if (this.IsGMCommand(chatCommand, chatCommandArray) && this.player.Authority >= 80)
                     this.GMCommand(chatCommand, chatCommandArray);
-                else if (this.IsADMINCommand(chatCommand, chatCommandArray) & this.player.Authority >= 100)
+                else if (this.IsADMINCommand(chatCommand, chatCommandArray) && this.player.Authority >= 100)
                     this.GMCommand(chatCommand, chatCommandArray);
             }
         }
@@ -80,6 +80,7 @@ namespace Hellion.World.Systems
                 case "/talk":
                 case "/notalk":
                 case "/ip":
+                case "/mute":
                 case "/GuildRanking":
                 case "/FallSnow":
                 case "/StopSnow":
@@ -261,7 +262,7 @@ namespace Hellion.World.Systems
                 case "/CreateLayer":
                 case "/DeleteLayer":
                 case "/Layer":
-                case "/RRapp":
+                case "/RRApp":
                 case "/RROpen":
                 case "/RRNext":
                 case "/RRPass":
@@ -315,6 +316,8 @@ namespace Hellion.World.Systems
                 case "/party":
                 case "/g":
                 case "/guild":
+                case "/partyinvite":
+                case "/guildinvite":
                     return true;
                 default: return false;
             }
