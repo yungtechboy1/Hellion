@@ -1,6 +1,10 @@
 ﻿using Hellion.Core.Configuration;
+#if !NET45
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+#else
+using System.Data.Entity;
+#endif
 using System.Linq;
 
 namespace Hellion.Core.Database

@@ -34,6 +34,7 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
       - Items
       - Maps
       - Npc
+      - Dialogs
     - Player login
     - Player visibility with other players
     - Player moves
@@ -51,7 +52,6 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
 - Chat
 - NPC
     - Shops
-    - Dialogs
 - Inventory
   - Use items
   - Create items

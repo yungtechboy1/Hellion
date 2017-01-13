@@ -2,14 +2,15 @@
 using Hellion.Core.Configuration;
 using Hellion.Core.Data.Resources;
 using Hellion.Core.IO;
+using Hellion.Core.Structures.Dialogs;
 using Hellion.Data;
 using Hellion.World.Managers;
 using Hellion.World.Structures;
 using Hellion.World.Systems;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Hellion.World
 {
@@ -20,6 +21,7 @@ namespace Hellion.World
 
         private static Dictionary<int, ItemData> itemsData = new Dictionary<int, ItemData>();
         private static Dictionary<int, MonsterData> monstersData = new Dictionary<int, MonsterData>();
+        private static Dictionary<string, DialogData> dialogData = new Dictionary<string, DialogData>();
         private static MapManager mapManager;
 
         /// <summary>
@@ -158,6 +160,8 @@ namespace Hellion.World
         /// </summary>
         private void LoadNpc()
         {
+            this.LoadNpcDialogs();
+
             Log.Info("Loading NPC data...");
 
             string[] files = {
@@ -176,11 +180,60 @@ namespace Hellion.World
                 foreach (var npc in npcGroupFile.Groups)
                 {
                     // Add npc here
+                    // set dialog
                     // Load shops
                 }
             }
 
             Log.Done("{0} npcs loaded!", -1);
+        }
+
+        /// <summary>
+        /// Load all NPC dialogs.
+        /// </summary>
+        private void LoadNpcDialogs()
+        {
+            Log.Info("Loading NPC dialogs for '{0}' language...", this.WorldConfiguration.Language);
+
+            string dialogLanguagePath = $"dialogs/{this.WorldConfiguration.Language}";
+            string dialogPath = Path.Combine(Global.DataPath, dialogLanguagePath);
+
+            if (!Directory.Exists(dialogPath))
+            {
+                Log.Error("Cannot find '{0}' dialog path. No dialogs will be loaded.", dialogLanguagePath);
+                return;
+            }
+
+            string[] dialogFilesPath = Directory.GetFiles(dialogPath);
+
+            foreach (var dialogFile in dialogFilesPath)
+            {
+                string dialogFileContent = File.ReadAllText(dialogFile);
+                var dialogsParsed = JToken.Parse(dialogFileContent, new JsonLoadSettings()
+                {
+                    CommentHandling = CommentHandling.Ignore,
+                });
+
+                if (dialogsParsed.Type == JTokenType.Array)
+                {
+                    var newDialogs = dialogsParsed.ToObject<DialogData[]>();
+
+                    foreach (var newDialog in newDialogs)
+                    {
+                        if (!dialogData.ContainsKey(newDialog.Name))
+                            dialogData.Add(newDialog.Name, newDialog);
+                    }
+                }
+                else if (dialogsParsed.Type == JTokenType.Object)
+                {
+                    var newDialog = dialogsParsed.ToObject<DialogData>();
+
+                    if (!dialogData.ContainsKey(newDialog.Name))
+                        dialogData.Add(newDialog.Name, newDialog);
+                }
+            }
+
+            Log.Done("{0} npc dialogs loaded!", dialogData.Count);
         }
 
         /// <summary>

@@ -314,6 +314,20 @@ namespace Hellion.World.Systems
                 foreach (var npc in this.npcs)
                 {
                     npc.Update();
+
+                    lock (syncLockClient)
+                    {
+                        foreach (var player in this.players)
+                        {
+                            if (npc.CanSee(player))
+                            {
+                                if (!npc.SpawnedObjects.Contains(player))
+                                    npc.SpawnedObjects.Add(player);
+                            }
+                            else
+                                npc.DespawnObject(player);
+                        }
+                    }
                 }
             }
         }

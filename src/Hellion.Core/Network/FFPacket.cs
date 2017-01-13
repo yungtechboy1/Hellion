@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Hellion.Core.Network
 {
+    /// <summary>
+    /// Represents a FlyFF packet.
+    /// </summary>
     public class FFPacket : NetPacketBase
     {
         private uint header;
