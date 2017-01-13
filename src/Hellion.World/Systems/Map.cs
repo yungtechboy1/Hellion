@@ -22,7 +22,9 @@ namespace Hellion.World.Systems
         private object syncLockNpc = new object();
 
         private ICollection<Monster> monsters;
-        private object syncLockMonster;
+        private object syncLockMonster = new object();
+
+        private ICollection<Region> regions;
 
         /// <summary>
         /// Gets the map id.
@@ -58,6 +60,7 @@ namespace Hellion.World.Systems
         {
             this.Id = id;
             this.Name = mapName;
+            this.regions = new List<Region>();
             this.players = new HashSet<Player>();
             this.npcs = new HashSet<Npc>();
             this.monsters = new HashSet<Monster>();
@@ -104,6 +107,24 @@ namespace Hellion.World.Systems
             byte[] rgnFileData = File.ReadAllBytes(rgnMapPath);
             var rgn = new RgnFile(rgnFileData);
             rgn.Read();
+
+            foreach (RgnRespawn7 rgnElement in rgn.Elements.Where(r => r is RgnRespawn7))
+            {
+                var respawner = new RespawnerRegion(rgnElement.Position, rgnElement.StartPosition, rgnElement.EndPosition, rgnElement.Time);
+
+                if (rgnElement.Type == 5)
+                {
+                    for (int i = 0; i < rgnElement.Count; ++i)
+                    {
+                        var monster = new Monster(rgnElement.Model, this.Id, respawner);
+
+                        this.monsters.Add(monster);
+                        monster.IsSpawned = true;
+                    }
+                }
+
+                this.regions.Add(respawner);
+            }
             
             // Load .lnd
         }
@@ -133,6 +154,12 @@ namespace Hellion.World.Systems
                 lock (syncLockClient)
                     this.players.Add(worldObject as Player);
             }
+
+            if (worldObject is Monster)
+            {
+                lock (syncLockMonster)
+                    this.monsters.Add(worldObject as Monster);
+            }
         }
 
         /// <summary>
@@ -152,6 +179,17 @@ namespace Hellion.World.Systems
                         otherPlayer.DespawnObject(player);
                 }
             }
+            else if (worldObject is Monster)
+            {
+                var monster = worldObject as Monster;
+
+                lock (syncLockMonster)
+                {
+                    this.monsters.Remove(monster);
+                    foreach (var player in monster.SpawnedObjects.Where(o => o is Player))
+                        player.DespawnObject(monster);
+                }
+            }
 
             worldObject.IsSpawned = false;
         }
@@ -163,7 +201,10 @@ namespace Hellion.World.Systems
         {
             while (true)
             {
-                this.UpdatePlayerVisibility();
+                this.UpdatePlayers();
+                this.UpdateMonsters();
+                this.UpdateNpc();
+                this.UpdateRegions();
 
                 Thread.Sleep(50);
             }
@@ -172,7 +213,7 @@ namespace Hellion.World.Systems
         /// <summary>
         /// Update the player visibility with other players.
         /// </summary>
-        private void UpdatePlayerVisibility()
+        private void UpdatePlayers()
         {
             lock (syncLockClient)
             {
@@ -209,8 +250,95 @@ namespace Hellion.World.Systems
                                 player.DespawnObject(npc);
                         }
                     }
+
+                    lock (syncLockMonster)
+                    {
+                        foreach (var monster in this.monsters)
+                        {
+                            if (player.CanSee(monster))
+                            {
+                                if (!player.SpawnedObjects.Contains(monster))
+                                    player.SpawnObject(monster);
+                            }
+                            else
+                                player.DespawnObject(monster);
+                        }
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Update the monsters and their visibility.
+        /// </summary>
+        private void UpdateMonsters()
+        {
+            lock (syncLockMonster)
+            {
+                foreach (var monster in this.monsters)
+                {
+                    if (!monster.IsSpawned)
+                        return;
+
+                    if (!monster.IsDead)
+                        monster.Update();
+                    else
+                    {
+                        // monster is dead, check respawn
+                    }
+
+                    lock (syncLockClient)
+                    {
+                        foreach (var player in this.players)
+                        {
+                            if (monster.CanSee(player) && monster.IsSpawned)
+                            {
+                                if (!monster.SpawnedObjects.Contains(player))
+                                    monster.SpawnedObjects.Add(player);
+                            }
+                            else
+                                monster.DespawnObject(player);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update the npcs.
+        /// </summary>
+        private void UpdateNpc()
+        {
+            lock (syncLockNpc)
+            {
+                foreach (var npc in this.npcs)
+                {
+                    npc.Update();
+
+                    lock (syncLockClient)
+                    {
+                        foreach (var player in this.players)
+                        {
+                            if (npc.CanSee(player))
+                            {
+                                if (!npc.SpawnedObjects.Contains(player))
+                                    npc.SpawnedObjects.Add(player);
+                            }
+                            else
+                                npc.DespawnObject(player);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update all the regions.
+        /// </summary>
+        private void UpdateRegions()
+        {
+            foreach (var region in this.regions)
+                region.Update();
         }
     }
 }

@@ -18,6 +18,8 @@ namespace Hellion.Core
         public const string SingleLineComment = "//";
         public const string MultiLineCommentStart = "/*";
         public const string MultiLineCommentEnd = "*/";
+
+        public const string DefaultLanguage = "en";
         
         public static readonly string DataPath = Path.Combine(Directory.GetCurrentDirectory(), "data");
 

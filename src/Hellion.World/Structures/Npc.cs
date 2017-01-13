@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Hellion.Core.Structures.Dialogs;
+using System.Collections.Generic;
 
 namespace Hellion.World.Structures
 {
@@ -11,6 +12,11 @@ namespace Hellion.World.Structures
         /// Gets the NPC name.
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the npc dialog data.
+        /// </summary>
+        public DialogData Dialog { get; set; }
 
         /// <summary>
         /// Gets the NPC shop items.
@@ -27,6 +33,14 @@ namespace Hellion.World.Structures
         public Npc()
             : base(-1)
         {
+        }
+
+        /// <summary>
+        /// Update the NPC.
+        /// </summary>
+        public override void Update()
+        {
+            base.Update();
         }
     }
 }

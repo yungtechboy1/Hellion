@@ -3,14 +3,13 @@ using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
 using Hellion.World.Structures;
-using Hellion.World.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hellion.Core.Extensions;
 
-namespace Hellion.World.Modules
+namespace Hellion.World.Systems
 {
     public class Inventory
     {

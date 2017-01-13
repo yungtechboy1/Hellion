@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Extensions;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -33,21 +34,6 @@ namespace Hellion.Core.Database.Repository
                 this.dbSet.Add(value);
                 //value = this.dbSet.Add(value).Entity;
                 this.Save();
-            }
-        }
-
-        /// <summary>
-        /// Deletes an entity by his id.
-        /// </summary>
-        /// <param name="id">Entity id</param>
-        public virtual void Delete(int id)
-        {
-            lock (syncDbContext)
-            {
-                var entity = this.dbSet.Find(id);
-
-                if (entity != null)
-                    this.Delete(entity);
             }
         }
 

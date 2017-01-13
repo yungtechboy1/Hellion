@@ -1,17 +1,11 @@
-﻿using Hellion.Core.Database;
-using Hellion.Core.Structures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Hellion.Core.Data;
-using Hellion.Core.IO;
-using Ether.Network.Packets;
-using Hellion.Core.Network;
-using Hellion.World.Structures;
-using Hellion.World.Modules;
-using Hellion.World.Client;
+﻿using Ether.Network.Packets;
 using Hellion.Core.Data.Headers;
+using Hellion.Core.Database;
+using Hellion.Core.IO;
+using Hellion.Core.Structures;
+using Hellion.World.Client;
+using Hellion.World.Structures;
+using System;
 
 namespace Hellion.World.Systems
 {
@@ -101,6 +95,11 @@ namespace Hellion.World.Systems
         public int BankCode { get; set; }
 
         /// <summary>
+        /// Gets the player's chat module.
+        /// </summary>
+        public Chat Chat { get; private set; }
+
+        /// <summary>
         /// Gets the player's inventory.
         /// </summary>
         public Inventory Inventory { get; private set; }
@@ -123,6 +122,7 @@ namespace Hellion.World.Systems
         {
             this.Client = parentClient;
             this.Attributes = new Attributes();
+            this.Chat = new Chat(this);
             this.Inventory = new Inventory(this, dbCharacter.Items);
 
             this.Id = dbCharacter.Id;
@@ -158,14 +158,22 @@ namespace Hellion.World.Systems
         /// </summary>
         public void Disconnect()
         {
-            this.Save();
+            try
+            {
+                this.Save();
 
-            var map = WorldServer.MapManager[this.MapId];
+                var map = WorldServer.MapManager[this.MapId];
 
-            if (map != null)
-                map.RemoveObject(this);
+                if (map != null)
+                    map.RemoveObject(this);
 
-            this.SpawnedObjects.Clear();
+                this.SpawnedObjects.Clear();
+            }
+            catch (Exception e)
+            {
+                Log.Error("An error occured while disconnecting the player. {0}", e.Message);
+                Log.Debug("StackTrace: {0}", e.StackTrace);
+            }
         }
 
         /// <summary>
@@ -245,6 +253,8 @@ namespace Hellion.World.Systems
                 this.SendPlayerSpawn(worldObject as Player);
             if (worldObject is Npc)
                 this.SendNpcSpawn(worldObject as Npc);
+            if (worldObject is Monster)
+                this.SendMonsterSpawn(worldObject as Monster);
 
             if (worldObject is Mover)
             {

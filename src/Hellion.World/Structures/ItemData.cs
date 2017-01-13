@@ -1,162 +1,158 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Hellion.Core.Data.Resources;
+﻿using Hellion.Core.Data.Resources;
 
 namespace Hellion.World.Structures
 {
+    /// <summary>
+    /// Represents an Item data from the propItem.txt resource file located in dataSub2.res.
+    /// </summary>
     public class ItemData
     {
-        #region FIELDS
+        public int Version { get; private set; }
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public int Num { get; private set; }
+        public int PackMax { get; private set; }
+        public int ItemKind1 { get; private set; }
+        public int ItemKind2 { get; private set; }
+        public int ItemKind3 { get; private set; }
+        public int ItemJob { get; private set; }
+        public bool Permanence { get; private set; }
+        public int Useable { get; private set; }
+        public int ItemSex { get; private set; }
+        public int Cost { get; private set; }
+        public int Endurance { get; private set; }
+        public int nAbrasion { get; private set; }
+        public int nMaxRepair { get; private set; }
+        public int Handed { get; private set; }
+        public int Flag { get; private set; }
+        public int Parts { get; private set; }
+        public int Partsub { get; private set; }
+        public bool PartFile { get; private set; }
+        public int Exclusive { get; private set; }
+        public int BasePartsIgnore { get; private set; }
+        public int ItemLV { get; private set; }
+        public int ItemRare { get; private set; }
+        public int ShopAble { get; private set; }
+        public bool Log { get; private set; }
+        public bool Charged { get; private set; }
+        public int LinkKindBullet { get; private set; }
+        public int LinkKind { get; private set; }
+        public int AbilityMin { get; private set; }
+        public int AbilityMax { get; private set; }
+        public int eItemType { get; private set; }
+        public int wItemEAtk { get; private set; }
+        public int Parry { get; private set; }
+        public int BlockRating { get; private set; }
+        public int AddSkillMin { get; private set; }
+        public int AddSkillMax { get; private set; }
+        public int AtkStyle { get; private set; }
+        public int WeaponType { get; private set; }
+        public int ItemAtkOrder1 { get; private set; }
+        public int ItemAtkOrder2 { get; private set; }
+        public int ItemAtkOrder3 { get; private set; }
+        public int ItemAtkOrder4 { get; private set; }
+        public bool ContinnuousPain { get; private set; }
+        public int ShellQuantity { get; private set; }
+        public int Recoil { get; private set; }
+        public int LoadingTime { get; private set; }
+        public int AdjHitRate { get; private set; }
+        public float AttackSpeed { get; private set; }
+        public int DmgShift { get; private set; }
+        public int AttackRange { get; private set; }
+        public int Probability { get; private set; }
+        public int DestParam1 { get; private set; }
+        public int DestParam2 { get; private set; }
+        public int DestParam3 { get; private set; }
+        public int nAdjParamVal1 { get; private set; }
+        public int nAdjParamVal2 { get; private set; }
+        public int nAdjParamVal3 { get; private set; }
+        public int ChgParamVal1 { get; private set; }
+        public int ChgParamVal2 { get; private set; }
+        public int ChgParamVal3 { get; private set; }
+        public int DestData1 { get; private set; }
+        public int DestData2 { get; private set; }
+        public int DestData3 { get; private set; }
+        public int ActiveSkill { get; private set; }
+        public int ActiveSkillLv { get; private set; }
+        public int ActiveSkillPer { get; private set; }
+        public int ReqMp { get; private set; }
+        public int ReqFp { get; private set; }
+        public int ReqDisLV { get; private set; }
+        public int ReSkill1 { get; private set; }
+        public int ReSkillLevel1 { get; private set; }
+        public int ReSkill2 { get; private set; }
+        public int ReSkillLevel2 { get; private set; }
+        public int SkillReadyType { get; private set; }
+        public int SkillReady { get; private set; }
+        public int SkillRange { get; private set; }
+        public int SfxElemental { get; private set; }
+        public int SfxObj { get; private set; }
+        public int SfxObj2 { get; private set; }
+        public int SfxObj3 { get; private set; }
+        public int SfxObj4 { get; private set; }
+        public int SfxObj5 { get; private set; }
+        public int UseMotion { get; private set; }
+        public int CircleTime { get; private set; }
+        public uint SkillTime { get; private set; }
+        public int ExeTarget { get; private set; }
+        public int UseChance { get; private set; }
+        public int SpellRegion { get; private set; }
+        public int SpellType { get; private set; }
+        public int ReferStat1 { get; private set; }
+        public int ReferStat2 { get; private set; }
+        public int ReferTarget1 { get; private set; }
+        public int ReferTarget2 { get; private set; }
+        public int ReferValue1 { get; private set; }
+        public int ReferValue2 { get; private set; }
+        public int SkillType { get; private set; }
+        public float ItemResistElectricity { get; private set; }
+        public float ItemResistFire { get; private set; }
+        public float ItemResistWind { get; private set; }
+        public float ItemResistWater { get; private set; }
+        public float ItemResistEarth { get; private set; }
+        public int nEvildoing { get; private set; }
+        public int ExpertLV { get; private set; }
+        public int ExpertMax { get; private set; }
+        public int SubDefine { get; private set; }
+        public int Exp { get; private set; }
+        public int ComboStyle { get; private set; }
+        public float FlightSpeed { get; private set; }
+        public float FlightLRAngle { get; private set; }
+        public float FlightTBAngle { get; private set; }
+        public int FlightLimit { get; private set; }
+        public int FFuelReMax { get; private set; }
+        public int AFuelReMax { get; private set; }
+        public int FuelRe { get; private set; }
+        public int LimitLevel1 { get; private set; }
+        public int Reflect { get; private set; }
+        public int SndAttack1 { get; private set; }
+        public int SndAttack2 { get; private set; }
+        public string Icon { get; private set; }
+        public int QuestID { get; private set; }
+        public string TextFile { get; private set; }
+        public string Comment { get; private set; }
 
-        public int Version;
-        public int ID;
-        public string Name;
-        public int Num;
-        public int PackMax;
-        public int ItemKind1;
-        public int ItemKind2;
-        public int ItemKind3;
-        public int ItemJob;
-        public bool Permanence;
-        public int Useable;
-        public int ItemSex;
-        public int Cost;
-        public int Endurance;
-        public int nAbrasion;
-        public int nMaxRepair;
-        public int Handed;
-        public int Flag;
-        public int Parts;
-        public int Partsub;
-        public bool PartFile;
-        public int Exclusive;
-        public int BasePartsIgnore;
-        public int ItemLV;
-        public int ItemRare;
-        public int ShopAble;
-        public bool Log;
-        public bool Charged;
-        public int LinkKindBullet;
-        public int LinkKind;
-        public int AbilityMin;
-        public int AbilityMax;
-        public int eItemType;
-        public int wItemEAtk;
-        public int Parry;
-        public int BlockRating;
-        public int AddSkillMin;
-        public int AddSkillMax;
-        public int AtkStyle;
-        public int WeaponType;
-        public int ItemAtkOrder1;
-        public int ItemAtkOrder2;
-        public int ItemAtkOrder3;
-        public int ItemAtkOrder4;
-        public bool ContinnuousPain;
-        public int ShellQuantity;
-        public int Recoil;
-        public int LoadingTime;
-        public int AdjHitRate;
-        public float AttackSpeed;
-        public int DmgShift;
-        public int AttackRange;
-        public int Probability;
-        public int DestParam1;
-        public int DestParam2;
-        public int DestParam3;
-        public int nAdjParamVal1;
-        public int nAdjParamVal2;
-        public int nAdjParamVal3;
-        public int ChgParamVal1;
-        public int ChgParamVal2;
-        public int ChgParamVal3;
-        public int DestData1;
-        public int DestData2;
-        public int DestData3;
-        public int ActiveSkill;
-        public int ActiveSkillLv;
-        public int ActiveSkillPer;
-        public int ReqMp;
-        public int ReqFp;
-        public int ReqDisLV;
-        public int ReSkill1;
-        public int ReSkillLevel1;
-        public int ReSkill2;
-        public int ReSkillLevel2;
-        public int SkillReadyType;
-        public int SkillReady;
-        public int SkillRange;
-        public int SfxElemental;
-        public int SfxObj;
-        public int SfxObj2;
-        public int SfxObj3;
-        public int SfxObj4;
-        public int SfxObj5;
-        public int UseMotion;
-        public int CircleTime;
-        public uint SkillTime;
-        public int ExeTarget;
-        public int UseChance;
-        public int SpellRegion;
-        public int SpellType;
-        public int ReferStat1;
-        public int ReferStat2;
-        public int ReferTarget1;
-        public int ReferTarget2;
-        public int ReferValue1;
-        public int ReferValue2;
-        public int SkillType;
-        public float ItemResistElectricity;
-        public float ItemResistFire;
-        public float ItemResistWind;
-        public float ItemResistWater;
-        public float ItemResistEarth;
-        public int nEvildoing;
-        public int ExpertLV;
-        public int ExpertMax;
-        public int SubDefine;
-        public int Exp;
-        public int ComboStyle;
-        public float FlightSpeed;
-        public float FlightLRAngle;
-        public float FlightTBAngle;
-        public int FlightLimit;
-        public int FFuelReMax;
-        public int AFuelReMax;
-        public int FuelRe;
-        public int LimitLevel1;
-        public int Reflect;
-        public int SndAttack1;
-        public int SndAttack2;
-        public string Icon;
-        public int QuestID;
-        public string TextFile;
-        public string Comment;
-
-        #endregion
-
-        #region CONSTRUCTORS
-
+        /// <summary>
+        /// Creates an empty ItemData instance.
+        /// </summary>
         public ItemData() { }
 
+        /// <summary>
+        /// Creates an ItemData from a <see cref="ResourceTable"/>.
+        /// </summary>
+        /// <param name="table"></param>
         public ItemData(ResourceTable table)
         {
             this.Initialize(table);
         }
 
-        #endregion
-
-        #region METHODS
-
         /// <summary>
-        /// Initialize the ItemData
+        /// Initialize the ItemData from a resource table.
         /// </summary>
         private void Initialize(ResourceTable table)
         {
             this.Version = table.Get<int>("dwVersion");
-            this.ID = table.Get<int>("dwID");
+            this.Id = table.Get<int>("dwID");
             this.Name = table.Get<string>("szName");
             this.Num = table.Get<int>("dwNum");
             this.PackMax = table.Get<int>("dwPackMax");
@@ -280,7 +276,5 @@ namespace Hellion.World.Structures
             this.TextFile = table.Get<string>("szTextFile");
             this.Comment = table.Get<string>("szComment");
         }
-
-        #endregion
     }
 }

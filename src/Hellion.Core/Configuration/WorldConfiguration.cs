@@ -46,6 +46,12 @@ namespace Hellion.Core.Configuration
         public int Capacity { get; set; }
 
         /// <summary>
+        /// Gets or sets the world server's language.
+        /// </summary>
+        [DataMember(Name = "language")]
+        public string Language { get; set; }
+
+        /// <summary>
         /// Gets or sets the ISC configuration.
         /// </summary>
         [DataMember(Name = "isc")]
@@ -70,6 +76,7 @@ namespace Hellion.Core.Configuration
         {
             this.Ip = Global.LocalAddress;
             this.Port = Global.WorldDefaultPort;
+            this.Language = Global.DefaultLanguage;
             this.ISC = new ISCConfiguration();
             this.Rates = new RatesConfiguration();
         }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Ether.Network.Packets;
+using Hellion.Core.Data.Headers;
+using Hellion.Core.Network;
 
 /*
  * This file contains only the incoming packets realated with the chat.
@@ -12,5 +11,18 @@ namespace Hellion.World.Client
 {
     public partial class WorldClient
     {
+        [FFIncomingPacket(WorldHeaders.Incoming.Chat)]
+        private void OnChat(NetPacketBase packet)
+        {
+            var chatMessage = packet.Read<string>();
+
+            if (string.IsNullOrEmpty(chatMessage))
+                return;
+
+            if (chatMessage.StartsWith("/"))
+                this.Player.Chat.CommandChat(chatMessage);
+            else
+                this.Player.SendNormalChat(chatMessage);
+        }
     }
 }

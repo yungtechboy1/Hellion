@@ -29,25 +29,39 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     - LoginProtect (On/Off on configuration file)
     - Select character
 - World Server
+    - Data loading
+      - Defines / Texts
+      - Items
+      - Maps
+      - Npc
+      - Dialogs
     - Player login
     - Player visibility with other players
     - Player moves
     - Player attributes
-    - NPC visibility
+    - NPC
+      - Visibility
     - Inventory
       - Move / Equip / Unequip
+    - Monsters
+      - Visibility
+      - Moves
     
 ## Todo list
 
+- Chat
 - NPC
     - Shops
-    - Dialogs
-- Monsters
 - Inventory
+  - Use items
+  - Create items
+  - Sets bonus
 - Battle system
 - Skills
 - Quest system
-- Fly system
+- Friends
+- Mails
+- Guilds
 
 
 ## Project architecture
@@ -93,13 +107,14 @@ Don't worry, tutorials will follow once the World Server can be started.
 
 1. Clone this repository
 2. Install MySQL Server on your computer/server
-3. Execute the sql/hellion.sql file in your MySQL server to setup the database.
+3. Execute the `sql/hellion.sql` file in your MySQL server to setup the database.
 4. Configure the 4 servers (ISC, Login, Cluster, World)
-5. Start the servers
-   - Start ISC
-   - Start Login Server
-   - Start Cluster Server
-   - Start World Server
-6. You are now ready to play!
+5. Restore all dependencies using `restore.bat`
+6. Start the servers
+   - Start `binar/ISC.bat`
+   - Start `binary/LoginServer.bat`
+   - Start `binary/ClusterServer.bat`
+   - Start `binary/WorldServer.bat`
+7. You are now ready to play!
 
 [ethernetwork]: https://github.com/Eastrall/Ether.Network

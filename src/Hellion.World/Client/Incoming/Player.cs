@@ -92,5 +92,14 @@ namespace Hellion.World.Client
             this.Player.DestinationPosition = new Vector3(posX, posY, posZ);
             this.Player.SendMoverMoving();
         }
+
+        /// <summary>
+        /// The client is moving with the keyboard.
+        /// </summary>
+        /// <param name="packet"></param>
+        [FFIncomingPacket(WorldHeaders.Incoming.MoveByKeyboard)]
+        private void OnMoveByKeyboard(NetPacketBase packet)
+        {
+        }
     }
 }

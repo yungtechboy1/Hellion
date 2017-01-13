@@ -3,21 +3,23 @@
   "title": "Hellion.Login",
   "version": "1.0.0-*",
   "buildOptions": {
-    "emitEntryPoint": true
-  },
-
-  "packOptions": {
-    "iconUrl": "" 
+    "emitEntryPoint": true,
+    "optimize": true
   },
 
   "dependencies": {
-    "Ether.Network": "1.1.5",
-    "Hellion.Core": "1.0.0-*",
-    "Microsoft.NETCore.App": "1.0.1"
+    "Ether.Network": "1.1.7",
+    "Hellion.Core": "1.0.0-*"
   },
 
   "frameworks": {
-    "netcoreapp1.0": {
+    "netcoreapp1.1": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.1.0"
+        }
+      },
       "imports": "dnxcore50"
     }
   },
@@ -25,6 +27,15 @@
   "runtimes": {
     "win10-x64": {},
     "osx.10.10-x64": {},
-    "ubuntu.14.04-x64": {}
+    "ubuntu.14.04-x64": {},
+    "ubuntu.14.10-x64": {},
+    "ubuntu.15.04-x64": {},
+    "ubuntu.15.10-x64": {},
+    "ubuntu.16.04-x64": {},
+    "ubuntu.16.10-x64": {},
+    "centos.7-x64": {},
+    "debian.8-x64": {},
+    "fedora.23-x64": {},
+    "fedora.24-x64": {}
   }
 }

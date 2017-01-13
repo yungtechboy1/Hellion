@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DefinesToConst": {
+      "commandName": "Project",
+      "commandLineArgs": "MsgHdr ./MsgHdr.h"
+    }
+  }
+}

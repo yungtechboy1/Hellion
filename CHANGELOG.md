@@ -1,6 +1,40 @@
 ## Hellion ChangeLog
 
-### Update #3 (23/12/2016) (In progress...)
+### Update #6 (13/01/2017)
+
+- Common
+  - NPC Dialog structure
+
+- World
+  - Add all GM and admin commands verification
+  - Monster moves
+  - Dialog loader
+
+### Update #5 (06/01/2017)
+
+- World
+  - Monster visibility
+
+### Update #4 (30/12/2016)
+
+- Common
+  - Update to .NET Core 1.1
+  - Remove unused dependencies
+  - Rgn file structure
+
+- Tools
+  - DefineToConst : Converts a flyff header file (.h) to a C# const file.
+  
+- Cluster
+  - FIX: HP/MP/FP at character creation
+  
+- World
+  - Chat system (normal chat)
+  - Load region from .rgn files
+  - Begin of monster respawner
+
+
+### Update #3 (23/12/2016)
 
 - Common
   - Add ResourceTable reader (to read files like propItem.txt, propSkills.txt, etc...)
@@ -30,7 +64,7 @@
 - World Server
     - Data loading
         - Defines loading
-        - Map loading (.dyo / .rgn)
+        - Map loading (.dyo)
     - Player login
     - Player visibility with other players
     - Player moves

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Hellion.Core.Data.Resources
@@ -10,13 +11,16 @@ namespace Hellion.Core.Data.Resources
     public sealed class DefineFile
     {
         private const string DefineDirective = "#define";
+        private const string DwordCast = "(DWORD)";
+        private const string WordCast = "(WORD)";
+        private const string ByteCast = "(BYTE)";
 
         private string filePath;
 
         /// <summary>
         /// Gets the defines dictionary.
         /// </summary>
-        public Dictionary<string, int> Defines { get; private set; }
+        public Dictionary<string, object> Defines { get; private set; }
 
         /// <summary>
         /// Creates a new DefineFile instance.
@@ -25,7 +29,7 @@ namespace Hellion.Core.Data.Resources
         public DefineFile(string filePath)
         {
             this.filePath = filePath;
-            this.Defines = new Dictionary<string, int>();
+            this.Defines = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -58,16 +62,52 @@ namespace Hellion.Core.Data.Resources
                         if (splitLine.Length >= 3)
                         {
                             string defineKey = splitLine[1];
-                            int defineValue = -1;
-
-                            int.TryParse(splitLine[2], out defineValue);
 
                             if (!this.Defines.ContainsKey(defineKey))
-                                this.Defines.Add(defineKey, defineValue);
+                                this.Defines.Add(defineKey, this.ParseDefineValue(splitLine[2]));
                         }
                     }
                 }
             }
+        }
+
+        private object ParseDefineValue(string defineValue)
+        {
+            object newDefineValue = null;
+
+            try
+            {
+                if (defineValue.StartsWith(DwordCast))
+                {
+                    defineValue = defineValue.Replace(DwordCast, string.Empty);
+                    newDefineValue = Convert.ToUInt32(defineValue, defineValue.StartsWith("0x") ? 16 : 10);
+                }
+                else if (defineValue.StartsWith(WordCast))
+                {
+                    defineValue = defineValue.Replace(WordCast, string.Empty);
+                    newDefineValue = Convert.ToUInt16(defineValue, defineValue.StartsWith("0x") ? 16 : 10);
+                }
+                else if (defineValue.StartsWith(ByteCast))
+                {
+                    defineValue = defineValue.Replace(ByteCast, string.Empty);
+                    newDefineValue = Convert.ToByte(defineValue, defineValue.StartsWith("0x") ? 16 : 10);
+                }
+                else if (defineValue.EndsWith("L"))
+                {
+                    defineValue = defineValue.Replace("L", string.Empty);
+                    newDefineValue = Convert.ToInt64(defineValue, defineValue.StartsWith("0x") ? 16 : 10);
+                }
+                else
+                {
+                    newDefineValue = Convert.ToInt32(defineValue, defineValue.StartsWith("0x") ? 16 : 10);
+                }
+            }
+            catch
+            {
+                newDefineValue = 0;
+            }
+
+            return newDefineValue;
         }
     }
 }

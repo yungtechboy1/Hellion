@@ -58,7 +58,7 @@ namespace Hellion.World.Client
         {
             Log.Info("Client with id {0} disconnected.", this.Id);
 
-            this.Player.Disconnect();
+            this.Player?.Disconnect();
         }
 
         /// <summary>
@@ -66,12 +66,13 @@ namespace Hellion.World.Client
         /// </summary>
         public override void Greetings()
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.Write(0);
+                packet.Write((int)this.sessionId);
 
-            packet.Write(0);
-            packet.Write((int)this.sessionId);
-
-            this.Send(packet);
+                this.Send(packet);
+            }
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace Hellion.World.Client
             var packetHeaderNumber = packet.Read<uint>();
             var packetHeader = (WorldHeaders.Incoming)packetHeaderNumber;
 
-            Log.Debug("Recieve packet: {0}", packetHeader);
+            Log.Debug("Recieve World packet: {0}", packetHeader);
 
             if (!FFPacketHandler.Invoke(this, packetHeader, packet))
                 FFPacket.UnknowPacket<WorldHeaders.Incoming>(packetHeaderNumber, 8);
