@@ -241,4 +241,5 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 
-binary/data/
+binary/data/maps
+binary/data/res
