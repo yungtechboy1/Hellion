@@ -22,6 +22,7 @@ namespace Hellion.World
         private static Dictionary<int, ItemData> itemsData = new Dictionary<int, ItemData>();
         private static Dictionary<int, MonsterData> monstersData = new Dictionary<int, MonsterData>();
         private static Dictionary<string, DialogData> dialogData = new Dictionary<string, DialogData>();
+        private static Dictionary<string, NPCData> npcData = new Dictionary<string, NPCData>();
         private static MapManager mapManager;
 
         /// <summary>
@@ -46,6 +47,22 @@ namespace Hellion.World
         public static Dictionary<int, MonsterData> MonstersData
         {
             get { return monstersData; }
+        }
+
+        /// <summary>
+        /// Gets the dialogs data.
+        /// </summary>
+        public static Dictionary<string, DialogData> DialogsData
+        {
+            get { return dialogData; }
+        }
+
+        /// <summary>
+        /// Gets the NPC data.
+        /// </summary>
+        public static Dictionary<string, NPCData> NPCData
+        {
+            get { return npcData; }
         }
 
         /// <summary>
@@ -74,6 +91,9 @@ namespace Hellion.World
         {
             this.defines.Clear();
             this.texts.Clear();
+
+            npcData.Clear();
+            dialogData.Clear();
 
             GC.Collect();
         }
@@ -179,13 +199,18 @@ namespace Hellion.World
 
                 foreach (var npc in npcGroupFile.Groups)
                 {
-                    // Add npc here
-                    // set dialog
-                    // Load shops
+                    var newNpc = new NPCData();
+
+                    newNpc.Name = npc.Name;
+
+                    if (!npcData.ContainsKey(newNpc.Name))
+                        npcData.Add(newNpc.Name, newNpc);
+                    else
+                        npcData[newNpc.Name] = newNpc;
                 }
             }
 
-            Log.Done("{0} npcs loaded!", -1);
+            Log.Done("{0} npcs data loaded!", npcData.Count);
         }
 
         /// <summary>

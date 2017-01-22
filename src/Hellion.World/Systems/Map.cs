@@ -90,18 +90,7 @@ namespace Hellion.World.Systems
             dyo.Read();
 
             foreach (NpcDyoElement dyoElement in dyo.Elements.Where(d => d is NpcDyoElement))
-            {
-                var npc = new Npc();
-                npc.MapId = this.Id;
-                npc.ModelId = dyoElement.Index;
-                npc.Angle = dyoElement.Angle;
-                npc.Position = dyoElement.Position.Clone();
-                npc.DestinationPosition = dyoElement.Position.Clone();
-                npc.Size = (short)(npc.Size * dyoElement.Scale.X);
-                npc.Name = dyoElement.Name;
-                
-                this.npcs.Add(npc);
-            }
+                this.npcs.Add(Npc.CreateFromDyo(dyoElement, this.Id));
 
             // Load .rgn
             byte[] rgnFileData = File.ReadAllBytes(rgnMapPath);

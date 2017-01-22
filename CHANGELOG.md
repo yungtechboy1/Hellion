@@ -1,5 +1,11 @@
 ## Hellion ChangeLog
 
+### Update #7 (27/01/2017)
+
+- World
+  - Npc data loading
+  - Teleport command
+
 ### Update #6 (13/01/2017)
 
 - Common
