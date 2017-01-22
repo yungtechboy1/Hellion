@@ -1,6 +1,7 @@
 ﻿using Hellion.Core.Data.Headers;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
+using Hellion.Database;
 using System.Linq;
 
 namespace Hellion.Login.Client
@@ -25,7 +26,7 @@ namespace Hellion.Login.Client
 
             Log.Debug("Recieved from client: buildVersion: {0}, username: {1}, password: {2}", buildVersion, username, password);
             
-            var user = LoginServer.UserRepository.Get(x => x.Username.ToLower() == username.ToLower());
+            var user = DatabaseService.Users.Get(x => x.Username.ToLower() == username.ToLower());
 
             if (user == null)
             {

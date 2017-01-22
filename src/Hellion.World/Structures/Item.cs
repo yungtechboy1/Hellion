@@ -1,5 +1,5 @@
 ﻿using Ether.Network.Packets;
-using Hellion.Core.Database;
+using Hellion.Database.Structures;
 
 namespace Hellion.World.Structures
 {

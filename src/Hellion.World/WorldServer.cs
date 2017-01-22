@@ -1,9 +1,9 @@
 ﻿using Ether.Network;
 using Ether.Network.Packets;
 using Hellion.Core.Configuration;
-using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
+using Hellion.Database;
 using Hellion.World.Client;
 using Hellion.World.ISC;
 using System;
@@ -19,22 +19,7 @@ namespace Hellion.World
         private const string WorldConfigurationFile = "config/world.json";
         private const string DatabaseConfigurationFile = "config/database.json";
 
-        /// <summary>
-        /// Gets the Database context.
-        /// </summary>
-        public static DatabaseContext DbContext
-        {
-            get
-            {
-                lock (syncDatabase)
-                {
-                    return dbContext;
-                }
-            }
-        }
-        private static object syncDatabase = new object();
-        private static DatabaseContext dbContext = null;
-
+        private DatabaseContext dbContext;
         private InterConnector connector;
         private Thread iscThread;
 
@@ -158,10 +143,15 @@ namespace Hellion.World
             try
             {
                 Log.Info("Connecting to database...");
-                dbContext = new DatabaseContext(this.DatabaseConfiguration);
-                dbContext.Database.EnsureCreated();
+
+                this.dbContext = new DatabaseContext(this.DatabaseConfiguration.Ip,
+                    this.DatabaseConfiguration.User,
+                    this.DatabaseConfiguration.Password,
+                    this.DatabaseConfiguration.DatabaseName);
+                this.dbContext.Database.EnsureCreated();
 
                 DatabaseService.InitializeDatabase(dbContext);
+
                 Log.Done("Connected to database!");
             }
             catch (Exception e)

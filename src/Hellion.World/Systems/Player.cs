@@ -1,8 +1,9 @@
 ﻿using Ether.Network.Packets;
 using Hellion.Core.Data.Headers;
-using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Structures;
+using Hellion.Database;
+using Hellion.Database.Structures;
 using Hellion.World.Client;
 using Hellion.World.Structures;
 using Hellion.World.System;
@@ -233,8 +234,8 @@ namespace Hellion.World.Systems
                 dbCharacter.Slot = this.Slot;
                 dbCharacter.Stamina = this.Attributes[DefineAttributes.STA];
                 dbCharacter.Strength = this.Attributes[DefineAttributes.STR];
-                
-                // TODO: save inventory
+
+                this.Inventory.Save();
                 // TODO: save skills
                 // TODO: save quest states
 

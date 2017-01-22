@@ -67,6 +67,9 @@ namespace Hellion.World.System
             base.Update();
         }
 
+        /// <summary>
+        /// Process the npc oral dialog.
+        /// </summary>
         private void SpeakOralText()
         {
             if (this.lastSpeakTime <= Time.TimeInSeconds())

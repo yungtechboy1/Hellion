@@ -1,11 +1,12 @@
 ﻿using Ether.Network;
 using Ether.Network.Packets;
 using Hellion.Core.Configuration;
-using Hellion.Core.Database;
-using Hellion.Core.Database.Repository;
 using Hellion.Core.IO;
 using Hellion.Core.ISC.Structures;
 using Hellion.Core.Network;
+using Hellion.Database;
+using Hellion.Database.Repository;
+using Hellion.Database.Structures;
 using Hellion.Login.Client;
 using Hellion.Login.ISC;
 using System;
@@ -23,20 +24,7 @@ namespace Hellion.Login
         private const string LoginConfigurationFile = "config/login.json";
         private const string DatabaseConfigurationFile = "config/database.json";
 
-        /// <summary>
-        /// Gets the user repository.
-        /// </summary>
-        public static IRepository<DbUser> UserRepository
-        {
-            get
-            {
-                if (userRepository == null)
-                    userRepository = new UserRepository(dbContext);
-                return userRepository;
-            }
-        }
-        private static IRepository<DbUser> userRepository;
-        private static DatabaseContext dbContext = null;
+        private DatabaseContext dbContext;
 
         /// <summary>
         /// Gets the cluster servers list.
@@ -172,8 +160,15 @@ namespace Hellion.Login
             try
             {
                 Log.Info("Connecting to database...");
-                dbContext = new DatabaseContext(this.DatabaseConfiguration);
-                dbContext.Database.EnsureCreated();
+
+                this.dbContext = new DatabaseContext(this.DatabaseConfiguration.Ip,
+                    this.DatabaseConfiguration.User,
+                    this.DatabaseConfiguration.Password,
+                    this.DatabaseConfiguration.DatabaseName);
+                this.dbContext.Database.EnsureCreated();
+
+                DatabaseService.InitializeDatabase(this.dbContext);
+
                 Log.Done("Connected to database!");
             }
             catch (Exception e)

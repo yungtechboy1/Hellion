@@ -1,6 +1,6 @@
 ﻿using Hellion.Core.Data.Headers;
-using Hellion.Core.Database;
 using Hellion.Core.Network;
+using Hellion.Database.Structures;
 using System.Collections.Generic;
 using System.Linq;
 

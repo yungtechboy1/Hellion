@@ -2,8 +2,12 @@
 
 ### Update #7 (27/01/2017)
 
+- Common
+  - Create `Hellion.Database` project to handle everyting realated witht the database.
+
 - World
   - Npc data loading
+  - Npc oral dialog
   - Teleport command
 
 ### Update #6 (13/01/2017)

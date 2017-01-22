@@ -1,9 +1,10 @@
 ﻿using Ether.Network.Packets;
 using Hellion.Core.Configuration;
 using Hellion.Core.Data.Headers;
-using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
+using Hellion.Database;
+using Hellion.Database.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;

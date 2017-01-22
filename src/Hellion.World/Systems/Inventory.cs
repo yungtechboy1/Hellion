@@ -1,13 +1,11 @@
 ﻿using Ether.Network.Packets;
-using Hellion.Core.Database;
 using Hellion.Core.IO;
-using Hellion.Core.Network;
 using Hellion.World.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Hellion.Core.Extensions;
+using Hellion.Database.Structures;
 
 namespace Hellion.World.Systems
 {
@@ -79,6 +77,10 @@ namespace Hellion.World.Systems
             return this.items.Where(i => i.UniqueId == uniqueId).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Gets the index of an available slot.
+        /// </summary>
+        /// <returns></returns>
         public int GetFreeSlot()
         {
             for (int i = 0; i < EquipOffset; ++i)
@@ -193,6 +195,13 @@ namespace Hellion.World.Systems
 
             for (int i = 0; i < MaxItems; ++i)
                 packet.Write(this.items[i].UniqueId);
+        }
+
+        /// <summary>
+        /// Saves the inventory.
+        /// </summary>
+        public void Save()
+        {
         }
     }
 }

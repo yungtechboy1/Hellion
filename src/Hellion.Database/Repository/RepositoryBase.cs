@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Extensions;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Hellion.Core.Database.Repository
+namespace Hellion.Database.Repository
 {
     public class RepositoryBase<T> : IRepository<T> where T : class
     {

@@ -3,7 +3,7 @@ using Ether.Network.Packets;
 using Hellion.Cluster.Client;
 using Hellion.Cluster.ISC;
 using Hellion.Core.Configuration;
-using Hellion.Core.Database;
+using Hellion.Database;
 using Hellion.Core.IO;
 using Hellion.Core.ISC.Structures;
 using Hellion.Core.Network;
@@ -150,7 +150,10 @@ namespace Hellion.Cluster
             try
             {
                 Log.Info("Connecting to database...");
-                this.dbContext = new DatabaseContext(this.DatabaseConfiguration);
+                this.dbContext = new DatabaseContext(this.DatabaseConfiguration.Ip, 
+                    this.DatabaseConfiguration.User, 
+                    this.DatabaseConfiguration.Password, 
+                    this.DatabaseConfiguration.DatabaseName);
                 this.dbContext.Database.EnsureCreated();
 
                 DatabaseService.InitializeDatabase(this.dbContext);

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Hellion.Core.Database
+namespace Hellion.Database.Structures
 {
     [Table("characters")]
     public class DbCharacter

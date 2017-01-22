@@ -11,7 +11,8 @@
 
   "dependencies": {
     "Ether.Network": "1.1.7",
-    "Hellion.Core": "1.0.0-*"
+    "Hellion.Core": "1.0.0-*",
+    "Hellion.Database": "1.0.0-*"
   },
 
   "frameworks": {

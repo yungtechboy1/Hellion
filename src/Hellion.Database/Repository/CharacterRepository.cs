@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Hellion.Database.Structures;
 
-namespace Hellion.Core.Database.Repository
+namespace Hellion.Database.Repository
 {
     public class CharacterRepository : RepositoryBase<DbCharacter>
     {
@@ -10,7 +9,5 @@ namespace Hellion.Core.Database.Repository
             : base(dbContext)
         {
         }
-
-        
     }
 }

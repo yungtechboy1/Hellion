@@ -1,9 +1,8 @@
-﻿using Hellion.Core.Database;
-using Hellion.Core.IO;
-using System;
+﻿using Hellion.Core.IO;
+using Hellion.Database;
+using Hellion.Database.Structures;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Hellion.Cluster.Structures
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Hellion.Core.Database
+namespace Hellion.Database.Structures
 {
     [Table("users")]
     public class DbUser
