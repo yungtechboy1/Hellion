@@ -74,15 +74,29 @@ namespace Hellion.World.Structures
 
         internal void SendMoverMoving()
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoveToPoint);
+                packet.Write(this.DestinationPosition.X);
+                packet.Write(this.DestinationPosition.Y);
+                packet.Write(this.DestinationPosition.Z);
+                packet.Write<byte>(1);
 
-            packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoveToPoint);
-            packet.Write(this.DestinationPosition.X);
-            packet.Write(this.DestinationPosition.Y);
-            packet.Write(this.DestinationPosition.Z);
-            packet.Write<byte>(1);
+                this.SendToVisible(packet);
+            }
+        }
 
-            this.SendToVisible(packet);
+        internal void SendMoverPosition()
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoverSetPosition);
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+
+                this.SendToVisible(packet);
+            }
         }
     }
 }

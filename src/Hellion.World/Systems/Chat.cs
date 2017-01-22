@@ -25,16 +25,24 @@ namespace Hellion.World.Systems
         {
             string[] chatCommandArray = chatMessage.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
+            Log.Debug("Recieved chat command: '{0}'", chatMessage);
+
             if (chatCommandArray.Length > 1)
             {
                 var chatCommand = chatCommandArray.First();
+                
+                this.NormalCommandChat(chatCommand, chatMessage);
 
-                if (this.IsNormalCommand(chatCommand))
-                    this.NormalCommandChat(chatCommand, chatMessage);
-                else if (this.IsGMCommand(chatCommand, chatCommandArray) && this.player.Authority >= 80)
-                    this.GMCommand(chatCommand, chatCommandArray);
-                else if (this.IsADMINCommand(chatCommand, chatCommandArray) && this.player.Authority >= 100)
-                    this.GMCommand(chatCommand, chatCommandArray);
+                if (this.player.Authority >= 80)
+                {
+                    if (!this.ExecuteGMCommand(chatCommand, chatCommandArray))
+                        Log.Error("Failed to execute command '{0}'.", chatCommand);
+                }
+                else if (this.player.Authority >= 100)
+                {
+                    if (!this.ExecuteAdminCommand(chatCommand, chatCommandArray))
+                        Log.Error("Failed to execute command '{0}'.", chatCommand);
+                }
             }
         }
 
@@ -45,20 +53,20 @@ namespace Hellion.World.Systems
         /// <param name="chatMessage"></param>
         private void NormalCommandChat(string chatMessageCommand, string chatMessage)
         {
-        }
-
-        /// <summary>
-        /// Executes a GM command.
-        /// </summary>
-        /// <param name="chatCommand"></param>
-        /// <param name="chatCommandArray"></param>
-        private void GMCommand(string chatCommand, string[] chatCommandArray)
-        {
-            switch (chatCommand)
+            switch (chatMessageCommand.ToLower())
             {
-                default:
-                    Log.Info("Unknow GM command '{0}'.", chatCommand);
+                case "/s":
+                case "/shout":
+                case "/w":
+                case "/whisper":
+                case "/p":
+                case "/party":
+                case "/g":
+                case "/guild":
+                case "/partyinvite":
+                case "/guildinvite":
                     break;
+
             }
         }
 
@@ -67,11 +75,12 @@ namespace Hellion.World.Systems
         /// </summary>
         /// <param name="chatCommand"></param>
         /// <param name="chatCommandArray"></param>
-        private bool IsGMCommand(string chatCommand, string[] chatCommandArray)
+        private bool ExecuteGMCommand(string chatCommand, string[] chatCommandArray)
         {
-            switch (chatCommand)
+            switch (chatCommand.ToLower())
             {
-                case "/teleport":
+                case "/teleport": return this.OnTeleportCommand(chatCommandArray);
+
                 case "/invisible":
                 case "/noinvisible":
                 case "/summon":
@@ -133,9 +142,9 @@ namespace Hellion.World.Systems
         /// <param name="chatCommand"></param>
         /// <param name="chatCommandArray"></param>
         /// <returns></returns>
-        private bool IsADMINCommand(string chatCommand, string[] chatCommandArray)
+        private bool ExecuteAdminCommand(string chatCommand, string[] chatCommandArray)
         {
-            switch (chatCommand)
+            switch (chatCommand.ToLower())
             {
                 case "/disguise":
                 case "/nodisguise":
@@ -146,14 +155,14 @@ namespace Hellion.World.Systems
                 case "/createitem2":
                 case "/QuestState":
                 case "/loadscript":
-                case "/ReloadConstant":
+                case "/reloadconstant":
                 case "/ctd":
-                case "/Piercing":
+                case "/piercing":
                 case "/petlevel":
                 case "/petexp":
                 case "/makepetfeed":
                 case "/Pet":
-                case "/Lua":
+                case "/lua":
                 case "/GC1TO1OPEN":
                 case "/GC1TO1CLOSE":
                 case "/GC1TO1NEXT":
@@ -299,29 +308,32 @@ namespace Hellion.World.Systems
             }
         }
 
-        /// <summary>
-        /// Check if the chat command is a regular command.
-        /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        private bool IsNormalCommand(string command)
+        private bool OnTeleportCommand(string[] chatCommandArray)
         {
-            switch (command)
+            Log.Info("OnTeleportCommand");
+
+            int mapId;
+            float posX;
+            float posZ;
+
+            if (!int.TryParse(chatCommandArray[1], out mapId) ||
+                !float.TryParse(chatCommandArray[2], out posX) || 
+                !float.TryParse(chatCommandArray[3], out posZ))
+                return false;
+            else
             {
-                case "/s":
-                case "/shout":
-                case "/w":
-                case "/whisper":
-                case "/p":
-                case "/party":
-                case "/g":
-                case "/guild":
-                case "/partyinvite":
-                case "/guildinvite":
-                    return true;
-                default: return false;
+                this.player.Position.X = posX;
+                this.player.Position.Z = posZ;
+
+                if (this.player.MapId != mapId)
+                {
+                    // TODO: change map
+                }
+                else
+                    this.player.SendMoverPosition();
             }
-            
+
+            return true;
         }
     }
 }
