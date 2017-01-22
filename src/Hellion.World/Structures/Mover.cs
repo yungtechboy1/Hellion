@@ -7,6 +7,7 @@ using Hellion.Core.Structures;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
 using Hellion.Core.Data.Headers;
+using Hellion.World.Systems;
 
 namespace Hellion.World.Structures
 {
@@ -71,6 +72,7 @@ namespace Hellion.World.Structures
             }
         }
 
+        // TODO: Move this packets to an other file.
 
         internal void SendMoverMoving()
         {
@@ -96,6 +98,20 @@ namespace Hellion.World.Structures
                 packet.Write(this.Position.Z);
 
                 this.SendToVisible(packet);
+            }
+        }
+
+        internal void SendNormalChat(string message, Player toPlayer = null)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoverChat);
+                packet.Write(message);
+
+                if (toPlayer == null)
+                    this.SendToVisible(packet);
+                else
+                    toPlayer.Send(packet);
             }
         }
     }

@@ -47,6 +47,11 @@ namespace Hellion.World.Structures
             return this.Position.IsInCircle(otherObject.Position, 75f);
         }
 
+        public IEnumerable<WorldObject> GetSpawnedObjectsAround(int range = 50)
+        {
+            return this.SpawnedObjects.Where(x => x.Position.IsInCircle(this.Position, range));
+        }
+
         public virtual void DespawnObject(WorldObject obj)
         {
             this.SpawnedObjects.Remove(obj);

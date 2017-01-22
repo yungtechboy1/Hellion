@@ -1,14 +1,21 @@
-﻿using Hellion.Core.Data.Resources;
+﻿using Hellion.Core;
+using Hellion.Core.Data.Resources;
+using Hellion.Core.IO;
 using Hellion.Core.Structures.Dialogs;
+using Hellion.World.Structures;
+using Hellion.World.Systems;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Hellion.World.Structures
+namespace Hellion.World.System
 {
     /// <summary>
     /// FlyFF NPC structure.
     /// </summary>
     public class Npc : Mover
     {
+        private long lastSpeakTime;
+
         /// <summary>
         /// Gets the NPC name.
         /// </summary>
@@ -42,11 +49,41 @@ namespace Hellion.World.Structures
         }
 
         /// <summary>
+        /// Creates a new NPC instance with a model id.
+        /// </summary>
+        /// <param name="modelId"></param>
+        public Npc(int modelId)
+            : base(modelId)
+        {
+        }
+
+        /// <summary>
         /// Update the NPC.
         /// </summary>
         public override void Update()
         {
+            this.SpeakOralText();
+
             base.Update();
+        }
+
+        private void SpeakOralText()
+        {
+            if (this.lastSpeakTime <= Time.TimeInSeconds())
+            {
+                if (this.Dialog != null && !string.IsNullOrEmpty(this.Dialog.OralText))
+                {
+                    var playersAround = this.GetSpawnedObjectsAround(60).Where(x => x is Player).Cast<Player>();
+
+                    foreach (var player in playersAround)
+                    {
+                        string oralText = this.Dialog.OralText.Replace("%PLAYERNAME%", player.Name);
+                        this.SendNormalChat(oralText, player);
+                    }
+                }
+
+                this.lastSpeakTime = Time.TimeInSeconds() + CRandom.LongRandom(10, 15);
+            }
         }
 
         /// <summary>
@@ -57,15 +94,14 @@ namespace Hellion.World.Structures
         /// <returns></returns>
         public static Npc CreateFromDyo(NpcDyoElement dyoElement, int mapId)
         {
-            var npc = new Npc();
+            var npc = new Npc(dyoElement.Index);
 
             npc.MapId = mapId;
-            npc.ModelId = dyoElement.Index;
+            npc.Name = dyoElement.Name;
             npc.Angle = dyoElement.Angle;
             npc.Position = dyoElement.Position.Clone();
             npc.DestinationPosition = dyoElement.Position.Clone();
             npc.Size = (short)(npc.Size * dyoElement.Scale.X);
-            npc.Name = dyoElement.Name;
 
             if (WorldServer.NPCData.ContainsKey(npc.Name))
                 npc.Data = WorldServer.NPCData[npc.Name];
