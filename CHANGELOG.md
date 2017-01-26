@@ -3,6 +3,7 @@
 ### Update #7 (27/01/2017)
 
 - Common
+  - Downgrade to .NET Core 1.0.3 LTS to avoid compatibility problems during releases.
   - Create `Hellion.Database` project to handle everyting realated witht the database.
 
 - World

@@ -29,6 +29,8 @@ namespace Hellion.World.Structures
         
         public int Level { get; }
 
+        public virtual string Name { get; set; }
+
         public Vector3 DestinationPosition { get; set; }
 
         public override WorldObjectType Type
@@ -101,7 +103,7 @@ namespace Hellion.World.Structures
             }
         }
 
-        internal void SendNormalChat(string message, Player toPlayer = null)
+        private void SendNormalChat(string message, Player toPlayer = null)
         {
             using (var packet = new FFPacket())
             {
@@ -113,6 +115,16 @@ namespace Hellion.World.Structures
                 else
                     toPlayer.Send(packet);
             }
+        }
+
+        internal void SendNormalChat(string message)
+        {
+            this.SendNormalChat(message, null);
+        }
+
+        internal void SendNormalChatTo(string message, Player player)
+        {
+            this.SendNormalChat(message, player);
         }
     }
 }

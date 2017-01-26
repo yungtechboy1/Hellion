@@ -6,7 +6,6 @@ using Hellion.Database;
 using Hellion.Database.Structures;
 using Hellion.World.Client;
 using Hellion.World.Structures;
-using Hellion.World.System;
 using System;
 
 namespace Hellion.World.Systems
@@ -14,7 +13,7 @@ namespace Hellion.World.Systems
     /// <summary>
     /// Represents a real player in the world.
     /// </summary>
-    public partial class Player : Mover
+    public sealed partial class Player : Mover
     {
         /// <summary>
         /// Gets the parent client instance.
@@ -30,11 +29,6 @@ namespace Hellion.World.Systems
         /// Gets the player's account Id.
         /// </summary>
         public int AccountId { get; set; }
-
-        /// <summary>
-        /// Gets the Player name.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// Gets the player's gender.
@@ -254,7 +248,7 @@ namespace Hellion.World.Systems
             if (worldObject is Player)
                 this.SendPlayerSpawn(worldObject as Player);
             if (worldObject is Npc)
-                this.SendNpcSpawn(worldObject as Npc);
+                (worldObject as Npc).SendSpawnTo(this);
             if (worldObject is Monster)
                 this.SendMonsterSpawn(worldObject as Monster);
 

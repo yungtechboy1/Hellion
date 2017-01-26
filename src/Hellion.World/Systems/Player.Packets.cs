@@ -1,7 +1,6 @@
 ﻿using Hellion.Core.Data.Headers;
 using Hellion.Core.Network;
 using Hellion.World.Structures;
-using Hellion.World.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -461,46 +460,6 @@ namespace Hellion.World.Systems
 
                 packet.Write(-1); // pet ?
                 packet.Write(0); // buffs ?
-
-                this.Send(packet);
-            }
-        }
-
-        internal void SendNpcSpawn(Npc npc)
-        {
-            using (var packet = new FFPacket())
-            {
-                packet.StartNewMergedPacket(npc.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
-
-                packet.Write((byte)npc.Type);
-                packet.Write(npc.ModelId);
-                packet.Write((byte)npc.Type);
-                packet.Write(npc.ModelId);
-                packet.Write(npc.Size);
-                packet.Write(npc.Position.X);
-                packet.Write(npc.Position.Y);
-                packet.Write(npc.Position.Z);
-                packet.Write((short)(npc.Angle * 10f));
-                packet.Write(npc.ObjectId);
-
-                packet.Write<short>(1);
-                packet.Write<byte>(0);
-                packet.Write(1); // can be selected
-                packet.Write(1);
-                packet.Write(0);
-                packet.Write<byte>(1);
-                packet.Write(-1);
-                packet.Write<byte>(0);//packet.Write((byte)npc.Data.HairId);
-                packet.Write(0);//packet.Write(npc.Data.HairColor);
-                packet.Write<byte>(0);//packet.Write((byte)npc.Data.FaceId);
-                packet.Write(npc.Name);
-                packet.Write<byte>(0); // item equiped count
-                packet.Write<byte>(0);
-                packet.Write<byte>(0);
-                packet.Write<byte>(0);
-                packet.Write(0);
-                packet.Write<float>(1);
-                packet.Write(0);
 
                 this.Send(packet);
             }

@@ -52,6 +52,11 @@ namespace Hellion.World.Structures
             return this.SpawnedObjects.Where(x => x.Position.IsInCircle(this.Position, range));
         }
 
+        public T GetSpawnedObjectById<T>(int objectId) where T : WorldObject
+        {
+            return this.SpawnedObjects.Where(x => x.ObjectId == objectId).Cast<T>().FirstOrDefault();
+        }
+
         public virtual void DespawnObject(WorldObject obj)
         {
             this.SpawnedObjects.Remove(obj);

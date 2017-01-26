@@ -3,23 +3,17 @@ using Hellion.Core.Data.Resources;
 using Hellion.Core.IO;
 using Hellion.Core.Structures.Dialogs;
 using Hellion.World.Structures;
-using Hellion.World.Systems;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Hellion.World.System
+namespace Hellion.World.Systems
 {
     /// <summary>
     /// FlyFF NPC structure.
     /// </summary>
-    public class Npc : Mover
+    public sealed partial class Npc : Mover
     {
         private long lastSpeakTime;
-
-        /// <summary>
-        /// Gets the NPC name.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the NPC data.
@@ -81,7 +75,7 @@ namespace Hellion.World.System
                     foreach (var player in playersAround)
                     {
                         string oralText = this.Dialog.OralText.Replace("%PLAYERNAME%", player.Name);
-                        this.SendNormalChat(oralText, player);
+                        this.SendNormalChatTo(oralText, player);
                     }
                 }
 
