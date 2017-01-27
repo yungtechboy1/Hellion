@@ -10,20 +10,20 @@ namespace Hellion.Login.Client
         /// Sends a login error to the client.
         /// </summary>
         /// <param name="code"></param>
-        private void SendLoginError(LoginHeaders.LoginErrors code)
+        private void SendLoginError(ErrorType code)
         {
-            this.SendLoginMessage((int)code);
+            this.SendLoginErrorMessage((int)code);
         }
 
         /// <summary>
         /// Sends a login message to the client with the specific code.
         /// </summary>
         /// <param name="code"></param>
-        private void SendLoginMessage(int code)
+        private void SendLoginErrorMessage(int code)
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(LoginHeaders.Outgoing.LoginMessage);
+                packet.WriteHeader(PacketType.ERROR);
                 packet.Write(code);
 
                 this.Send(packet);
@@ -37,7 +37,7 @@ namespace Hellion.Login.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(LoginHeaders.Outgoing.ServerList);
+                packet.WriteHeader(PacketType.SRVR_LIST);
                 packet.Write(0);
                 packet.Write<byte>(1);
                 packet.Write(this.username);
