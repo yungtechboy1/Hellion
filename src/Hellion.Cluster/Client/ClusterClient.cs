@@ -60,10 +60,10 @@ namespace Hellion.Cluster.Client
             packet.Position += 17;
 
             var packetHeaderNumber = packet.Read<uint>();
-            var packetHeader = (ClusterHeaders.Incoming)packetHeaderNumber;
+            var packetHeader = (PacketType)packetHeaderNumber;
 
             if (!FFPacketHandler.Invoke(this, packetHeader, packet))
-                FFPacket.UnknowPacket<ClusterHeaders.Incoming>(packetHeaderNumber, 2);
+                FFPacket.UnknowPacket<PacketType>(packetHeaderNumber, 2);
         }
 
         /// <summary>

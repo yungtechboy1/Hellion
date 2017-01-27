@@ -20,7 +20,7 @@ namespace Hellion.World.Client
         /// The client sended the Join request to join the world as a player.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(WorldHeaders.Incoming.Join)]
+        [FFIncomingPacket(PacketType.JOIN)]
         private void OnJoin(NetPacketBase packet)
         {
             var worldId = packet.Read<int>();
@@ -78,20 +78,36 @@ namespace Hellion.World.Client
         }
 
         /// <summary>
-        /// The client has send a request to move in the world.
+        /// The client has send a snapshot request.
+        /// Which means that this is a packet containing several packets.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(WorldHeaders.Incoming.MoveByMouse)]
-        private void OnMoveByMouse(NetPacketBase packet)
+        [FFIncomingPacket(PacketType.SNAPSHOT)]
+        private void OnSnapshot(NetPacketBase packet)
         {
-            packet.Position = 24;
-            var posX = packet.Read<float>();
-            var posY = packet.Read<float>();
-            var posZ = packet.Read<float>();
-            var forward = packet.Read<byte>();
+            var snapshotCount = packet.Read<byte>();
 
-            this.Player.DestinationPosition = new Vector3(posX, posY, posZ);
-            this.Player.SendMoverMoving();
+            while (snapshotCount != 0)
+            {
+                var snapshotHeaderNumber = packet.Read<ushort>();
+                var snapshotHeader = (SnapshotType)snapshotHeaderNumber;
+
+                switch (snapshotHeader)
+                {
+                    case SnapshotType.DESTPOS:
+                        var posX = packet.Read<float>();
+                        var posY = packet.Read<float>();
+                        var posZ = packet.Read<float>();
+                        var forward = packet.Read<byte>();
+
+                        this.Player.DestinationPosition = new Vector3(posX, posY, posZ);
+                        this.Player.Angle = Vector3.AngleBetween(this.Player.Position, this.Player.DestinationPosition);
+                        this.Player.SendMoverMoving();
+                        break;
+                };
+
+                snapshotCount--;
+            }
         }
 
         /// <summary>
