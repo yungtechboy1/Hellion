@@ -8,14 +8,16 @@
 
   "dependencies": {
     "Ether.Network": "1.1.7",
-    "Hellion.Core": "1.0.0-*"
+    "Hellion.Core": "1.0.0-*",
+    "Hellion.Database": "1.0.0-*"
   },
 
   "frameworks": {
-    "netcoreapp1.1": {
+    "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
-          "version": "1.1.0"
+          "type": "platform",
+          "version": "1.0.3"
         }
       },
       "imports": "dnxcore50"
@@ -24,6 +26,7 @@
 
   "runtimes": {
     "win10-x64": {},
+    "win7-x64": {},
     "osx.10.10-x64": {},
     "ubuntu.14.04-x64": {},
     "ubuntu.14.10-x64": {},

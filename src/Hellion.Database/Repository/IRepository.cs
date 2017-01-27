@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Hellion.Core.Database.Repository
+namespace Hellion.Database.Repository
 {
     public interface IRepository<T>
     {

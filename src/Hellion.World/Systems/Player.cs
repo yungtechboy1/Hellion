@@ -1,8 +1,9 @@
 ﻿using Ether.Network.Packets;
 using Hellion.Core.Data.Headers;
-using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Structures;
+using Hellion.Database;
+using Hellion.Database.Structures;
 using Hellion.World.Client;
 using Hellion.World.Structures;
 using System;
@@ -12,7 +13,7 @@ namespace Hellion.World.Systems
     /// <summary>
     /// Represents a real player in the world.
     /// </summary>
-    public partial class Player : Mover
+    public sealed partial class Player : Mover
     {
         /// <summary>
         /// Gets the parent client instance.
@@ -28,11 +29,6 @@ namespace Hellion.World.Systems
         /// Gets the player's account Id.
         /// </summary>
         public int AccountId { get; set; }
-
-        /// <summary>
-        /// Gets the Player name.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// Gets the player's gender.
@@ -232,8 +228,8 @@ namespace Hellion.World.Systems
                 dbCharacter.Slot = this.Slot;
                 dbCharacter.Stamina = this.Attributes[DefineAttributes.STA];
                 dbCharacter.Strength = this.Attributes[DefineAttributes.STR];
-                
-                // TODO: save inventory
+
+                this.Inventory.Save();
                 // TODO: save skills
                 // TODO: save quest states
 
@@ -252,7 +248,7 @@ namespace Hellion.World.Systems
             if (worldObject is Player)
                 this.SendPlayerSpawn(worldObject as Player);
             if (worldObject is Npc)
-                this.SendNpcSpawn(worldObject as Npc);
+                (worldObject as Npc).SendSpawnTo(this);
             if (worldObject is Monster)
                 this.SendMonsterSpawn(worldObject as Monster);
 

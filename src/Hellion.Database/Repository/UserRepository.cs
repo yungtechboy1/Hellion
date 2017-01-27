@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Hellion.Database.Structures;
+using Microsoft.EntityFrameworkCore;
 
-namespace Hellion.Core.Database.Repository
+namespace Hellion.Database.Repository
 {
     public class UserRepository : RepositoryBase<DbUser>
     {

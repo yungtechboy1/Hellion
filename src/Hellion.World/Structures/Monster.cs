@@ -15,6 +15,15 @@ namespace Hellion.World.Structures
         private Region region;
 
         /// <summary>
+        /// Gets the monster name.
+        /// </summary>
+        public override string Name
+        {
+            get { return this.Data.Name; }
+            set {  }
+        }
+
+        /// <summary>
         /// Gets the monster's attributes.
         /// </summary>
         public Attributes Attributes { get; private set; }

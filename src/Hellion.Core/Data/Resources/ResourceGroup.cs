@@ -130,39 +130,29 @@ namespace Hellion.Data
         /// <param name="group"></param>
         private void Replace(Group group)
         {
-            for (Int32 i = 0; i < group.Content.Count; ++i)
+            for (int i = 0; i < group.Content.Count; ++i)
             {
-                if (this.defines.ContainsKey(group.Content[i]) == true)
-                {
+                if (this.defines.ContainsKey(group.Content[i]))
                     group.Content[i] = this.defines[group.Content[i]].ToString();
-                }
-                else if (this.texts.ContainsKey(group.Content[i]) == true)
-                {
+                else if (this.texts.ContainsKey(group.Content[i]))
                     group.Content[i] = this.texts[group.Content[i]].ToString();
-                }
             }
-            if (this.defines.ContainsKey(group.Name) == true)
-            {
+
+            if (this.defines.ContainsKey(group.Name))
                 group.Name = this.defines[group.Name].ToString();
-            }
-            else if (this.texts.ContainsKey(group.Name) == true)
-            {
+            else if (this.texts.ContainsKey(group.Name))
                 group.Name = this.texts[group.Name].ToString();
-            }
+
             foreach (var kvalue in this.defines)
             {
-                for (Int32 j = 0; j < group.Content.Count; ++j)
+                for (int j = 0; j < group.Content.Count; ++j)
                 {
-                    if (group.Content[j].Contains(kvalue.Key) == true)
-                    {
+                    if (group.Content[j].Contains(kvalue.Key))
                         group.Content[j] = group.Content[j].Replace(kvalue.Key, kvalue.Value.ToString());
-                    }
                 }
             }
             foreach (Group groupChild in group.Groups)
-            {
                 this.Replace(groupChild);
-            }
         }
     }
 
@@ -217,58 +207,56 @@ namespace Hellion.Data
         /// </summary>
         internal void Parse()
         {
-            for (Int32 i = 1; i < this.Content.Count - 1; ++i)
+            for (int i = 1; i < this.Content.Count - 1; ++i)
             {
                 if (this.Content[i + 1] != null && this.Content[i + 1].StartsWith("{") == true)
                 {
-                    Int32 _block = 0;
-                    Group _group = new Group(this.Content[i]);
+                    int block = 0;
+                    var group = new Group(this.Content[i]);
                     ++i;
 
                     while (true)
                     {
-                        if (this.Content[i].StartsWith("{") == true)
+                        if (this.Content[i].StartsWith("{"))
+                            ++block;
+                        else if (this.Content[i].StartsWith("}"))
                         {
-                            ++_block;
-                        }
-                        else if (this.Content[i].StartsWith("}") == true)
-                        {
-                            --_block;
-                            if (_block == 0)
-                            {
+                            --block;
+                            if (block == 0)
                                 break; // we return to main block
-                            }
                         }
-                        _group.Content.Add(this.Content[i]);
+                        group.Content.Add(this.Content[i]);
                         ++i;
                     }
-                    _group.Parse();
-                    this.Groups.Add(_group);
+
+                    group.Parse();
+                    this.Groups.Add(group);
                 }
-                else if (this.Content[i + 1] != null && this.Content[i + 1].StartsWith("(") == true)
+                else if (this.Content[i + 1] != null && this.Content[i + 1].StartsWith("("))
                 {
-                    Int32 _block = 0;
-                    Group _group = new Group(this.Content[i]);
+                    int block = 0;
+                    var group = new Group(this.Content[i]);
                     ++i;
 
                     while (true)
                     {
-                        if (this.Content[i].StartsWith("(") == true)
+                        if (this.Content[i].StartsWith("("))
                         {
-                            ++_block;
+                            ++block;
                             ++i;
                         }
-                        else if (this.Content[i].StartsWith(")") == true)
+                        else if (this.Content[i].StartsWith(")"))
                         {
-                            --_block;
-                            if (_block == 0)
+                            --block;
+                            if (block == 0)
                                 break; // we return to main block
                         }
-                        _group.Content.Add(this.Content[i]);
+                        group.Content.Add(this.Content[i]);
                         ++i;
                     }
-                    _group.Parse();
-                    this.Groups.Add(_group);
+
+                    group.Parse();
+                    this.Groups.Add(group);
                 }
             }
         }

@@ -2,9 +2,9 @@
 using Ether.Network.Packets;
 using Hellion.Core;
 using Hellion.Core.Data.Headers;
-using Hellion.Core.Database;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
+using Hellion.Database.Structures;
 using Hellion.World.Systems;
 using System.Net.Sockets;
 

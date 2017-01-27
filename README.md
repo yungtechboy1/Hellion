@@ -11,7 +11,7 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
 ## Details
 
 - Language: `C#`
-- Framework target : `.NET Core 1.0`
+- Framework target : `.NET Core 1.0.3`
 - Application type: `Console`
 - Database type : `MySQL`
 - Configuration files type: `JSON`
@@ -41,6 +41,7 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
     - Player attributes
     - NPC
       - Visibility
+      - Dialogs
     - Inventory
       - Move / Equip / Unequip
     - Monsters

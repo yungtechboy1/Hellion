@@ -392,6 +392,8 @@ namespace Hellion.Core.Data.Headers
             WorldInformation = 0x00009910,
 
             AnnounceNotice = 0x00FF00EA,
+
+            SNAPSHOTTYPE_RUNSCRIPTFUNC = 0x0024
         }
     }
 }

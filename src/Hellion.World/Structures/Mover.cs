@@ -7,6 +7,7 @@ using Hellion.Core.Structures;
 using Hellion.Core.IO;
 using Hellion.Core.Network;
 using Hellion.Core.Data.Headers;
+using Hellion.World.Systems;
 
 namespace Hellion.World.Structures
 {
@@ -27,6 +28,8 @@ namespace Hellion.World.Structures
         public float Speed { get; set; }
         
         public int Level { get; }
+
+        public virtual string Name { get; set; }
 
         public Vector3 DestinationPosition { get; set; }
 
@@ -71,18 +74,57 @@ namespace Hellion.World.Structures
             }
         }
 
+        // TODO: Move this packets to an other file.
 
         internal void SendMoverMoving()
         {
-            var packet = new FFPacket();
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoveToPoint);
+                packet.Write(this.DestinationPosition.X);
+                packet.Write(this.DestinationPosition.Y);
+                packet.Write(this.DestinationPosition.Z);
+                packet.Write<byte>(1);
 
-            packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoveToPoint);
-            packet.Write(this.DestinationPosition.X);
-            packet.Write(this.DestinationPosition.Y);
-            packet.Write(this.DestinationPosition.Z);
-            packet.Write<byte>(1);
+                this.SendToVisible(packet);
+            }
+        }
 
-            this.SendToVisible(packet);
+        internal void SendMoverPosition()
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoverSetPosition);
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+
+                this.SendToVisible(packet);
+            }
+        }
+
+        private void SendNormalChat(string message, Player toPlayer = null)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoverChat);
+                packet.Write(message);
+
+                if (toPlayer == null)
+                    this.SendToVisible(packet);
+                else
+                    toPlayer.Send(packet);
+            }
+        }
+
+        internal void SendNormalChat(string message)
+        {
+            this.SendNormalChat(message, null);
+        }
+
+        internal void SendNormalChatTo(string message, Player player)
+        {
+            this.SendNormalChat(message, player);
         }
     }
 }

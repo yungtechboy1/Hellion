@@ -1,8 +1,9 @@
-﻿using Hellion.Core.Database.Repository;
+﻿using Hellion.Database.Exceptions;
+using Hellion.Database.Repository;
+using Hellion.Database.Structures;
 using Microsoft.EntityFrameworkCore;
-using System;
 
-namespace Hellion.Core.Database
+namespace Hellion.Database
 {
     public static class DatabaseService
     {
@@ -19,7 +20,7 @@ namespace Hellion.Core.Database
             get
             {
                 if (dbContext == null)
-                    throw new InvalidOperationException("Database service has not been initialized. Please call the DatabaseService.InitializeDatabase method.");
+                    throw new DatabaseNotInitializedException();
 
                 if (userRepository == null)
                     userRepository = new UserRepository(dbContext);
@@ -36,7 +37,7 @@ namespace Hellion.Core.Database
             get
             {
                 if (dbContext == null)
-                    throw new InvalidOperationException("Database service has not been initialized. Please call the DatabaseService.InitializeDatabase method.");
+                    throw new DatabaseNotInitializedException();
 
                 if (characterRepository == null)
                     characterRepository = new CharacterRepository(dbContext);
@@ -53,7 +54,7 @@ namespace Hellion.Core.Database
             get
             {
                 if (dbContext == null)
-                    throw new InvalidOperationException("Database service has not been initialized. Please call the DatabaseService.InitializeDatabase method.");
+                    throw new DatabaseNotInitializedException();
 
                 if (itemRepository == null)
                     itemRepository = new ItemRepository(dbContext);

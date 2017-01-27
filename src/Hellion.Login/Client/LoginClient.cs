@@ -50,7 +50,7 @@ namespace Hellion.Login.Client
         {
             var packet = new FFPacket();
 
-            packet.WriteHeader(LoginHeaders.Outgoing.Welcome);
+            packet.WriteHeader(PacketType.WELCOME);
             packet.Write(this.sessionId);
 
             this.Send(packet);
@@ -64,11 +64,11 @@ namespace Hellion.Login.Client
         {
             packet.Position += 13;
             var packetHeaderNumber = packet.Read<uint>();
-            var packetHeader = (LoginHeaders.Incoming)packetHeaderNumber;
+            var packetHeader = (PacketType)packetHeaderNumber;
             var pak = packet as FFPacket;
 
             if (!FFPacketHandler.Invoke(this, packetHeader, packet))
-                FFPacket.UnknowPacket<LoginHeaders.Incoming>(packetHeaderNumber, 2);
+                FFPacket.UnknowPacket<PacketType>(packetHeaderNumber, 2);
         }
 
         /// <summary>
