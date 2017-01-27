@@ -9,6 +9,7 @@
 - World
   - Npc data loading
   - Npc oral dialog
+  - Npc dialog box
   - Teleport command
 
 ### Update #6 (13/01/2017)

@@ -69,7 +69,7 @@ namespace Hellion.World.Systems
                 packet.StartNewMergedPacket(player.ObjectId, WorldHeaders.Outgoing.SNAPSHOTTYPE_RUNSCRIPTFUNC);
                 packet.Write((short)DialogOptions.FUNCTYPE_SAY);
                 packet.Write(dialogText);
-                packet.Write(0);
+                packet.Write(0); // quest id
 
                 foreach (var link in this.Dialog.Links)
                 {

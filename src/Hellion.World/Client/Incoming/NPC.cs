@@ -19,20 +19,11 @@ namespace Hellion.World.Client
             var dialogKey = packet.Read<string>();
             var global1 = packet.Read<int>();
             var global2 = packet.Read<int>();
-            var global3 = packet.Read<int>();
-            var global4 = packet.Read<int>();
-
-            Log.Debug("Obj: {0} ; Name: {1} ; g1: {2} ; g2: {3} ; srcId: {4} ; destId: {5}", 
-                objectId, 
-                dialogKey, 
-                global1, 
-                global2, 
-                global3, 
-                global4);
-
+            var srcId = packet.Read<int>();
+            var destId = packet.Read<int>();
             var npc = this.Player.GetSpawnedObjectById<Npc>(objectId);
 
-            if (npc != null)
+            if (npc != null && npc.Dialog != null)
             {
                 if (dialogKey == "BYE")
                 {
