@@ -26,6 +26,12 @@ namespace Hellion.World.Structures
         public bool IsReseting { get; set; }
 
         public float Speed { get; set; }
+
+        public uint MovingFlags { get; set; }
+
+        public int MotionFlags { get; set; }
+
+        public int ActionFlags { get; set; }
         
         public int Level { get; }
 
@@ -80,7 +86,7 @@ namespace Hellion.World.Structures
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoveToPoint);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.DESTPOS);
                 packet.Write(this.DestinationPosition.X);
                 packet.Write(this.DestinationPosition.Y);
                 packet.Write(this.DestinationPosition.Z);
@@ -94,7 +100,7 @@ namespace Hellion.World.Structures
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoverSetPosition);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.SETPOS);
                 packet.Write(this.Position.X);
                 packet.Write(this.Position.Y);
                 packet.Write(this.Position.Z);
@@ -107,7 +113,7 @@ namespace Hellion.World.Structures
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.MoverChat);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.CHAT);
                 packet.Write(message);
 
                 if (toPlayer == null)

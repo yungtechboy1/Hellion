@@ -104,6 +104,7 @@ namespace Hellion.World.Client
                         this.Player.Angle = Vector3.AngleBetween(this.Player.Position, this.Player.DestinationPosition);
                         this.Player.SendMoverMoving();
                         break;
+                    default: Log.Warning("Unknow snapshot: 0x{0}", snapshotHeaderNumber.ToString("X8")); break;
                 };
 
                 snapshotCount--;
@@ -114,9 +115,39 @@ namespace Hellion.World.Client
         /// The client is moving with the keyboard.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(WorldHeaders.Incoming.MoveByKeyboard)]
+        [FFIncomingPacket(PacketType.PLAYERMOVED)]
         private void OnMoveByKeyboard(NetPacketBase packet)
         {
+            var startPositionX = packet.Read<float>();
+            var startPositionY = packet.Read<float>();
+            var startPositionZ = packet.Read<float>();
+
+            this.Player.Position = new Vector3(startPositionX, startPositionY, startPositionZ);
+
+            var directionX = packet.Read<float>();
+            var directionY = packet.Read<float>();
+            var directionZ = packet.Read<float>();
+
+            var directionVector = new Vector3(directionX, directionY, directionZ);
+
+            this.Player.Position += directionVector;
+            this.Player.Angle = packet.Read<float>();
+
+            this.Player.MovingFlags = packet.Read<uint>();
+            this.Player.MotionFlags = packet.Read<int>();
+            this.Player.ActionFlags = packet.Read<int>();
+            var motionEx = packet.Read<int>();
+
+            var loop = packet.Read<int>();
+            var motionOption = packet.Read<int>();
+
+            var tick = packet.Read<long>();
+
+            int delay = (int)((Time.GetTickFrom(tick) / 10000) / 66.6667f);
+
+            // TODO: Checks
+
+            //this.Player.SendMoveByKeyboard(directionVector, motionEx, loop, motionOption, tick);
         }
     }
 }

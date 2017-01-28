@@ -1,18 +1,13 @@
 ﻿using Hellion.Core.Data.Headers;
-using Hellion.Core.IO;
 using Hellion.Core.Network;
-using Hellion.World.Structures;
 using Hellion.World.Systems;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Hellion.World.Client
 {
     public partial class WorldClient
     {
-        [FFIncomingPacket(WorldHeaders.Incoming.NPCInteraction)]
+        [FFIncomingPacket(PacketType.SCRIPTDLG)]
         public void OnNPCInteraction(FFPacket packet)
         {
             var objectId = packet.Read<int>();

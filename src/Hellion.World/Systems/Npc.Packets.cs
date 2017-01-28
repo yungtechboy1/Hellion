@@ -13,7 +13,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.ADD_OBJ);
 
                 packet.Write((byte)this.Type);
                 packet.Write(this.ModelId);
@@ -53,7 +53,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(player.ObjectId, WorldHeaders.Outgoing.SNAPSHOTTYPE_RUNSCRIPTFUNC);
+                packet.StartNewMergedPacket(player.ObjectId, SnapshotType.RUNSCRIPTFUNC);
                 packet.Write((short)DialogOptions.FUNCTYPE_REMOVEALLKEY);
 
                 string dialogText = "";
@@ -66,14 +66,14 @@ namespace Hellion.World.Systems
                     dialogText = link?.Text;
                 }
 
-                packet.StartNewMergedPacket(player.ObjectId, WorldHeaders.Outgoing.SNAPSHOTTYPE_RUNSCRIPTFUNC);
+                packet.StartNewMergedPacket(player.ObjectId, SnapshotType.RUNSCRIPTFUNC);
                 packet.Write((short)DialogOptions.FUNCTYPE_SAY);
                 packet.Write(dialogText);
                 packet.Write(0); // quest id
 
                 foreach (var link in this.Dialog.Links)
                 {
-                    packet.StartNewMergedPacket(player.ObjectId, WorldHeaders.Outgoing.SNAPSHOTTYPE_RUNSCRIPTFUNC);
+                    packet.StartNewMergedPacket(player.ObjectId, SnapshotType.RUNSCRIPTFUNC);
                     packet.Write((short)DialogOptions.FUNCTYPE_ADDKEY);
                     packet.Write(link.Title);
                     packet.Write(link.Id);
@@ -88,7 +88,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(player.ObjectId, WorldHeaders.Outgoing.SNAPSHOTTYPE_RUNSCRIPTFUNC);
+                packet.StartNewMergedPacket(player.ObjectId, SnapshotType.RUNSCRIPTFUNC);
                 packet.Write((short)DialogOptions.FUNCTYPE_EXIT);
 
                 player.Send(packet);
