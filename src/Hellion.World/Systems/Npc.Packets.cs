@@ -42,7 +42,7 @@ namespace Hellion.World.Systems
                 packet.Write<byte>(0);
                 packet.Write<byte>(0);
                 packet.Write(0);
-                packet.Write<float>(1);
+                packet.Write<float>(1); // speed factor
                 packet.Write(0);
 
                 player.Send(packet);

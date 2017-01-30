@@ -92,6 +92,8 @@ namespace Hellion.World.Client
                 var snapshotHeaderNumber = packet.Read<ushort>();
                 var snapshotHeader = (SnapshotType)snapshotHeaderNumber;
 
+                Log.Debug("Recieve snapshot: {0}", snapshotHeader);
+
                 switch (snapshotHeader)
                 {
                     case SnapshotType.DESTPOS:
@@ -100,11 +102,13 @@ namespace Hellion.World.Client
                         var posZ = packet.Read<float>();
                         var forward = packet.Read<byte>();
 
+                        this.Player.MovingFlags = ObjectState.OBJSTA_NONE;
+                        this.Player.MovingFlags |= ObjectState.OBJSTA_FMOVE;
                         this.Player.DestinationPosition = new Vector3(posX, posY, posZ);
                         this.Player.Angle = Vector3.AngleBetween(this.Player.Position, this.Player.DestinationPosition);
                         this.Player.SendMoverMoving();
                         break;
-                    default: Log.Warning("Unknow snapshot: 0x{0}", snapshotHeaderNumber.ToString("X8")); break;
+                    default: FFPacket.UnknowPacket<SnapshotType>(snapshotHeaderNumber, 4); break;
                 };
 
                 snapshotCount--;
@@ -133,8 +137,8 @@ namespace Hellion.World.Client
             this.Player.Position += directionVector;
             this.Player.Angle = packet.Read<float>();
 
-            this.Player.MovingFlags = packet.Read<uint>();
-            this.Player.MotionFlags = packet.Read<int>();
+            this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
+            this.Player.MotionFlags = (StateFlags)packet.Read<int>();
             this.Player.ActionFlags = packet.Read<int>();
             var motionEx = packet.Read<int>();
 

@@ -1,5 +1,6 @@
 ﻿using Hellion.Core;
 using Hellion.Core.Data.Headers;
+using Hellion.Core.Helpers;
 using Hellion.Core.IO;
 using Hellion.Core.Structures;
 using System;
@@ -71,7 +72,7 @@ namespace Hellion.World.Structures
 
             this.Position = this.region.GetRandomPosition();
             this.DestinationPosition = this.Position.Clone();
-            this.Angle = CRandom.Random(0, 360);
+            this.Angle = RandomHelper.Random(0, 360);
             this.moveTimer = Time.TimeInSeconds();
         }
 
@@ -92,9 +93,12 @@ namespace Hellion.World.Structures
         {
             if (this.moveTimer <= Time.TimeInSeconds())
             {
-                this.moveTimer = Time.TimeInSeconds() + CRandom.Random(15, 30);
+                this.moveTimer = Time.TimeInSeconds() + RandomHelper.Random(15, 30);
                 this.DestinationPosition = this.region.GetRandomPosition();
                 this.Angle = Vector3.AngleBetween(this.Position, this.DestinationPosition);
+
+                this.MovingFlags = ObjectState.OBJSTA_NONE;
+                this.MovingFlags |= ObjectState.OBJSTA_FMOVE;
                 this.SendMoverMoving();
             }
         }

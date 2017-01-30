@@ -39,6 +39,14 @@ namespace Hellion.Core.Structures
         }
 
         /// <summary>
+        /// Gets the vector length.
+        /// </summary>
+        public float Length
+        {
+            get { return (float)(Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z)); }
+        }
+
+        /// <summary>
         /// Creates a new Vector3 initialized to 0.
         /// </summary>
         public Vector3()
@@ -104,6 +112,16 @@ namespace Hellion.Core.Structures
             float zDistance = this.Z - otherPosition.Z;
 
             return (xDistance * xDistance + zDistance * zDistance) <= circleRadius * circleRadius;
+        }
+
+        public bool IsInSphere(Vector3 otherPosition, float circleRadius)
+        {
+            var dist = new Vector3(
+                x - otherPosition.x,
+                y - otherPosition.y,
+                z - otherPosition.z);
+
+            return (dist.x * dist.x + dist.y * dist.y + dist.z * dist.z) <= circleRadius * circleRadius;
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using Hellion.Core;
 using Hellion.Core.Data.Resources;
+using Hellion.Core.Helpers;
 using Hellion.Core.IO;
 using Hellion.Core.Structures.Dialogs;
 using Hellion.World.Structures;
@@ -79,7 +80,7 @@ namespace Hellion.World.Systems
                     }
                 }
 
-                this.lastSpeakTime = Time.TimeInSeconds() + CRandom.LongRandom(10, 15);
+                this.lastSpeakTime = Time.TimeInSeconds() + RandomHelper.LongRandom(10, 15);
             }
         }
 

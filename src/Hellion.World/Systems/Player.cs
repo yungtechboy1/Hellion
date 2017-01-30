@@ -228,6 +228,7 @@ namespace Hellion.World.Systems
                 dbCharacter.Slot = this.Slot;
                 dbCharacter.Stamina = this.Attributes[DefineAttributes.STA];
                 dbCharacter.Strength = this.Attributes[DefineAttributes.STR];
+                this.Speed = 1f;
 
                 this.Inventory.Save();
                 // TODO: save skills
