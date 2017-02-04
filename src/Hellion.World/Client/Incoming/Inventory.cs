@@ -11,7 +11,7 @@ namespace Hellion.World.Client
 {
     public partial class WorldClient
     {
-        [FFIncomingPacket(WorldHeaders.Incoming.ItemMoveInIntentory)]
+        [FFIncomingPacket(PacketType.MOVEITEM)]
         private void OnItemMoveInInventory(NetPacketBase packet)
         {
             var itemType = packet.Read<byte>();
@@ -21,7 +21,7 @@ namespace Hellion.World.Client
             this.Player.Inventory.Move(sourceSlot, destSlot);
         }
 
-        [FFIncomingPacket(WorldHeaders.Incoming.ItemUnequip)]
+        [FFIncomingPacket(PacketType.DOEQUIP)]
         private void OnItemUnequip(NetPacketBase packet)
         {
             var itemUniqueId = packet.Read<int>();
@@ -33,7 +33,7 @@ namespace Hellion.World.Client
             this.Player.Inventory.Unequip(item);
         }
 
-        [FFIncomingPacket(WorldHeaders.Incoming.ItemUsage)]
+        [FFIncomingPacket(PacketType.DOUSEITEM)]
         private void OnItemUsage(NetPacketBase packet)
         {
             var itemUniqueId = (packet.Read<int>() >> 16) & 0xFFFF;

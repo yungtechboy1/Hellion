@@ -20,7 +20,7 @@ namespace Hellion.World.Client
         /// The client sended the Join request to join the world as a player.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(WorldHeaders.Incoming.Join)]
+        [FFIncomingPacket(PacketType.JOIN)]
         private void OnJoin(NetPacketBase packet)
         {
             var worldId = packet.Read<int>();
@@ -78,18 +78,46 @@ namespace Hellion.World.Client
         }
 
         /// <summary>
-        /// The client has send a request to move in the world.
+        /// The client has send a snapshot request.
+        /// Which means that this is a packet containing more than one packet.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(WorldHeaders.Incoming.MoveByMouse)]
-        private void OnMoveByMouse(NetPacketBase packet)
+        [FFIncomingPacket(PacketType.SNAPSHOT)]
+        private void OnSnapshot(NetPacketBase packet)
         {
-            packet.Position = 24;
+            var snapshotCount = packet.Read<byte>();
+
+            while (snapshotCount != 0)
+            {
+                var snapshotHeaderNumber = packet.Read<short>();
+                var snapshotHeader = (SnapshotType)snapshotHeaderNumber;
+
+                Log.Debug("Recieve snapshot: {0}", snapshotHeader);
+
+                switch (snapshotHeader)
+                {
+                    case SnapshotType.DESTPOS: this.OnSnapshotDestPos(packet); break;
+                    default: FFPacket.UnknowPacket<SnapshotType>((uint)snapshotHeaderNumber, 4); break;
+                };
+
+                snapshotCount--;
+            }
+        }
+
+        /// <summary>
+        /// Process the player moves.
+        /// </summary>
+        /// <param name="packet"></param>
+        private void OnSnapshotDestPos(NetPacketBase packet)
+        {
             var posX = packet.Read<float>();
             var posY = packet.Read<float>();
             var posZ = packet.Read<float>();
             var forward = packet.Read<byte>();
 
+            this.Player.IsMovingWithKeyboard = false;
+            this.Player.MovingFlags = ObjectState.OBJSTA_NONE;
+            this.Player.MovingFlags |= ObjectState.OBJSTA_FMOVE;
             this.Player.DestinationPosition = new Vector3(posX, posY, posZ);
             this.Player.SendMoverMoving();
         }
@@ -98,9 +126,76 @@ namespace Hellion.World.Client
         /// The client is moving with the keyboard.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(WorldHeaders.Incoming.MoveByKeyboard)]
+        [FFIncomingPacket(PacketType.PLAYERMOVED)]
         private void OnMoveByKeyboard(NetPacketBase packet)
         {
+            var startPositionX = packet.Read<float>();
+            var startPositionY = packet.Read<float>();
+            var startPositionZ = packet.Read<float>();
+            var startPosition = new Vector3(startPositionX, startPositionY, startPositionZ);
+
+            var directionX = packet.Read<float>();
+            var directionY = packet.Read<float>();
+            var directionZ = packet.Read<float>();
+            var directionVector = new Vector3(directionX, directionY, directionZ);
+            
+            this.Player.Position = startPosition.Clone();
+            this.Player.Position += directionVector;
+            this.Player.Angle = packet.Read<float>();
+            this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
+            this.Player.MotionFlags = (StateFlags)packet.Read<int>();
+            this.Player.ActionFlags = packet.Read<int>();
+            var motionEx = packet.Read<int>();
+            var loop = packet.Read<int>();
+            var motionOption = packet.Read<int>();
+            var tick = packet.Read<long>();
+            
+            this.Player.DestinationPosition.Reset();
+            
+            if (this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE) || 
+                this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_BMOVE))
+                this.Player.IsMovingWithKeyboard = true;
+            else
+                this.Player.IsMovingWithKeyboard = false;
+
+            this.Player.DestinationPosition = this.Player.Position.Clone();
+            
+            this.Player.SendMoveByKeyboard(directionVector, motionEx, loop, motionOption, tick);
+        }
+
+        /// <summary>
+        /// This client has send a behavior request.
+        /// </summary>
+        /// <param name="packet"></param>
+        [FFIncomingPacket(PacketType.PLAYERBEHAVIOR)]
+        private void OnPlayerBehavior(NetPacketBase packet)
+        {
+            var startPositionX = packet.Read<float>();
+            var startPositionY = packet.Read<float>();
+            var startPositionZ = packet.Read<float>();
+            var startPosition = new Vector3(startPositionX, startPositionY, startPositionZ);
+
+            var directionX = packet.Read<float>();
+            var directionY = packet.Read<float>();
+            var directionZ = packet.Read<float>();
+            var directionVector = new Vector3(directionX, directionY, directionZ);
+
+            var angle = packet.Read<float>();
+            this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
+            this.Player.MotionFlags = (StateFlags)packet.Read<int>();
+            this.Player.ActionFlags = packet.Read<int>();
+            var motionEx = packet.Read<int>();
+            var loop = packet.Read<int>();
+            var motionOption = packet.Read<int>();
+            var tick = packet.Read<long>();
+
+            this.Player.Position = startPosition.Clone();
+            this.Player.Position += directionVector;
+            this.Player.DestinationPosition.Reset();
+
+            this.Player.IsMovingWithKeyboard = this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE);
+
+            this.Player.SendMoverBehavior(directionVector, motionEx, loop, motionOption, tick);
         }
     }
 }

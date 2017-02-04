@@ -1,12 +1,9 @@
 ﻿using Hellion.Core.IO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Hellion.Core
+namespace Hellion.Core.Helpers
 {
-    public static class CRandom
+    public class RandomHelper
     {
         /// <summary>
         /// Do a random between integers

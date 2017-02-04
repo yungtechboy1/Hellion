@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hellion.Core.Helpers;
+using System;
 
 namespace Hellion.Core.Structures
 {
@@ -36,6 +37,14 @@ namespace Hellion.Core.Structures
         {
             get { return this.z; }
             set { this.z = value; }
+        }
+
+        /// <summary>
+        /// Gets the vector length.
+        /// </summary>
+        public float Length
+        {
+            get { return (float)(Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z)); }
         }
 
         /// <summary>
@@ -106,6 +115,16 @@ namespace Hellion.Core.Structures
             return (xDistance * xDistance + zDistance * zDistance) <= circleRadius * circleRadius;
         }
 
+        public bool IsInSphere(Vector3 otherPosition, float circleRadius)
+        {
+            var dist = new Vector3(
+                x - otherPosition.x,
+                y - otherPosition.y,
+                z - otherPosition.z);
+
+            return (dist.x * dist.x + dist.y * dist.y + dist.z * dist.z) <= circleRadius * circleRadius;
+        }
+
         /// <summary>
         /// Clones this Vector3 instance.
         /// </summary>
@@ -113,6 +132,18 @@ namespace Hellion.Core.Structures
         public Vector3 Clone()
         {
             return new Vector3(this.X, this.Y, this.Z);
+        }
+
+        public void Reset()
+        {
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+        }
+
+        public bool IsZero()
+        {
+            return this.x == 0 && this.y == 0 && this.z == 0;
         }
 
         /// <summary>
@@ -183,6 +214,28 @@ namespace Hellion.Core.Structures
         }
 
         /// <summary>
+        /// Compares two Vector3.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static bool operator ==(Vector3 a, Vector3 b)
+        {
+            return Math.Ceiling(a.X - b.X) < 0.01 && Math.Ceiling(a.Y - b.Y) < 0.01 && Math.Ceiling(a.Z - b.Z) < 0.01;
+        }
+
+        /// <summary>
+        /// Compares two Vector3.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static bool operator !=(Vector3 a, Vector3 b)
+        {
+            return !(a == b);
+        }
+
+        /// <summary>
         /// Get the angle between two vectors.
         /// </summary>
         /// <param name="a"></param>
@@ -190,23 +243,40 @@ namespace Hellion.Core.Structures
         /// <returns></returns>
         public static float AngleBetween(Vector3 a, Vector3 b)
         {
-            float deltaX = a.x - b.x;
-            float deltaZ = a.z - b.z;
+            var distDelta = b - a;
+            distDelta.Y = 0;
 
-            float angle = (float)((Math.Atan2(deltaZ, deltaX) * 180 / Math.PI) + 90D);
+            float angle = MathHelper.ToDegree((float)Math.Atan2(distDelta.X, -distDelta.Z));
+            float length = distDelta.Length;
 
+            //float fAngXZ = ToDegree((float)Math.Atan2(vDist.fPosX, -vDist.fPosZ));		// ¿ì¼± XZÆò¸éÀÇ °¢µµ¸¦ ¸ÕÀú ±¸ÇÔ
+            //float fLenXZ = D3DXVec3Length(vDistXZ);						// yÁÂÇ¥¸¦ ¹«½ÃÇÑ XZÆò¸é¿¡¼­ÀÇ ±æÀÌ¸¦ ±¸ÇÔ.
+            //float fAngH = ToDegree((float)Math.Atan2(fLenXZ, vDist.fPosY));     // XZÆò¸éÀÇ ±æÀÌ¿Í y³ôÀÌ°£ÀÇ °¢µµ¸¦ ±¸ÇÔ.
+            
             if (angle < 0)
                 angle += 360;
-            
-            if (a.X >= b.X)
-                angle += 180;
-            else
-                angle -= 180;
-
-            if (angle >= 360)
+            else if (angle >= 360)
                 angle -= 360;
 
             return angle;
+
+            //float deltaX = a.x - b.x;
+            //float deltaZ = a.z - b.z;
+
+            //float angle = (float)((Math.Atan2(deltaZ, deltaX) * 180 / Math.PI) + 90D);
+
+            //if (angle < 0)
+            //    angle += 360;
+
+            //if (a.X >= b.X)
+            //    angle += 180;
+            //else
+            //    angle -= 180;
+
+            //if (angle >= 360)
+            //    angle -= 360;
+
+            //return angle;
         }
     }
 }

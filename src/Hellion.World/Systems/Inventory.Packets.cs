@@ -10,7 +10,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.ItemMoveInInventory);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVEITEM);
                 packet.Write<byte>(0);
                 packet.Write(sourceSlot);
                 packet.Write(destinationSlot);
@@ -23,7 +23,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.ItemChangeEquipState);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.DOEQUIP);
                 packet.Write(item.UniqueId);
                 packet.Write<byte>(0);
                 packet.Write(equip ? (byte)0x01 : (byte)0x00);

@@ -144,7 +144,9 @@ namespace Hellion.World.Systems
             this.BankCode = dbCharacter.BankCode;
             this.MapId = dbCharacter.MapId;
             this.Position = new Vector3(dbCharacter.PosX, dbCharacter.PosY, dbCharacter.PosZ);
+            this.Angle = dbCharacter.Angle;
             this.DestinationPosition = this.Position.Clone();
+            this.Speed = 1f;
 
             // Initialize inventory, quests, guild, friends, skills etc...
         }
@@ -224,10 +226,12 @@ namespace Hellion.World.Systems
                 dbCharacter.PosX = this.Position.X;
                 dbCharacter.PosY = this.Position.Y;
                 dbCharacter.PosZ = this.Position.Z;
+                dbCharacter.Angle = this.Angle;
                 dbCharacter.SkinSetId = this.SkinSetId;
                 dbCharacter.Slot = this.Slot;
                 dbCharacter.Stamina = this.Attributes[DefineAttributes.STA];
                 dbCharacter.Strength = this.Attributes[DefineAttributes.STR];
+                this.Speed = 1f;
 
                 this.Inventory.Save();
                 // TODO: save skills

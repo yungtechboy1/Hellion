@@ -77,7 +77,7 @@ namespace Hellion.World
             this.LoadTexts();
             this.LoadItems();
             this.LoadNpc();
-            this.LoadMonsters();
+            this.LoadMovers();
             this.LoadMaps();
             this.Clear();
 
@@ -262,11 +262,11 @@ namespace Hellion.World
         }
 
         /// <summary>
-        /// Load all flyff monsters.
+        /// Load all flyff movers.
         /// </summary>
-        private void LoadMonsters()
+        private void LoadMovers()
         {
-            Log.Info("Loading Monsters data...");
+            Log.Info("Loading movers data...");
 
             try
             {
@@ -287,14 +287,14 @@ namespace Hellion.World
                     else
                         monstersData.Add(monsterData.Id, monsterData);
 
-                    Log.Loading("Loading {0}/{1} monsters...", propMover.ReadingIndex, propMover.Count);
+                    Log.Loading("Loading {0}/{1} movers...", propMover.ReadingIndex, propMover.Count);
                 }
 
-                Log.Done("{0} monsters loaded!", monstersData.Count);
+                Log.Done("{0} movers loaded!", monstersData.Count);
             }
             catch (Exception e)
             {
-                Log.Error("Cannot load monsters: {0}", e.Message);
+                Log.Error("Cannot load movers: {0}", e.Message);
             }
         }
 

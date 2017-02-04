@@ -1,6 +1,6 @@
 ﻿namespace Hellion.Core.Data.Headers
 {
-    public enum SnapshotType : ushort
+    public enum SnapshotType : uint
     {
         CHAT = 0x0001,
         ACTMSG = 0x0002,

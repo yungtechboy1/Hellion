@@ -11,7 +11,7 @@ namespace Hellion.World.Client
 {
     public partial class WorldClient
     {
-        [FFIncomingPacket(WorldHeaders.Incoming.Chat)]
+        [FFIncomingPacket(PacketType.CHAT)]
         private void OnChat(NetPacketBase packet)
         {
             var chatMessage = packet.Read<string>();

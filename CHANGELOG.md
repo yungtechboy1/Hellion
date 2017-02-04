@@ -1,5 +1,20 @@
 ## Hellion ChangeLog
 
+### Update #9 (10/02/2017)
+
+...
+
+### Update #8 (03/02/2017)
+
+- Common
+  - Add official packet and snapshot headers
+
+- World
+  - Improve moving system
+  - Add Moving and and motion flags management
+  - Moves with keyboard (wsad)
+  - Jump
+
 ### Update #7 (27/01/2017)
 
 - Common

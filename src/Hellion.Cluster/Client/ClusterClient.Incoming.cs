@@ -17,7 +17,7 @@ namespace Hellion.Cluster.Client
         /// Recieves the ping request and send the pong.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(ClusterHeaders.Incoming.Ping)]
+        [FFIncomingPacket(PacketType.PING)]
         private void OnPing(NetPacketBase packet)
         {
             var time = packet.Read<int>();
@@ -29,7 +29,7 @@ namespace Hellion.Cluster.Client
         /// Retrieves all character of the current account and send them to the client.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(ClusterHeaders.Incoming.CharacterListRequest)]
+        [FFIncomingPacket(PacketType.GETPLAYERLIST)]
         private void OnCharacterListRequest(NetPacketBase packet)
         {
             var buildDate = packet.Read<string>();
@@ -63,7 +63,7 @@ namespace Hellion.Cluster.Client
         /// Creates a new character.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(ClusterHeaders.Incoming.CreateCharacter)]
+        [FFIncomingPacket(PacketType.CREATE_PLAYER)]
         private void OnCreateCharacter(NetPacketBase packet)
         {
             var username = packet.Read<string>();
@@ -92,7 +92,7 @@ namespace Hellion.Cluster.Client
             var characterWithSameName = DatabaseService.Characters.Get(x => x.Name.ToLower() == name.ToLower());
             if (characterWithSameName != null)
             {
-                this.SendClusterError(ClusterHeaders.Errors.NameAlreadyInUse);
+                this.SendClusterError(ErrorType.USER_EXISTS);
                 return;
             }
 
@@ -149,7 +149,7 @@ namespace Hellion.Cluster.Client
         /// Delete a character.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(ClusterHeaders.Incoming.DeleteCharacter)]
+        [FFIncomingPacket(PacketType.DEL_PLAYER)]
         private void OnDeleteCharacter(NetPacketBase packet)
         {
             var username = packet.Read<string>();
@@ -169,7 +169,7 @@ namespace Hellion.Cluster.Client
             if (password.ToLower() != passwordVerification.ToLower())
             {
                 Log.Error("Password doesn't match for client '{0}' with id {1}", account.Username, account.Id);
-                this.SendClusterError(ClusterHeaders.Errors.PasswordDontMatch);
+                this.SendClusterError(ErrorType.WRONG_PASSWORD);
                 return;
             }
 
@@ -195,7 +195,7 @@ namespace Hellion.Cluster.Client
         /// On character pre join the world.
         /// </summary>
         /// <param name="packet"></param>
-        [FFIncomingPacket(ClusterHeaders.Incoming.PreJoin)]
+        [FFIncomingPacket(PacketType.PRE_JOIN)]
         private void OnPreJoin(NetPacketBase packet)
         {
             var username = packet.Read<string>();

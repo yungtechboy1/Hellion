@@ -68,7 +68,7 @@ namespace Hellion.World.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.Write(0);
+                packet.WriteHeader(PacketType.WELCOME);
                 packet.Write((int)this.sessionId);
 
                 this.Send(packet);
@@ -84,12 +84,12 @@ namespace Hellion.World.Client
             packet.Position = 17;
 
             var packetHeaderNumber = packet.Read<uint>();
-            var packetHeader = (WorldHeaders.Incoming)packetHeaderNumber;
+            var packetHeader = (PacketType)packetHeaderNumber;
 
             Log.Debug("Recieve World packet: {0}", packetHeader);
 
             if (!FFPacketHandler.Invoke(this, packetHeader, packet))
-                FFPacket.UnknowPacket<WorldHeaders.Incoming>(packetHeaderNumber, 8);
+                FFPacket.UnknowPacket<PacketType>(packetHeaderNumber, 8);
         }
     }
 }

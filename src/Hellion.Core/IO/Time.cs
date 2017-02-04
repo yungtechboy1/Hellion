@@ -23,9 +23,8 @@ namespace Hellion.Core.IO
         public static long TimeInSeconds(DateTime date)
         {
             if (date < Utc)
-            {
                 date = Utc;
-            }
+
             return (long)(date - Utc).TotalSeconds;
         }
 
@@ -45,6 +44,16 @@ namespace Hellion.Core.IO
         public static long GetTick()
         {
             return Environment.TickCount - Start;
+        }
+
+        /// <summary>
+        /// Gets the number of milliseconds since the time passed has parameter.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <returns></returns>
+        public static long GetTickFrom(long start)
+        {
+            return GetTick() - start;
         }
 
         /// <summary>

@@ -1,5 +1,7 @@
 ﻿using Hellion.Core.Data.Headers;
+using Hellion.Core.IO;
 using Hellion.Core.Network;
+using Hellion.Core.Structures;
 using Hellion.World.Structures;
 using System;
 using System.Collections.Generic;
@@ -13,17 +15,17 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.WeatherAll, 0x0000FF00);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.ENVIRONMENTALL, 0x0000FF00);
                 packet.Write(0); // Get weather by season
 
 
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.WorldInformation);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.WORLD_READINFO);
                 packet.Write(this.MapId);
                 packet.Write(this.Position.X);
                 packet.Write(this.Position.Y);
                 packet.Write(this.Position.Z);
 
-                packet.StartNewMergedPacket(this.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.ADD_OBJ);
 
                 // Object properties
                 packet.Write((byte)this.Type);
@@ -34,14 +36,14 @@ namespace Hellion.World.Systems
                 packet.Write(this.Position.X);
                 packet.Write(this.Position.Y);
                 packet.Write(this.Position.Z);
-                packet.Write((short)(this.Angle * 10f));
+                packet.Write((short)(this.Angle * 10));
                 packet.Write(this.ObjectId);
 
                 packet.Write<short>(0);
                 packet.Write<byte>(1); // is player ?
                 packet.Write(this.Attributes[DefineAttributes.HP]);
-                packet.Write(0);
-                packet.Write(0);
+                packet.Write((int)this.MovingFlags);
+                packet.Write((int)this.MotionFlags);
                 packet.Write<byte>(1);
 
                 // baby buffer
@@ -371,7 +373,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(worldObject.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
+                packet.StartNewMergedPacket(worldObject.ObjectId, SnapshotType.ADD_OBJ);
 
                 packet.Write((byte)worldObject.Type);
                 packet.Write(worldObject.ModelId);
@@ -387,8 +389,8 @@ namespace Hellion.World.Systems
                 packet.Write<short>(0);
                 packet.Write<byte>(1); // is player?
                 packet.Write(worldObject.Attributes[DefineAttributes.HP]);
-                packet.Write(0); // moving flags
-                packet.Write(0); // motion flags
+                packet.Write((int)worldObject.MovingFlags); // moving flags
+                packet.Write((int)worldObject.MotionFlags); // motion flags
                 packet.Write<byte>(0);
                 packet.Write(-1); // baby buffer
 
@@ -469,7 +471,7 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(monster.ObjectId, WorldHeaders.Outgoing.ObjectSpawn);
+                packet.StartNewMergedPacket(monster.ObjectId, SnapshotType.ADD_OBJ);
 
                 packet.Write((byte)monster.Type);
                 packet.Write(monster.ModelId);
@@ -516,9 +518,59 @@ namespace Hellion.World.Systems
         {
             using (var packet = new FFPacket())
             {
-                packet.StartNewMergedPacket(worldObject.ObjectId, WorldHeaders.Outgoing.ObjectDespawn);
+                packet.StartNewMergedPacket(worldObject.ObjectId, SnapshotType.DEL_OBJ);
 
                 this.Send(packet);
+            }
+        }
+
+        internal void SendMoveByKeyboard(Vector3 direction, int motionEx, int loop, int motionOption, long tick)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERMOVED);
+
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+                packet.Write(direction.X);
+                packet.Write(direction.Y);
+                packet.Write(direction.Z);
+                packet.Write(this.Angle);
+                packet.Write((uint)this.MovingFlags);
+                packet.Write((int)this.MotionFlags);
+                packet.Write(this.ActionFlags);
+                packet.Write(motionEx);
+                packet.Write(loop);
+                packet.Write(motionOption);
+                packet.Write(tick);
+
+                base.SendToVisible(packet);
+            }
+        }
+
+        internal void SendMoverBehavior(Vector3 direction, int motionEx, int loop, int motionOption, long tick)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERBEHAVIOR);
+
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+                packet.Write(direction.X);
+                packet.Write(direction.Y);
+                packet.Write(direction.Z);
+                packet.Write(this.Angle);
+                packet.Write((uint)this.MovingFlags);
+                packet.Write((int)this.MotionFlags);
+                packet.Write(this.ActionFlags);
+                packet.Write(motionEx);
+                packet.Write(loop);
+                packet.Write(motionOption);
+                packet.Write(tick);
+
+                base.SendToVisible(packet);
             }
         }
     }

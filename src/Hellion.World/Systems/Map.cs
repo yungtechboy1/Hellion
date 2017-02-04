@@ -195,7 +195,7 @@ namespace Hellion.World.Systems
                 this.UpdateNpc();
                 this.UpdateRegions();
 
-                Thread.Sleep(50);
+                Thread.Sleep(100);
             }
         }
 

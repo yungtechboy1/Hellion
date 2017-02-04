@@ -15,7 +15,7 @@ namespace Hellion.Cluster.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.Write(0);
+                packet.WriteHeader(PacketType.WELCOME);
                 packet.Write((int)this.sessionId);
 
                 this.Send(packet);
@@ -30,7 +30,7 @@ namespace Hellion.Cluster.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(ClusterHeaders.Outgoing.Pong);
+                packet.WriteHeader(PacketType.PING);
                 packet.Write(time);
 
                 this.Send(packet);
@@ -41,7 +41,7 @@ namespace Hellion.Cluster.Client
         /// Sends a cluster error to the client.
         /// </summary>
         /// <param name="code"></param>
-        private void SendClusterError(ClusterHeaders.Errors code)
+        private void SendClusterError(ErrorType code)
         {
             this.SendClusterMessage((int)code);
         }
@@ -54,7 +54,7 @@ namespace Hellion.Cluster.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(ClusterHeaders.Outgoing.LoginMessage);
+                packet.WriteHeader(PacketType.ERROR);
                 packet.Write(code);
 
                 this.Send(packet);
@@ -65,7 +65,7 @@ namespace Hellion.Cluster.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(ClusterHeaders.Outgoing.GameServerIP);
+                packet.WriteHeader(PacketType.CACHE_ADDR);
                 packet.Write(ip);
 
                 this.Send(packet);
@@ -79,7 +79,7 @@ namespace Hellion.Cluster.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.Write(0x88100200);
+                packet.WriteHeader(PacketType.LOGIN_PROTECT_NUMPAD);
                 packet.Write(this.loginProtectValue);
 
                 this.Send(packet);
@@ -93,7 +93,7 @@ namespace Hellion.Cluster.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.Write(0x88100201);
+                packet.WriteHeader(PacketType.LOGIN_PROTECT_CERT);
                 packet.Write(0);
                 packet.Write(this.loginProtectValue);
 
@@ -110,7 +110,7 @@ namespace Hellion.Cluster.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(ClusterHeaders.Outgoing.CharacterList);
+                packet.WriteHeader(PacketType.PLAYER_LIST);
                 packet.Write(authKey);
 
                 if (characters.Any())
@@ -166,7 +166,7 @@ namespace Hellion.Cluster.Client
         {
             using (var packet = new FFPacket())
             {
-                packet.WriteHeader(ClusterHeaders.Outgoing.JoinWorld);
+                packet.WriteHeader(PacketType.PRE_JOIN);
 
                 this.Send(packet);
             }
