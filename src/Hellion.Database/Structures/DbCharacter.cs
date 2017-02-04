@@ -81,6 +81,9 @@ namespace Hellion.Database.Structures
         [Column("posZ")]
         public float PosZ { get; set; }
 
+        [Column("angle")]
+        public float Angle { get; set; }
+
         [Column("bankCode")]
         public int BankCode { get; set; }
 

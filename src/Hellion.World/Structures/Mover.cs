@@ -60,34 +60,82 @@ namespace Hellion.World.Structures
             this.ProcessMoves();
         }
 
+        private long nextMove = Time.GetCurrentTick() + 10;
+
         private void ProcessMoves()
         {
+            if (this.DestinationPosition.IsZero())
+                return;
+
+            if (this.nextMove > Time.GetCurrentTick())
+                return;
+
+            this.nextMove = Time.GetCurrentTick() + 10;
+
             if (this.IsFlying)
                 this.Fly();
-            else
-                this.Walk();
+            //else
+                //this.Walk();
         }
 
         private void Fly()
         {
         }
 
+        public static void xGetDegree(ref float pfAngXZ,/* ref float pfAngH,*/ Vector3 vDist)
+        {
+            Vector3 vDistXZ = vDist.Clone();
+            //Helper.CopyVector(vDist, ref vDistXZ);
+            vDistXZ.Y = 0;
+            float fAngXZ = MathHelper.ToDegree((float)Math.Atan2(vDist.X, -vDist.Z));		// ¿ì¼± XZÆò¸éÀÇ °¢µµ¸¦ ¸ÕÀú ±¸ÇÔ
+            float fLenXZ = vDistXZ.Length;					// yÁÂÇ¥¸¦ ¹«½ÃÇÑ XZÆò¸é¿¡¼­ÀÇ ±æÀÌ¸¦ ±¸ÇÔ.
+            //float fAngH = ToDegree((float)Math.Atan2(fLenXZ, vDist.fPosY));     // XZÆò¸éÀÇ ±æÀÌ¿Í y³ôÀÌ°£ÀÇ °¢µµ¸¦ ±¸ÇÔ.
+
+            //fAngH -= 90.0f;
+            if (fAngXZ < 0)
+                fAngXZ += 360;
+            else if (fAngXZ >= 360)
+                fAngXZ -= 360;
+
+            pfAngXZ = fAngXZ;
+            //pfAngH = fAngH;
+        }
+
         private void Walk()
         {
+            if (this.MovingFlags.HasFlag(ObjectState.OBJSTA_STAND))
+                return;
+
             this.lastMoveTime = Time.GetTick();
-            
+
             // DEBUG
+
             //if (this.IsMovingWithKeyboard)
             //    f = this.Angle;
             //else
             //    GetDegree(ref f, DestinationPosition - Position);
+            float angle = 0;
+
+            if (this.IsMovingWithKeyboard)
+            {
+                angle = this.Angle;
+            }
+            else
+            {
+                xGetDegree(ref angle, this.DestinationPosition - this.Position);
+
+                if (angle == 180)
+                {
+                }
+            }
+            //float angle = this.IsMovingWithKeyboard ? this.Angle : Vector3.AngleBetween(this.Position, this.DestinationPosition);
 
             float distX = this.DestinationPosition.X - this.Position.X;
             float distZ = this.DestinationPosition.Z - this.Position.Z;
             float distAll = (float)Math.Sqrt(distX * distX + distZ * distZ);
 
             var distDelta = new Vector3();
-            float angleTheta = (float)(this.Angle * (Math.PI / 180));
+            float angleTheta = (float)(angle * (Math.PI / 180));
             float speed = this.Speed; // TODO: add speed bonus
 
             switch (this.MovingFlags & ObjectState.OBJSTA_MOVE_ALL)
@@ -112,36 +160,69 @@ namespace Hellion.World.Structures
             switch (this.MovingFlags & ObjectState.OBJSTA_TURN_ALL)
             {
                 case ObjectState.OBJSTA_LTURN:
-                    this.Angle += 4;
-                    if (this.Angle > 360)
-                        this.Angle -= 360;
+                    angle += 4;
+                    if (angle > 360)
+                        angle -= 360;
                     break;
                 case ObjectState.OBJSTA_RTURN:
-                    this.Angle -= 4;
-                    if (this.Angle < 0)
-                        this.Angle += 360;
+                    angle -= 4;
+                    if (angle < 0)
+                        angle += 360;
                     break;
             }
 
             float longprogression = (float)Math.Sqrt(distDelta.X * distDelta.X + distDelta.Z * distDelta.Z);
-            
+
+            Vector3 v = new Vector3();
             if (distAll <= longprogression)
             {
                 //Log.Debug("{0} Arrived", this.Name);
                 this.DestinationPosition = this.Position.Clone();
+                this.Angle = angle;
+                v.Reset();
 
                 if (!this.IsFighting)
                 {
-                    MovingFlags &= ~ObjectState.OBJSTA_FMOVE; 
+                    MovingFlags &= ~ObjectState.OBJSTA_FMOVE;
                     MovingFlags |= ObjectState.OBJSTA_STAND;
                     SendMoverAction((int)OBJMSG.OBJMSG_STAND);
                 }
             }
             else
             {
-                this.Position.X += distDelta.X;
-                this.Position.Z += distDelta.Z;
+                v.X += distDelta.X;
+                v.Z += distDelta.Z;
                 distAll -= longprogression;
+            }
+
+            this.move(v.X, v.Z);
+            this.Angle = angle;
+
+            if ((this is Player))
+                Log.Debug("Mover Angle = {0}", this.Angle);
+        }
+
+        // TODO: clean this mess up! :p
+         
+        public void move(float x, float z)
+        {
+            if (this.IsMovingWithKeyboard)
+            {
+                if (this.MovingFlags.HasFlag(ObjectState.OBJSTA_BMOVE))
+                {
+                    this.Position.X -= (float)(Math.Sin(this.Angle * (Math.PI / 180)) * Math.Sqrt(x * x + z * z));
+                    this.Position.Z += (float)(Math.Cos(this.Angle * (Math.PI / 180)) * Math.Sqrt(x * x + z * z));
+                }
+                else if (this.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE))
+                {
+                    this.Position.X += (float)(Math.Sin(this.Angle * (Math.PI / 180)) * Math.Sqrt(x * x + z * z));
+                    this.Position.Z -= (float)(Math.Cos(this.Angle * (Math.PI / 180)) * Math.Sqrt(x * x + z * z));
+                }
+            }
+            else
+            {
+                this.Position.X += x;
+                this.Position.Z += z;
             }
         }
 

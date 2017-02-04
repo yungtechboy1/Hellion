@@ -1,4 +1,5 @@
 ﻿using Hellion.Core.Data.Headers;
+using Hellion.Core.IO;
 using Hellion.Core.Network;
 using Hellion.Core.Structures;
 using Hellion.World.Structures;
@@ -35,14 +36,14 @@ namespace Hellion.World.Systems
                 packet.Write(this.Position.X);
                 packet.Write(this.Position.Y);
                 packet.Write(this.Position.Z);
-                packet.Write((short)(this.Angle * 10f));
+                packet.Write((short)(this.Angle * 10));
                 packet.Write(this.ObjectId);
 
                 packet.Write<short>(0);
                 packet.Write<byte>(1); // is player ?
                 packet.Write(this.Attributes[DefineAttributes.HP]);
-                packet.Write(0);
-                packet.Write(0);
+                packet.Write((int)this.MovingFlags);
+                packet.Write((int)this.MotionFlags);
                 packet.Write<byte>(1);
 
                 // baby buffer
@@ -388,8 +389,8 @@ namespace Hellion.World.Systems
                 packet.Write<short>(0);
                 packet.Write<byte>(1); // is player?
                 packet.Write(worldObject.Attributes[DefineAttributes.HP]);
-                packet.Write(0); // moving flags
-                packet.Write(0); // motion flags
+                packet.Write((int)worldObject.MovingFlags); // moving flags
+                packet.Write((int)worldObject.MotionFlags); // motion flags
                 packet.Write<byte>(0);
                 packet.Write(-1); // baby buffer
 
@@ -536,15 +537,40 @@ namespace Hellion.World.Systems
                 packet.Write(direction.Y);
                 packet.Write(direction.Z);
                 packet.Write(this.Angle);
-                packet.Write((int)this.MovingFlags);
-                packet.Write(this.MotionFlags);
+                packet.Write((uint)this.MovingFlags);
+                packet.Write((int)this.MotionFlags);
                 packet.Write(this.ActionFlags);
                 packet.Write(motionEx);
                 packet.Write(loop);
                 packet.Write(motionOption);
                 packet.Write(tick);
 
-                this.SendToVisible(packet);
+                base.SendToVisible(packet);
+            }
+        }
+
+        internal void SendMoverBehavior(Vector3 direction, int motionEx, int loop, int motionOption, long tick)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERBEHAVIOR);
+
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+                packet.Write(direction.X);
+                packet.Write(direction.Y);
+                packet.Write(direction.Z);
+                packet.Write(this.Angle);
+                packet.Write((uint)this.MovingFlags);
+                packet.Write((int)this.MotionFlags);
+                packet.Write(this.ActionFlags);
+                packet.Write(motionEx);
+                packet.Write(loop);
+                packet.Write(motionOption);
+                packet.Write(tick);
+
+                base.SendToVisible(packet);
             }
         }
     }
