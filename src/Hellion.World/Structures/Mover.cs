@@ -30,13 +30,15 @@ namespace Hellion.World.Structures
 
         public float Speed { get; set; }
 
+        public virtual float FlightSpeed { get; }
+
         public ObjectState MovingFlags { get; set; }
 
         public StateFlags MotionFlags { get; set; }
 
         public int ActionFlags { get; set; }
         
-        public int Level { get; }
+        public virtual int Level { get; protected set; }
 
         public virtual string Name { get; set; }
 
@@ -74,31 +76,61 @@ namespace Hellion.World.Structures
 
             if (this.IsFlying)
                 this.Fly();
-            //else
-                //this.Walk();
+            else
+                this.Walk();
         }
 
         private void Fly()
         {
-        }
+            if (this.FlightSpeed > 0 && this.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE))
+            {
+                float angle = this.Angle;
+                float angleFly = this.AngleFly;
+                float turnAngle = 0f;
+                float accelPower = 0f;
 
-        public static void xGetDegree(ref float pfAngXZ,/* ref float pfAngH,*/ Vector3 vDist)
-        {
-            Vector3 vDistXZ = vDist.Clone();
-            //Helper.CopyVector(vDist, ref vDistXZ);
-            vDistXZ.Y = 0;
-            float fAngXZ = MathHelper.ToDegree((float)Math.Atan2(vDist.X, -vDist.Z));		// ¿ì¼± XZÆò¸éÀÇ °¢µµ¸¦ ¸ÕÀú ±¸ÇÔ
-            float fLenXZ = vDistXZ.Length;					// yÁÂÇ¥¸¦ ¹«½ÃÇÑ XZÆò¸é¿¡¼­ÀÇ ±æÀÌ¸¦ ±¸ÇÔ.
-            //float fAngH = ToDegree((float)Math.Atan2(fLenXZ, vDist.fPosY));     // XZÆò¸éÀÇ ±æÀÌ¿Í y³ôÀÌ°£ÀÇ °¢µµ¸¦ ±¸ÇÔ.
+                switch (this.MovingFlags & ObjectState.OBJSTA_MOVE_ALL)
+                {
+                    case ObjectState.OBJSTA_STAND:
+                        accelPower = 0f;
+                        break;
+                    case ObjectState.OBJSTA_FMOVE:
+                        accelPower = this.FlightSpeed;
+                        break;   
+                }
 
-            //fAngH -= 90.0f;
-            if (fAngXZ < 0)
-                fAngXZ += 360;
-            else if (fAngXZ >= 360)
-                fAngXZ -= 360;
+                switch (this.MovingFlags & ObjectState.OBJSTA_TURN_ALL)
+                {
+                    case ObjectState.OBJSTA_RTURN: break;
+                    case ObjectState.OBJSTA_LTURN: break;
+                }
 
-            pfAngXZ = fAngXZ;
-            //pfAngH = fAngH;
+                switch (this.MovingFlags & ObjectState.OBJSTA_LOOK_ALL)
+                {
+                    case ObjectState.OBJSTA_LOOKUP:
+                        if (angleFly > 45f)
+                            angleFly -= 1f;
+                        break;
+                    case ObjectState.OBJSTA_LOOKDOWN:
+                        if (angleFly < 45f)
+                            angleFly += 1f;
+                        break;
+                }
+
+                if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_TURBO))
+                    accelPower *= 1.5f;
+
+                float angleTheta = MathHelper.ToRadians(angle);
+                float angleFlyTheta = MathHelper.ToRadians(angleFly);
+                float d = (float)Math.Cos(angleFlyTheta) * accelPower;
+
+                var accelVector = new Vector3()
+                {
+                    X = (float)Math.Sin(angleTheta) * d,
+                    Y = (float)-Math.Sin(angleFlyTheta) * accelPower,
+                    Z = (float)-Math.Cos(angleTheta) * d
+                };
+            }
         }
 
         private void Walk()
@@ -108,27 +140,8 @@ namespace Hellion.World.Structures
 
             this.lastMoveTime = Time.GetTick();
 
-            // DEBUG
-
-            //if (this.IsMovingWithKeyboard)
-            //    f = this.Angle;
-            //else
-            //    GetDegree(ref f, DestinationPosition - Position);
-            float angle = 0;
-
-            if (this.IsMovingWithKeyboard)
-            {
-                angle = this.Angle;
-            }
-            else
-            {
-                xGetDegree(ref angle, this.DestinationPosition - this.Position);
-
-                if (angle == 180)
-                {
-                }
-            }
-            //float angle = this.IsMovingWithKeyboard ? this.Angle : Vector3.AngleBetween(this.Position, this.DestinationPosition);
+            float angle = this.IsMovingWithKeyboard ? 
+               this.Angle : Vector3.AngleBetween(this.Position, this.DestinationPosition);
 
             float distX = this.DestinationPosition.X - this.Position.X;
             float distZ = this.DestinationPosition.Z - this.Position.Z;

@@ -126,6 +126,10 @@ namespace Hellion.World.Systems
             }
         }
 
+        /// <summary>
+        /// Equips an item.
+        /// </summary>
+        /// <param name="item"></param>
         public void Equip(Item item)
         {
             // TODO: Add some verifications before equip.
@@ -141,9 +145,16 @@ namespace Hellion.World.Systems
             item.Slot = destSlot;
             this.items.Swap(sourceSlot, destSlot);
 
+            if (item.Data.Parts == 13 && item.Data.ItemKind1 == 4)
+                this.player.IsFlying = true;
+
             this.player.SendItemEquip(item, equipParts, true);
         }
 
+        /// <summary>
+        /// Unequips an item.
+        /// </summary>
+        /// <param name="item"></param>
         public void Unequip(Item item)
         {
             int sourceSlot = item.Slot;
@@ -168,8 +179,41 @@ namespace Hellion.World.Systems
                 item.Slot = destSlot;
                 this.items.Swap(sourceSlot, destSlot);
 
+                if (item.Data.Parts == 13 && item.Data.ItemKind1 == 4)
+                    this.player.IsFlying = false;
+
                 this.player.SendItemEquip(item, parts, false);
             }
+        }
+
+        /// <summary>
+        /// Create a new item in the inventory.
+        /// </summary>
+        /// <param name="item"></param>
+        public void CreateItem(Item item)
+        {
+            if (item == null || !WorldServer.ItemsData.ContainsKey(item.Id))
+            {
+                Log.Warning("Item {0} doesn't exists", item.Id);
+                return;
+            }
+
+            for (int i = 0; i < item.Quantity; ++i)
+            {
+                int freeSlot = this.GetFreeSlot();
+
+                if (freeSlot == -1)
+                {
+                }
+                else
+                {
+                    item.Slot = freeSlot;
+                    item.UniqueId = freeSlot;
+                    this.items[freeSlot] = item;
+                    this.player.SendCreateItem(item);
+                }
+            }
+            
         }
 
         /// <summary>

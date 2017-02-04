@@ -573,5 +573,34 @@ namespace Hellion.World.Systems
                 base.SendToVisible(packet);
             }
         }
+
+        internal void SendMoverMoved(Vector3 direction, int motionEx, int loop, int motionOption, long tick, byte frame, float turnAngle)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERMOVED2);
+
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+                packet.Write(direction.X);
+                packet.Write(direction.Y);
+                packet.Write(direction.Z);
+                packet.Write(this.Angle);
+                packet.Write(this.AngleFly);
+                packet.Write(this.FlightSpeed);
+                packet.Write(turnAngle);
+                packet.Write((uint)this.MovingFlags);
+                packet.Write((int)this.MotionFlags);
+                packet.Write(this.ActionFlags);
+                packet.Write(motionEx);
+                packet.Write(loop);
+                packet.Write(motionOption);
+                packet.Write(tick);
+                packet.Write(frame);
+
+                base.SendToVisible(packet);
+            }
+        }
     }
 }

@@ -108,6 +108,19 @@ namespace Hellion.World.Systems
         // Buffs
         // etc...
 
+        public override float FlightSpeed
+        {
+            get
+            {
+                var flyItem = this.Inventory.GetItemBySlot(55);
+
+                if (flyItem == null)
+                    return 0f;
+
+                return flyItem.Data.FlightSpeed * 0.75f;
+            }
+        }
+
         /// <summary>
         /// Creates a new Player based on a <see cref="DbCharacter"/> stored in database.
         /// </summary>
@@ -128,6 +141,7 @@ namespace Hellion.World.Systems
             this.ClassId = dbCharacter.ClassId;
             this.Gold = dbCharacter.Gold;
             this.Slot = dbCharacter.Slot;
+            this.Level = dbCharacter.Level;
             this.Authority = this.Client.CurrentUser.Authority;
             this.Attributes[DefineAttributes.STR] = dbCharacter.Strength;
             this.Attributes[DefineAttributes.STA] = dbCharacter.Stamina;

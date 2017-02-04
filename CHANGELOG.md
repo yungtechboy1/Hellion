@@ -2,7 +2,8 @@
 
 ### Update #9 (10/02/2017)
 
-...
+- World
+  - Command: /createitem
 
 ### Update #8 (03/02/2017)
 

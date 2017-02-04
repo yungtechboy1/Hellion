@@ -1,4 +1,5 @@
 ﻿using Hellion.Core.IO;
+using Hellion.World.Structures;
 using System;
 using System.Linq;
 
@@ -35,12 +36,8 @@ namespace Hellion.World.Systems
 
                 if (this.player.Authority >= 80)
                 {
-                    if (!this.ExecuteGMCommand(chatCommand, chatCommandArray))
-                        Log.Error("Failed to execute command '{0}'.", chatCommand);
-                }
-                else if (this.player.Authority >= 100)
-                {
-                    if (!this.ExecuteAdminCommand(chatCommand, chatCommandArray))
+                    if (!this.ExecuteGMCommand(chatCommand, chatCommandArray) && 
+                        !this.ExecuteAdminCommand(chatCommand, chatCommandArray))
                         Log.Error("Failed to execute command '{0}'.", chatCommand);
                 }
             }
@@ -144,6 +141,9 @@ namespace Hellion.World.Systems
         /// <returns></returns>
         private bool ExecuteAdminCommand(string chatCommand, string[] chatCommandArray)
         {
+            if (this.player.Authority < 100)
+                return false;
+
             switch (chatCommand.ToLower())
             {
                 case "/disguise":
@@ -151,7 +151,8 @@ namespace Hellion.World.Systems
                 case "/ResistItem":
                 case "/jobname":
                 case "/getgold":
-                case "/createitem":
+                    break;
+                case "/createitem": return this.CreateItem(chatCommandArray);
                 case "/createitem2":
                 case "/QuestState":
                 case "/loadscript":
@@ -306,6 +307,8 @@ namespace Hellion.World.Systems
                     return true;
                 default: return false;
             }
+
+            return false;
         }
 
         private bool OnTeleportCommand(string[] chatCommandArray)
@@ -331,6 +334,27 @@ namespace Hellion.World.Systems
                 }
                 else
                     this.player.SendMoverPosition();
+            }
+
+            return true;
+        }
+
+        private bool CreateItem(string[] chatCommandArray)
+        {
+            try
+            {
+                var itemId = int.Parse(chatCommandArray[1]);
+                var item = new Item(itemId, 1, this.player.Id);
+
+                if (itemId <= 0)
+                    throw new InvalidOperationException("Item must be grather than 0");
+
+                this.player.Inventory.CreateItem(item);
+            }
+            catch (Exception e)
+            {
+                Log.Error("CreateItem error: {0}", e.Message);
+                return false;
             }
 
             return true;

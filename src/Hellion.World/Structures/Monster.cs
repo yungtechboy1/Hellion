@@ -38,6 +38,14 @@ namespace Hellion.World.Structures
         }
 
         /// <summary>
+        /// Gets the monster flight speed.
+        /// </summary>
+        public override float FlightSpeed
+        {
+            get { return this.Speed; }
+        }
+
+        /// <summary>
         /// Creates a new monster instance.
         /// </summary>
         /// <param name="modelId">Monster model id</param>

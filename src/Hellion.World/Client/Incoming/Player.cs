@@ -197,5 +197,41 @@ namespace Hellion.World.Client
 
             this.Player.SendMoverBehavior(directionVector, motionEx, loop, motionOption, tick);
         }
+
+        [FFIncomingPacket(PacketType.PLAYERMOVED2)]
+        private void OnPlayerMoved2(NetPacketBase packet)
+        {
+            var startPositionX = packet.Read<float>();
+            var startPositionY = packet.Read<float>();
+            var startPositionZ = packet.Read<float>();
+            var startPosition = new Vector3(startPositionX, startPositionY, startPositionZ);
+
+            var directionX = packet.Read<float>();
+            var directionY = packet.Read<float>();
+            var directionZ = packet.Read<float>();
+            var directionVector = new Vector3(directionX, directionY, directionZ);
+
+            var angle = packet.Read<float>();
+            var angleY = packet.Read<float>();
+            float flySpeed = packet.Read<float>();
+            float turnAngle = packet.Read<float>();
+            this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
+            this.Player.MotionFlags = (StateFlags)packet.Read<int>();
+            this.Player.ActionFlags = packet.Read<int>();
+            var motionEx = packet.Read<int>();
+            var loop = packet.Read<int>();
+            var motionOption = packet.Read<int>();
+            var tick = packet.Read<long>();
+            var frame = packet.Read<byte>();
+
+            this.Player.IsFlying = this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE);
+
+            this.Player.SendMoverMoved(directionVector, motionEx, loop, motionOption, tick, frame, turnAngle);
+        }
+
+        [FFIncomingPacket(PacketType.PLAYERANGLE)]
+        private void OnPlayerAngle(NetPacketBase packet)
+        {
+        }
     }
 }
