@@ -44,7 +44,7 @@ namespace Hellion.Core.Structures
         /// </summary>
         public float Length
         {
-            get { return (float)(Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z)); }
+            get { return (float)(Math.Sqrt(this.GetLengthSq())); }
         }
 
         /// <summary>
@@ -115,14 +115,16 @@ namespace Hellion.Core.Structures
             return (xDistance * xDistance + zDistance * zDistance) <= circleRadius * circleRadius;
         }
 
-        public bool IsInSphere(Vector3 otherPosition, float circleRadius)
+        public Vector3 Normalize()
         {
-            var dist = new Vector3(
-                x - otherPosition.x,
-                y - otherPosition.y,
-                z - otherPosition.z);
+            float distance = this.Length;
 
-            return (dist.x * dist.x + dist.y * dist.y + dist.z * dist.z) <= circleRadius * circleRadius;
+            return new Vector3(this.x / distance, this.y / distance, this.z / distance);
+        }
+
+        public float GetLengthSq()
+        {
+            return this.x * this.x + this.y * this.y + this.z * this.z;
         }
 
         /// <summary>

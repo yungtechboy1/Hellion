@@ -251,7 +251,7 @@ namespace Hellion.World.Systems
                 // TODO: save skills
                 // TODO: save quest states
 
-                DatabaseService.Characters.Update(dbCharacter);
+                DatabaseService.Characters.Update(dbCharacter, true);
             }
         }
 

@@ -26,13 +26,14 @@ namespace Hellion.Database.Repository
         /// Add a new entity to the database.
         /// </summary>
         /// <param name="value">Entity value</param>
-        public virtual void Add(T value)
+        public virtual void Add(T value, bool saveContext = false)
         {
             lock (syncDbContext)
             {
                 this.dbSet.Add(value);
                 //value = this.dbSet.Add(value).Entity;
-                this.Save();
+                if (saveContext)
+                    this.Save();
             }
         }
 
@@ -40,12 +41,13 @@ namespace Hellion.Database.Repository
         /// Deletes an entity from the database.
         /// </summary>
         /// <param name="value">Entity value</param>
-        public virtual void Delete(T value)
+        public virtual void Delete(T value, bool saveContext = false)
         {
             lock (syncDbContext)
             {
                 this.dbSet.Remove(value);
-                this.Save();
+                if (saveContext)
+                    this.Save();
             }
         }
 
@@ -79,22 +81,40 @@ namespace Hellion.Database.Repository
         }
 
         /// <summary>
+        /// Gets all entities from the table matching the expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="includes"></param>
+        /// <returns></returns>
+        public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> set = this.dbSet.Where(expression);
+
+            foreach (var include in includes)
+                set = this.dbSet.Include(include);
+
+            return set;
+        }
+
+        /// <summary>
         /// Update an existing entity.
         /// </summary>
         /// <param name="value">Entity</param>
-        public virtual void Update(T value)
+        public virtual void Update(T value, bool saveContext = false)
         {
             lock (syncDbContext)
             {
                 value = this.dbSet.Update(value).Entity;
-                this.Save();
+
+                if (saveContext)
+                    this.Save();
             }
         }
 
         /// <summary>
         /// Save the database changes.
         /// </summary>
-        protected void Save()
+        public void Save()
         {
             this.dbContext.SaveChanges();
         }

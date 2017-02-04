@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Hellion.Core.Extensions;
 using Hellion.Database.Structures;
+using Hellion.Database;
 
 namespace Hellion.World.Systems
 {
@@ -246,6 +247,47 @@ namespace Hellion.World.Systems
         /// </summary>
         public void Save()
         {
+            var dbInventory = DatabaseService.Items.GetAll(x => x.CharacterId == this.player.Id);
+
+            // Check deleted items
+            foreach (var dbItem in dbInventory)
+            {
+                if (this.GetItemBySlot(dbItem.ItemSlot) == null)
+                    DatabaseService.Items.Delete(dbItem);
+            }
+
+            // Check updated and new items
+            foreach (var item in this.items)
+            {
+                if (item.Id == -1)
+                    continue; // ignore this item
+
+                var dbItem = dbInventory.Where(x => x.ItemId == item.Id).FirstOrDefault();
+
+                if (dbItem == null)
+                {
+                    dbItem = new DbItem()
+                    {
+                        CharacterId = this.player.Id,
+                        CreatorId = item.CreatorId,
+                        ItemId = item.Id,
+                        ItemCount = item.Quantity,
+                        ItemSlot = item.Slot
+                    };
+
+                    DatabaseService.Items.Add(dbItem);
+                }
+                else
+                {
+                    dbItem.ItemId = item.Id;
+                    dbItem.ItemCount = item.Quantity;
+                    dbItem.ItemSlot = item.Slot;
+                    // TODO: add refine and updates
+                    DatabaseService.Items.Update(dbItem);
+                }
+            }
+
+            DatabaseService.Items.Save();
         }
     }
 }

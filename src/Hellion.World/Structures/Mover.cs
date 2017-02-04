@@ -84,6 +84,7 @@ namespace Hellion.World.Structures
         {
             if (this.FlightSpeed > 0 && this.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE))
             {
+                Vector3 moveVector = this.Position.Clone();
                 float angle = this.Angle;
                 float angleFly = this.AngleFly;
                 float turnAngle = 0f;
@@ -101,8 +102,22 @@ namespace Hellion.World.Structures
 
                 switch (this.MovingFlags & ObjectState.OBJSTA_TURN_ALL)
                 {
-                    case ObjectState.OBJSTA_RTURN: break;
-                    case ObjectState.OBJSTA_LTURN: break;
+                    case ObjectState.OBJSTA_RTURN:
+                        turnAngle = this.TurnAngle;
+                        if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_ACC))
+                            turnAngle *= 2.5f;
+                        this.Angle += turnAngle;
+                        if (this.Angle < 0.0f)
+                            this.Angle += 360.0f;
+                        break;
+                    case ObjectState.OBJSTA_LTURN:
+                        turnAngle = this.TurnAngle;
+                        if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_ACC))
+                            turnAngle *= 2.5f;
+                        this.Angle += turnAngle;
+                        if (this.Angle > 360.0f)
+                            this.Angle -= 360.0f;
+                        break;
                 }
 
                 switch (this.MovingFlags & ObjectState.OBJSTA_LOOK_ALL)
@@ -124,12 +139,38 @@ namespace Hellion.World.Structures
                 float angleFlyTheta = MathHelper.ToRadians(angleFly);
                 float d = (float)Math.Cos(angleFlyTheta) * accelPower;
 
+                var deltaVector = new Vector3();
                 var accelVector = new Vector3()
                 {
                     X = (float)Math.Sin(angleTheta) * d,
                     Y = (float)-Math.Sin(angleFlyTheta) * accelPower,
                     Z = (float)-Math.Cos(angleTheta) * d
                 };
+                var accelVectorNorm = accelVector.Normalize();
+                var deltaVectorNorm = deltaVector.Normalize();
+                float deltaVectorLength = deltaVector.GetLengthSq();
+                float maxSpeed = 0.3f;
+
+                if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_TURBO))
+                    maxSpeed *= 1.1f;
+
+                if (deltaVectorLength < (maxSpeed * maxSpeed))
+                    deltaVector += accelVector;
+
+                deltaVector *= (1.0f - 0.011f);
+
+                if (this is Player)
+                    moveVector += deltaVector;
+                else
+                {
+                    // other ?
+                }
+
+                if (moveVector.Y > Map.MaxHeight)
+                    moveVector.Y = Map.MaxHeight;
+
+                this.Position = moveVector.Clone();
+                this.AngleFly = angleFly;
             }
         }
 

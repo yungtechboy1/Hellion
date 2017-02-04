@@ -214,7 +214,7 @@ namespace Hellion.World.Client
             var angle = packet.Read<float>();
             var angleY = packet.Read<float>();
             float flySpeed = packet.Read<float>();
-            float turnAngle = packet.Read<float>();
+            this.Player.TurnAngle = packet.Read<float>();
             this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
             this.Player.MotionFlags = (StateFlags)packet.Read<int>();
             this.Player.ActionFlags = packet.Read<int>();
@@ -226,7 +226,7 @@ namespace Hellion.World.Client
 
             this.Player.IsFlying = this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE);
 
-            this.Player.SendMoverMoved(directionVector, motionEx, loop, motionOption, tick, frame, turnAngle);
+            this.Player.SendMoverMoved(directionVector, motionEx, loop, motionOption, tick, frame, this.Player.TurnAngle);
         }
 
         [FFIncomingPacket(PacketType.PLAYERANGLE)]
