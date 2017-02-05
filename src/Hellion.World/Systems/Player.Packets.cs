@@ -602,5 +602,27 @@ namespace Hellion.World.Systems
                 base.SendToVisible(packet);
             }
         }
+
+        public void SendMoverAngle(Vector3 direction, long tick, float turnAngle)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERANGLE);
+
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+                packet.Write(direction.X);
+                packet.Write(direction.Y);
+                packet.Write(direction.Z);
+                packet.Write(this.Angle);
+                packet.Write(this.AngleFly);
+                packet.Write(this.FlightSpeed);
+                packet.Write(turnAngle);
+                packet.Write(tick);
+
+                base.SendToVisible(packet);
+            }
+        }
     }
 }

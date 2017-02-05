@@ -211,10 +211,10 @@ namespace Hellion.World.Client
             var directionZ = packet.Read<float>();
             var directionVector = new Vector3(directionX, directionY, directionZ);
 
-            var angle = packet.Read<float>();
-            var angleY = packet.Read<float>();
-            float flySpeed = packet.Read<float>();
-            this.Player.TurnAngle = packet.Read<float>();
+            this.Player.Angle = packet.Read<float>();
+            this.Player.AngleFly = packet.Read<float>();
+            var flySpeed = packet.Read<float>();
+            var turnAngle = packet.Read<float>();
             this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
             this.Player.MotionFlags = (StateFlags)packet.Read<int>();
             this.Player.ActionFlags = packet.Read<int>();
@@ -226,12 +226,36 @@ namespace Hellion.World.Client
 
             this.Player.IsFlying = this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE);
 
-            this.Player.SendMoverMoved(directionVector, motionEx, loop, motionOption, tick, frame, this.Player.TurnAngle);
+            this.Player.SendMoverMoved(directionVector, motionEx, loop, motionOption, tick, frame, turnAngle);
         }
 
         [FFIncomingPacket(PacketType.PLAYERANGLE)]
         private void OnPlayerAngle(NetPacketBase packet)
         {
+            var startPositionX = packet.Read<float>();
+            var startPositionY = packet.Read<float>();
+            var startPositionZ = packet.Read<float>();
+            var startPosition = new Vector3(startPositionX, startPositionY, startPositionZ);
+
+            var directionX = packet.Read<float>();
+            var directionY = packet.Read<float>();
+            var directionZ = packet.Read<float>();
+            var directionVector = new Vector3(directionX, directionY, directionZ);
+
+            var angle = packet.Read<float>();
+            var angleY = packet.Read<float>();
+            float flySpeed = packet.Read<float>();
+            this.Player.TurnAngle = packet.Read<float>();
+            var tick = packet.Read<long>();
+
+            this.Player.Angle = angle;
+            this.Player.AngleFly = angle;
+            this.Player.Position = startPosition.Clone();
+
+            if (directionVector.IsZero())
+                this.Player.DestinationPosition = this.Player.Position.Clone();
+
+            this.Player.SendMoverAngle(directionVector, tick, this.Player.TurnAngle);
         }
     }
 }
