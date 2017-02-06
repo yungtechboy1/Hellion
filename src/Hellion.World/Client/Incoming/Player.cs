@@ -162,6 +162,40 @@ namespace Hellion.World.Client
             
             this.Player.SendMoveByKeyboard(directionVector, motionEx, loop, motionOption, tick);
         }
+        
+        [FFIncomingPacket(PacketType.PLAYERMOVED2)]
+        private void OnPlayerMoved2(NetPacketBase packet)
+        {
+            var startPositionX = packet.Read<float>();
+            var startPositionY = packet.Read<float>();
+            var startPositionZ = packet.Read<float>();
+            var startPosition = new Vector3(startPositionX, startPositionY, startPositionZ);
+
+            var directionX = packet.Read<float>();
+            var directionY = packet.Read<float>();
+            var directionZ = packet.Read<float>();
+            var directionVector = new Vector3(directionX, directionY, directionZ);
+
+            if (directionVector.IsZero())
+                this.Player.DestinationPosition = startPosition.Clone();
+
+            this.Player.Angle = packet.Read<float>();
+            this.Player.AngleFly = packet.Read<float>();
+            var flySpeed = packet.Read<float>();
+            var turnAngle = packet.Read<float>();
+            this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
+            this.Player.MotionFlags = (StateFlags)packet.Read<int>();
+            this.Player.ActionFlags = packet.Read<int>();
+            var motionEx = packet.Read<int>();
+            var loop = packet.Read<int>();
+            var motionOption = packet.Read<int>();
+            var tick = packet.Read<long>();
+            var frame = packet.Read<byte>();
+
+            this.Player.IsFlying = this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE);
+
+            this.Player.SendMoverMoved(directionVector, motionEx, loop, motionOption, tick, frame, turnAngle);
+        }
 
         /// <summary>
         /// This client has send a behavior request.
@@ -170,6 +204,9 @@ namespace Hellion.World.Client
         [FFIncomingPacket(PacketType.PLAYERBEHAVIOR)]
         private void OnPlayerBehavior(NetPacketBase packet)
         {
+            if (this.Player.IsFlying)
+                return;
+
             var startPositionX = packet.Read<float>();
             var startPositionY = packet.Read<float>();
             var startPositionZ = packet.Read<float>();
@@ -198,35 +235,9 @@ namespace Hellion.World.Client
             this.Player.SendMoverBehavior(directionVector, motionEx, loop, motionOption, tick);
         }
 
-        [FFIncomingPacket(PacketType.PLAYERMOVED2)]
-        private void OnPlayerMoved2(NetPacketBase packet)
+        //[FFIncomingPacket(PacketType.PLAYERBEHAVIOR2)]
+        private void OnPlayerBehavior2(NetPacketBase packet)
         {
-            var startPositionX = packet.Read<float>();
-            var startPositionY = packet.Read<float>();
-            var startPositionZ = packet.Read<float>();
-            var startPosition = new Vector3(startPositionX, startPositionY, startPositionZ);
-
-            var directionX = packet.Read<float>();
-            var directionY = packet.Read<float>();
-            var directionZ = packet.Read<float>();
-            var directionVector = new Vector3(directionX, directionY, directionZ);
-
-            this.Player.Angle = packet.Read<float>();
-            this.Player.AngleFly = packet.Read<float>();
-            var flySpeed = packet.Read<float>();
-            var turnAngle = packet.Read<float>();
-            this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
-            this.Player.MotionFlags = (StateFlags)packet.Read<int>();
-            this.Player.ActionFlags = packet.Read<int>();
-            var motionEx = packet.Read<int>();
-            var loop = packet.Read<int>();
-            var motionOption = packet.Read<int>();
-            var tick = packet.Read<long>();
-            var frame = packet.Read<byte>();
-
-            this.Player.IsFlying = this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE);
-
-            this.Player.SendMoverMoved(directionVector, motionEx, loop, motionOption, tick, frame, turnAngle);
         }
 
         [FFIncomingPacket(PacketType.PLAYERANGLE)]

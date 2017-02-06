@@ -161,8 +161,9 @@ namespace Hellion.World.Systems
             this.Angle = dbCharacter.Angle;
             this.DestinationPosition = this.Position.Clone();
             this.Speed = 1f;
+            this.IsFlying = this.Inventory.HasFlyingObjectEquiped();
 
-            // Initialize inventory, quests, guild, friends, skills etc...
+            // Initialize quests, guild, friends, skills etc...
         }
 
         /// <summary>

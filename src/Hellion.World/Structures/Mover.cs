@@ -84,11 +84,15 @@ namespace Hellion.World.Structures
         {
             if (this.FlightSpeed > 0 && this.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE))
             {
+                Vector3 distance = this.DestinationPosition - this.Position;
                 Vector3 moveVector = this.Position.Clone();
-                float angle = this.Angle;
+                float angle = Vector3.AngleBetween(this.Position, this.DestinationPosition);
                 float angleFly = this.AngleFly;
+                float angleTheta = MathHelper.ToRadians(angle);
+                float angleFlyTheta = MathHelper.ToRadians(angleFly);
                 float turnAngle = 0f;
                 float accelPower = 0f;
+
 
                 switch (this.MovingFlags & ObjectState.OBJSTA_MOVE_ALL)
                 {
@@ -106,17 +110,17 @@ namespace Hellion.World.Structures
                         turnAngle = this.TurnAngle;
                         if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_ACC))
                             turnAngle *= 2.5f;
-                        this.Angle += turnAngle;
-                        if (this.Angle < 0.0f)
-                            this.Angle += 360.0f;
+                        angle += turnAngle;
+                        if (angle < 0.0f)
+                            angle += 360.0f;
                         break;
                     case ObjectState.OBJSTA_LTURN:
                         turnAngle = this.TurnAngle;
                         if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_ACC))
                             turnAngle *= 2.5f;
-                        this.Angle += turnAngle;
-                        if (this.Angle > 360.0f)
-                            this.Angle -= 360.0f;
+                        angle += turnAngle;
+                        if (angle > 360.0f)
+                            angle -= 360.0f;
                         break;
                 }
 
@@ -134,9 +138,7 @@ namespace Hellion.World.Structures
 
                 if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_TURBO))
                     accelPower *= 1.5f;
-
-                float angleTheta = MathHelper.ToRadians(angle);
-                float angleFlyTheta = MathHelper.ToRadians(angleFly);
+                
                 float d = (float)Math.Cos(angleFlyTheta) * accelPower;
 
                 var deltaVector = new Vector3();
@@ -171,6 +173,7 @@ namespace Hellion.World.Structures
 
                 this.Position = moveVector.Clone();
                 this.AngleFly = angleFly;
+                this.Angle = angle;
             }
         }
 

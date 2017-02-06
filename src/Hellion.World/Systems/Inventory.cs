@@ -94,6 +94,17 @@ namespace Hellion.World.Systems
         }
 
         /// <summary>
+        /// Check if the player's inventory has a flying object equiped.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasFlyingObjectEquiped()
+        {
+            var flyingItem = this.GetItemBySlot(55);
+
+            return flyingItem != null && flyingItem.Id != -1;
+        }
+
+        /// <summary>
         /// Move an item in the inventory.
         /// </summary>
         /// <param name="sourceSlot"></param>
