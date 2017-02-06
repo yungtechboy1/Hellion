@@ -14,6 +14,7 @@ namespace Hellion.World.Structures
 {
     public partial class Mover : WorldObject
     {
+        private long nextMove;
         private long lastMoveTime;
 
         public bool IsDead { get; set; }
@@ -37,6 +38,8 @@ namespace Hellion.World.Structures
         public StateFlags MotionFlags { get; set; }
 
         public int ActionFlags { get; set; }
+
+        public Mover TargetMover { get; private set; }
         
         public virtual int Level { get; protected set; }
 
@@ -52,17 +55,27 @@ namespace Hellion.World.Structures
         public Mover(int modelId)
             : base(modelId)
         {
+            this.nextMove = Time.GetCurrentTick() + 10;
             this.Speed = 0.5f;
             this.Level = 1;
             this.DestinationPosition = new Vector3();
+            this.TargetMover = null;
+        }
+
+        public void Target(Mover mover)
+        {
+            this.TargetMover = mover;
+        }
+
+        public void RemoveTarget()
+        {
+            this.TargetMover = null;
         }
 
         public virtual void Update()
         {
             this.ProcessMoves();
         }
-
-        private long nextMove = Time.GetCurrentTick() + 10;
 
         private void ProcessMoves()
         {
@@ -73,6 +86,9 @@ namespace Hellion.World.Structures
                 return;
 
             this.nextMove = Time.GetCurrentTick() + 10;
+
+            if (this.IsFollowing)
+                this.Follow();
 
             if (this.IsFlying)
                 this.Fly();
@@ -259,8 +275,18 @@ namespace Hellion.World.Structures
                 Log.Debug("Mover Angle = {0}", this.Angle);
         }
 
+        public void Follow()
+        {
+            if (this.TargetMover != null)
+            {
+                this.DestinationPosition = this.TargetMover.Position;
+                this.MovingFlags = this.MovingFlags & ~ObjectState.OBJSTA_STAND;
+                this.MovingFlags = this.MovingFlags | ObjectState.OBJSTA_FMOVE;
+            }
+        }
+
         // TODO: clean this mess up! :p
-         
+
         public void move(float x, float z)
         {
             if (this.IsMovingWithKeyboard)
@@ -320,6 +346,21 @@ namespace Hellion.World.Structures
                 packet.Write(motionId);
 
                 this.SendToVisible(packet);
+            }
+        }
+
+        internal void SendFollowTarget(float distance)
+        {
+            if (this.TargetMover == null)
+                return;
+
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERSETDESTOBJ);
+                packet.Write(this.TargetMover.ObjectId);
+                packet.Write(distance);
+
+                base.SendToVisible(packet);
             }
         }
 

@@ -5,6 +5,7 @@ using Hellion.Core.Network;
 using Hellion.Core.Structures;
 using Hellion.Database;
 using Hellion.Database.Structures;
+using Hellion.World.Structures;
 using Hellion.World.Systems;
 
 /*
@@ -115,6 +116,8 @@ namespace Hellion.World.Client
             var posZ = packet.Read<float>();
             var forward = packet.Read<byte>();
 
+            this.Player.RemoveTarget();
+            this.Player.IsFollowing = false;
             this.Player.IsMovingWithKeyboard = false;
             this.Player.MovingFlags = ObjectState.OBJSTA_NONE;
             this.Player.MovingFlags |= ObjectState.OBJSTA_FMOVE;
@@ -129,6 +132,8 @@ namespace Hellion.World.Client
         [FFIncomingPacket(PacketType.PLAYERMOVED)]
         private void OnMoveByKeyboard(NetPacketBase packet)
         {
+            this.Player.IsFollowing = false;
+
             var startPositionX = packet.Read<float>();
             var startPositionY = packet.Read<float>();
             var startPositionZ = packet.Read<float>();
@@ -267,6 +272,33 @@ namespace Hellion.World.Client
                 this.Player.DestinationPosition = this.Player.Position.Clone();
 
             this.Player.SendMoverAngle(directionVector, tick, this.Player.TurnAngle);
+        }
+
+        [FFIncomingPacket(PacketType.PLAYERSETDESTOBJ)]
+        public void OnPlayerSetFollowTarget(NetPacketBase packet)
+        {
+            var moverId = packet.Read<uint>();
+            var followDistance = packet.Read<float>();
+
+            if (moverId == this.Player.ObjectId)
+            {
+                this.Player.Target(this.Player);
+                return;
+            }
+
+            var targetMover = this.Player.GetSpawnedObjectById<Mover>((int)moverId);
+
+            if (targetMover == null)
+            {
+                Log.Error("[PLAYERSETDESTOBJ]: Cannot target mover ID: {0}", moverId);
+                return;
+            }
+
+            this.Player.IsFollowing = true;
+            this.Player.MovingFlags = ObjectState.OBJSTA_FMOVE;
+            this.Player.Target(targetMover);
+            this.Player.DestinationPosition = targetMover.Position.Clone();
+            this.Player.SendFollowTarget(followDistance);
         }
     }
 }
