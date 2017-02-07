@@ -6,6 +6,7 @@
   - Command: /createitem
   - Save inventory items in database
   - Fly moves (need review in some points)
+  - Follow movers (foot only)
 
 ### Update #8 (03/02/2017)
 

@@ -300,5 +300,21 @@ namespace Hellion.World.Client
             this.Player.DestinationPosition = targetMover.Position.Clone();
             this.Player.SendFollowTarget(followDistance);
         }
+
+        [FFIncomingPacket(PacketType.MELEE_ATTACK)]
+        public void OnMeleeAttack(NetPacketBase packet)
+        {
+            var motion = packet.Read<int>();
+            var targetId = packet.Read<int>();
+            var target = this.Player.GetSpawnedObjectById<Mover>(targetId);
+
+            if (target == null || this.Player.TargetMover == null || this.Player.TargetMover.ObjectId != targetId)
+                return;
+            
+            if (target.IsDead)
+                return;
+
+            this.Player.Fight(target);
+        }
     }
 }

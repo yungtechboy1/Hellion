@@ -290,5 +290,10 @@ namespace Hellion.World.Systems
 
             base.DespawnObject(obj);
         }
+
+        public override void Fight(Mover defender)
+        {
+            Log.Debug("{0} is fighting {1}", this.Name, defender.Name);
+        }
     }
 }

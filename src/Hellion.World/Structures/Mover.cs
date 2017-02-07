@@ -12,7 +12,7 @@ using Hellion.Core.Helpers;
 
 namespace Hellion.World.Structures
 {
-    public partial class Mover : WorldObject
+    public class Mover : WorldObject
     {
         private long nextMove;
         private long lastMoveTime;
@@ -76,6 +76,8 @@ namespace Hellion.World.Structures
         {
             this.ProcessMoves();
         }
+
+
 
         private void ProcessMoves()
         {
@@ -275,7 +277,7 @@ namespace Hellion.World.Structures
                 Log.Debug("Mover Angle = {0}", this.Angle);
         }
 
-        public void Follow()
+        private void Follow()
         {
             if (this.TargetMover != null)
             {
@@ -287,7 +289,7 @@ namespace Hellion.World.Structures
 
         // TODO: clean this mess up! :p
 
-        public void move(float x, float z)
+        private void move(float x, float z)
         {
             if (this.IsMovingWithKeyboard)
             {
@@ -308,6 +310,8 @@ namespace Hellion.World.Structures
                 this.Position.Z += z;
             }
         }
+
+        public virtual void Fight(Mover defender) { }
 
         // TODO: Move this packets to an other file.
 
