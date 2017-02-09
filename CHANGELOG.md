@@ -7,6 +7,7 @@
   - Save inventory items in database
   - Fly moves (need review in some points)
   - Follow movers (foot only)
+  - Begin of fight system
 
 ### Update #8 (03/02/2017)
 
