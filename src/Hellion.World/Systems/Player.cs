@@ -5,6 +5,7 @@ using Hellion.Core.Structures;
 using Hellion.Database;
 using Hellion.Database.Structures;
 using Hellion.World.Client;
+using Hellion.World.Managers;
 using Hellion.World.Structures;
 using System;
 
@@ -294,6 +295,16 @@ namespace Hellion.World.Systems
         public override void Fight(Mover defender)
         {
             Log.Debug("{0} is fighting {1}", this.Name, defender.Name);
+
+            var rightWeapon = this.Inventory.GetItemBySlot(Inventory.RightWeaponSlot);
+
+            if (rightWeapon == null)
+                rightWeapon = Inventory.Hand;
+
+            int damages = BattleManager.CalculateDamages(this, defender);
+
+
+
         }
     }
 }

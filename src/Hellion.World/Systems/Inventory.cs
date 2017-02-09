@@ -12,10 +12,13 @@ namespace Hellion.World.Systems
 {
     public class Inventory
     {
+        public const int RightWeaponSlot = 52;
         public const int EquipOffset = 42;
         public const int MaxItems = 73;
         public const int InventorySize = EquipOffset;
         public const int MaxHumanParts = MaxItems - EquipOffset;
+
+        public static readonly Item Hand = new Item(11, 1, -1, RightWeaponSlot);
 
         private Item[] items;
         private Player player;

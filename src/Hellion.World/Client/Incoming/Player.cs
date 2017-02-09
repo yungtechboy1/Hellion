@@ -306,6 +306,9 @@ namespace Hellion.World.Client
         {
             var motion = packet.Read<int>();
             var targetId = packet.Read<int>();
+            var param2 = packet.Read<int>(); // ??
+            var param3 = packet.Read<int>(); // ??
+            var value = packet.Read<float>(); // ??
             var target = this.Player.GetSpawnedObjectById<Mover>(targetId);
 
             if (target == null || this.Player.TargetMover == null || this.Player.TargetMover.ObjectId != targetId)
