@@ -278,7 +278,7 @@ namespace Hellion.World.Client
         public void OnPlayerSetFollowTarget(NetPacketBase packet)
         {
             var moverId = packet.Read<uint>();
-            var followDistance = packet.Read<float>();
+            this.Player.FollowDistance = packet.Read<float>();
 
             if (moverId == this.Player.ObjectId)
             {
@@ -298,7 +298,7 @@ namespace Hellion.World.Client
             this.Player.MovingFlags = ObjectState.OBJSTA_FMOVE;
             this.Player.Target(targetMover);
             this.Player.DestinationPosition = targetMover.Position.Clone();
-            this.Player.SendFollowTarget(followDistance);
+            this.Player.SendFollowTarget(this.Player.FollowDistance);
         }
 
         [FFIncomingPacket(PacketType.MELEE_ATTACK)]
@@ -318,6 +318,7 @@ namespace Hellion.World.Client
                 return;
 
             this.Player.Fight(target);
+            this.Player.SendMeleeAttack(motion, targetId);
         }
     }
 }

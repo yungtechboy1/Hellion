@@ -161,7 +161,6 @@ namespace Hellion.World.Systems
             this.Position = new Vector3(dbCharacter.PosX, dbCharacter.PosY, dbCharacter.PosZ);
             this.Angle = dbCharacter.Angle;
             this.DestinationPosition = this.Position.Clone();
-            this.Speed = 1f;
             this.IsFlying = this.Inventory.HasFlyingObjectEquiped();
 
             // Initialize quests, guild, friends, skills etc...
@@ -180,6 +179,13 @@ namespace Hellion.World.Systems
 
                 if (map != null)
                     map.RemoveObject(this);
+
+                // release targets
+                foreach (Mover mover in this.SpawnedObjects)
+                {
+                    if (mover.TargetMover == this)
+                        mover.RemoveTarget();
+                }
 
                 this.SpawnedObjects.Clear();
             }
@@ -247,7 +253,6 @@ namespace Hellion.World.Systems
                 dbCharacter.Slot = this.Slot;
                 dbCharacter.Stamina = this.Attributes[DefineAttributes.STA];
                 dbCharacter.Strength = this.Attributes[DefineAttributes.STR];
-                this.Speed = 1f;
 
                 this.Inventory.Save();
                 // TODO: save skills
@@ -294,8 +299,6 @@ namespace Hellion.World.Systems
 
         public override void Fight(Mover defender)
         {
-            Log.Debug("{0} is fighting {1}", this.Name, defender.Name);
-
             var rightWeapon = this.Inventory.GetItemBySlot(Inventory.RightWeaponSlot);
 
             if (rightWeapon == null)
@@ -303,7 +306,15 @@ namespace Hellion.World.Systems
 
             int damages = BattleManager.CalculateDamages(this, defender);
 
+            // Set monster target
+            if (defender is Monster && defender.TargetMover == null)
+            {
+                defender.Target(this);
+                defender.IsFighting = true;
+                defender.IsFollowing = true;
+            }
 
+            Log.Debug("{0} inflicted {1} damages to {2}", this.Name, damages, defender.Name);
 
         }
     }

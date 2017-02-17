@@ -1,5 +1,16 @@
 ## Hellion ChangeLog
 
+### Update #10
+
+Date: 17/02/2017
+
+- Cluster
+  - Fix delete character issue
+  - Fix create character issue
+- World
+  - Monsters follow player when attacked
+
+
 ### Update #9 (10/02/2017)
 
 - World

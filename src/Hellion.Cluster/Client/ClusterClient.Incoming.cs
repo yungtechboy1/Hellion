@@ -135,7 +135,7 @@ namespace Hellion.Cluster.Client
                 }
             };
 
-            DatabaseService.Characters.Add(character);
+            DatabaseService.Characters.Add(character, true);
             Log.Info("Character '{0}' has been created!", character.Name);
             
             var characters = from x in DatabaseService.Characters.GetAll(c => c.Items)
@@ -181,7 +181,7 @@ namespace Hellion.Cluster.Client
                 return;
             }
 
-            DatabaseService.Characters.Delete(character);
+            DatabaseService.Characters.Delete(character, true);
             Log.Info("Character '{0}' has been deleted.", character.Name);
 
             var characters = from x in DatabaseService.Characters.GetAll()

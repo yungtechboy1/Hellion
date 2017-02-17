@@ -29,7 +29,15 @@ namespace Hellion.World.Structures
 
         public bool IsMovingWithKeyboard { get; set; }
 
-        public float Speed { get; set; }
+        public float Speed
+        {
+            get
+            {
+                float speed = WorldServer.MonstersData[this.ModelId].Speed;
+
+                return speed * 10f;
+            }
+        }
 
         public virtual float FlightSpeed { get; }
 
@@ -40,7 +48,9 @@ namespace Hellion.World.Structures
         public int ActionFlags { get; set; }
 
         public Mover TargetMover { get; private set; }
-        
+
+        public float FollowDistance { get; set; }
+
         public virtual int Level { get; protected set; }
 
         public virtual string Name { get; set; }
@@ -56,10 +66,11 @@ namespace Hellion.World.Structures
             : base(modelId)
         {
             this.nextMove = Time.GetCurrentTick() + 10;
-            this.Speed = 0.5f;
             this.Level = 1;
             this.DestinationPosition = new Vector3();
             this.TargetMover = null;
+            this.FollowDistance = 1f;
+            this.MovingFlags = ObjectState.OBJSTA_STAND;
         }
 
         public void Target(Mover mover)
@@ -119,7 +130,7 @@ namespace Hellion.World.Structures
                         break;
                     case ObjectState.OBJSTA_FMOVE:
                         accelPower = this.FlightSpeed;
-                        break;   
+                        break;
                 }
 
                 switch (this.MovingFlags & ObjectState.OBJSTA_TURN_ALL)
@@ -156,7 +167,7 @@ namespace Hellion.World.Structures
 
                 if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_TURBO))
                     accelPower *= 1.5f;
-                
+
                 float d = (float)Math.Cos(angleFlyTheta) * accelPower;
 
                 var deltaVector = new Vector3();
@@ -202,7 +213,7 @@ namespace Hellion.World.Structures
 
             this.lastMoveTime = Time.GetTick();
 
-            float angle = this.IsMovingWithKeyboard ? 
+            float angle = this.IsMovingWithKeyboard ?
                this.Angle : Vector3.AngleBetween(this.Position, this.DestinationPosition);
 
             float distX = this.DestinationPosition.X - this.Position.X;
@@ -251,16 +262,15 @@ namespace Hellion.World.Structures
             Vector3 v = new Vector3();
             if (distAll <= longprogression)
             {
-                //Log.Debug("{0} Arrived", this.Name);
                 this.DestinationPosition = this.Position.Clone();
                 this.Angle = angle;
                 v.Reset();
 
                 if (!this.IsFighting)
                 {
-                    MovingFlags &= ~ObjectState.OBJSTA_FMOVE;
-                    MovingFlags |= ObjectState.OBJSTA_STAND;
-                    SendMoverAction((int)OBJMSG.OBJMSG_STAND);
+                    this.MovingFlags &= ~ObjectState.OBJSTA_FMOVE;
+                    this.MovingFlags |= ObjectState.OBJSTA_STAND;
+                    this.SendMoverAction((int)OBJMSG.OBJMSG_STAND);
                 }
             }
             else
@@ -272,9 +282,6 @@ namespace Hellion.World.Structures
 
             this.move(v.X, v.Z);
             this.Angle = angle;
-
-            if ((this is Player))
-                Log.Debug("Mover Angle = {0}", this.Angle);
         }
 
         private void Follow()
@@ -284,6 +291,15 @@ namespace Hellion.World.Structures
                 this.DestinationPosition = this.TargetMover.Position;
                 this.MovingFlags = this.MovingFlags & ~ObjectState.OBJSTA_STAND;
                 this.MovingFlags = this.MovingFlags | ObjectState.OBJSTA_FMOVE;
+            }
+            else
+            {
+                this.IsFollowing = false;
+                this.IsFighting = false;
+                this.RemoveTarget();
+                this.DestinationPosition.Reset();
+                this.MovingFlags = ObjectState.OBJSTA_STAND;
+                this.SendMoverAction((int)ObjectState.OBJSTA_STAND);
             }
         }
 
@@ -390,6 +406,31 @@ namespace Hellion.World.Structures
         internal void SendNormalChatTo(string message, Player player)
         {
             this.SendNormalChat(message, player);
+        }
+
+        internal void SendMeleeAttack(int motion, int targetId)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MELEE_ATTACK);
+                packet.Write(motion);
+                packet.Write(targetId);
+                packet.Write(0);
+                packet.Write(0x10000);
+
+                this.SendToVisible(packet);
+            }
+        }
+
+        internal void SendSpeed(float speed)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.SET_SPEED_FACTOR);
+                packet.Write(speed);
+
+                this.SendToVisible(packet);
+            }
         }
     }
 }

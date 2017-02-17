@@ -3,6 +3,7 @@ using Hellion.Core.Data.Headers;
 using Hellion.Core.Helpers;
 using Hellion.Core.IO;
 using Hellion.Core.Structures;
+using Hellion.World.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Hellion.World.Structures
     public class Monster : Mover
     {
         private long moveTimer;
+        private long attackTimer;
         private Region region;
 
         /// <summary>
@@ -21,7 +23,7 @@ namespace Hellion.World.Structures
         public override string Name
         {
             get { return this.Data.Name; }
-            set {  }
+            set { }
         }
 
         /// <summary>
@@ -74,9 +76,7 @@ namespace Hellion.World.Structures
             this.Attributes[DefineAttributes.STA] = this.Data.Sta;
             this.Attributes[DefineAttributes.INT] = this.Data.Int;
             this.Attributes[DefineAttributes.DEX] = this.Data.Dex;
-            this.Attributes[DefineAttributes.SPEED] = 50;
             this.Size = (short)(this.Data.Size + 100);
-            this.Speed = this.Data.Speed;
 
             this.Position = this.region.GetRandomPosition();
             this.DestinationPosition = this.Position.Clone();
@@ -89,7 +89,10 @@ namespace Hellion.World.Structures
         /// </summary>
         public override void Update()
         {
-            this.ProcessMoves();
+            if (this.IsFighting)
+                this.ProcessFight();
+            else
+                this.ProcessMoves();
 
             base.Update();
         }
@@ -109,6 +112,43 @@ namespace Hellion.World.Structures
                 this.MovingFlags |= ObjectState.OBJSTA_FMOVE;
                 this.SendMoverMoving();
             }
+        }
+
+        private void ProcessFight()
+        {
+            if (this.IsFighting && this.TargetMover != null)
+            {
+                if (this.Position.IsInCircle(this.TargetMover.Position, 1))
+                {
+                    if (this.attackTimer < Time.GetCurrentTick())
+                        this.Fight(this.TargetMover);
+                }
+                else
+                    this.SendFollowTarget(1f);
+            }
+        }
+
+        public override void Fight(Mover defender)
+        {
+            if (this.Position.IsInCircle(this.TargetMover.Position, 2)) // DEBUG arrived to target
+            {
+                Log.Debug("{0} is fighting {1}", this.Name, this.TargetMover.Name);
+                // Reset attack delay
+                this.attackTimer = Time.GetCurrentTick() + this.Data.ReAttackDelay;
+
+                int motion = 29; // TODO: 28+attackType (IA)
+                int damages = BattleManager.CalculateDamages(this, defender);
+
+                this.SendMeleeAttack(motion, this.TargetMover.ObjectId);
+            }
+            else
+            {
+                Log.Debug("{0} following {1}", this.Name, this.TargetMover.Name);
+                this.IsFollowing = true;
+                this.SendFollowTarget(1);
+            }
+
+            base.Fight(defender);
         }
     }
 }

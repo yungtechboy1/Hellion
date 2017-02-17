@@ -24,6 +24,10 @@ namespace Hellion.World.Managers
             {
                 // normal attack
             }
+            if (attackFlags.HasFlag(AttackFlags.AF_CRITICAL))
+            {
+                // Critical hit
+            }
 
             return 0;
         }
@@ -32,7 +36,7 @@ namespace Hellion.World.Managers
         {
             AttackFlags attackFlags = 0;
 
-
+            // determine if its a critical hit, knockback, miss hit, etc...
 
             return attackFlags;
         }
