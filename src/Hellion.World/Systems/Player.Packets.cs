@@ -484,31 +484,31 @@ namespace Hellion.World.Systems
                 packet.Write((short)(monster.Angle * 10f));
                 packet.Write(monster.ObjectId);
 
-                packet.Write<Int16>(5);
-                packet.Write<Byte>(0);
-                packet.Write<Int32>(monster.Attributes[DefineAttributes.HP]);
-                packet.Write<Int32>(1);
-                packet.Write<Int32>(0);
-                packet.Write<Byte>((Byte)monster.Data.Belligerence);
-                packet.Write<Int32>(-1);
-                packet.Write<Byte>(0);
-                packet.Write<Int32>(-1);
-                packet.Write<Byte>(0);
-                packet.Write<Int32>(0);
-                packet.Write<Byte>(0);
+                packet.Write<short>(5);
+                packet.Write((byte)0);
+                packet.Write(monster.Attributes[DefineAttributes.HP]);
+                packet.Write(1);
+                packet.Write(0);
+                packet.Write((byte)monster.Data.Belligerence);
+                packet.Write(-1);
+                packet.Write((byte)0);
+                packet.Write(-1);
+                packet.Write((byte)0);
+                packet.Write(0);
+                packet.Write((byte)0);
                 if (this.ModelId == 1021)
                 {
-                    packet.Write<Byte>(0);
+                    packet.Write((byte)0);
                 }
                 else
                 {
-                    packet.Write<Byte>(false ? (Byte)1 : (Byte)0);
+                    packet.Write(false ? (byte)1 : (byte)0);
                 }
-                packet.Write<Byte>(0);
-                packet.Write<Byte>(0);
-                packet.Write<Int32>(0);
-                packet.Write<Single>(1);
-                packet.Write<Int32>(0);
+                packet.Write((byte)0);
+                packet.Write((byte)0);
+                packet.Write(0);
+                packet.Write(this.SpeedFactor);
+                packet.Write(0);
 
                 this.Send(packet);
             }

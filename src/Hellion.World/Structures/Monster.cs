@@ -118,13 +118,30 @@ namespace Hellion.World.Structures
         {
             if (this.IsFighting && this.TargetMover != null)
             {
+                if (this.SpeedFactor != 2)
+                {
+                    this.SpeedFactor = 2;
+                    this.SendSpeed(this.SpeedFactor);
+                }
+
                 if (this.Position.IsInCircle(this.TargetMover.Position, 1))
                 {
-                    if (this.attackTimer < Time.GetCurrentTick())
+                    if (this.attackTimer < Time.GetTick())
                         this.Fight(this.TargetMover);
                 }
                 else
                     this.SendFollowTarget(1f);
+            }
+            else if (this.TargetMover == null)
+            {
+                this.SpeedFactor = 1;
+                this.SendSpeed(this.SpeedFactor);
+                this.IsFighting = false;
+                this.IsFollowing = false;
+                this.DestinationPosition = this.region.GetRandomPosition();
+                this.MovingFlags = ObjectState.OBJSTA_NONE;
+                this.MovingFlags |= ObjectState.OBJSTA_FMOVE;
+                this.SendMoverMoving();
             }
         }
 
@@ -134,7 +151,7 @@ namespace Hellion.World.Structures
             {
                 Log.Debug("{0} is fighting {1}", this.Name, this.TargetMover.Name);
                 // Reset attack delay
-                this.attackTimer = Time.GetCurrentTick() + this.Data.ReAttackDelay;
+                this.attackTimer = Time.GetTick() + this.Data.ReAttackDelay;
 
                 int motion = 29; // TODO: 28+attackType (IA)
                 int damages = BattleManager.CalculateDamages(this, defender);

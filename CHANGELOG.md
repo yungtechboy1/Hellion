@@ -4,6 +4,8 @@
 
 Date: 17/02/2017
 
+- Common
+  - Fix database dump `sql/hellion.sql`
 - Cluster
   - Fix delete character issue
   - Fix create character issue

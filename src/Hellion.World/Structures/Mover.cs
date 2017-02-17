@@ -17,6 +17,17 @@ namespace Hellion.World.Structures
         private long nextMove;
         private long lastMoveTime;
 
+
+        /// <summary>
+        /// Get or sets the mover level.
+        /// </summary>
+        public virtual int Level { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the mover name.
+        /// </summary>
+        public virtual string Name { get; set; }
+
         public bool IsDead { get; set; }
 
         public bool IsFlying { get; set; }
@@ -29,16 +40,27 @@ namespace Hellion.World.Structures
 
         public bool IsMovingWithKeyboard { get; set; }
 
+        /// <summary>
+        /// Gets the mover speed.
+        /// </summary>
         public float Speed
         {
             get
             {
-                float speed = WorldServer.MonstersData[this.ModelId].Speed;
+                float moverSpeed = WorldServer.MonstersData[this.ModelId].Speed;
 
-                return speed * 10f;
+                return (moverSpeed * 10f) * this.SpeedFactor;
             }
         }
+        
+        /// <summary>
+        /// Gets or sets the mover speed factor.
+        /// </summary>
+        public float SpeedFactor { get; set; }
 
+        /// <summary>
+        /// Gets the mover flight speed.
+        /// </summary>
         public virtual float FlightSpeed { get; }
 
         public ObjectState MovingFlags { get; set; }
@@ -51,11 +73,12 @@ namespace Hellion.World.Structures
 
         public float FollowDistance { get; set; }
 
-        public virtual int Level { get; protected set; }
-
-        public virtual string Name { get; set; }
-
         public Vector3 DestinationPosition { get; set; }
+        
+        /// <summary>
+        /// Gets the mover's attributes.
+        /// </summary>
+        public Attributes Attributes { get; private set; }
 
         public override WorldObjectType Type
         {
@@ -65,16 +88,21 @@ namespace Hellion.World.Structures
         public Mover(int modelId)
             : base(modelId)
         {
-            this.nextMove = Time.GetCurrentTick() + 10;
+            this.nextMove = Time.GetTick() + 10;
             this.Level = 1;
             this.DestinationPosition = new Vector3();
             this.TargetMover = null;
             this.FollowDistance = 1f;
+            this.SpeedFactor = 1f;
             this.MovingFlags = ObjectState.OBJSTA_STAND;
+
+            this.Attributes = new Attributes();
+            this.Attributes[DefineAttributes.SPEED] = 50;
         }
 
         public void Target(Mover mover)
         {
+            Log.Debug("{0} is targeting {1}", this.Name, mover.Name);
             this.TargetMover = mover;
         }
 
@@ -95,10 +123,10 @@ namespace Hellion.World.Structures
             if (this.DestinationPosition.IsZero())
                 return;
 
-            if (this.nextMove > Time.GetCurrentTick())
+            if (this.nextMove > Time.GetTick())
                 return;
 
-            this.nextMove = Time.GetCurrentTick() + 10;
+            this.nextMove = Time.GetTick() + 10;
 
             if (this.IsFollowing)
                 this.Follow();
@@ -288,18 +316,18 @@ namespace Hellion.World.Structures
         {
             if (this.TargetMover != null)
             {
-                this.DestinationPosition = this.TargetMover.Position;
-                this.MovingFlags = this.MovingFlags & ~ObjectState.OBJSTA_STAND;
-                this.MovingFlags = this.MovingFlags | ObjectState.OBJSTA_FMOVE;
+                this.DestinationPosition = this.TargetMover.Position.Clone();
+                this.MovingFlags &= ~ObjectState.OBJSTA_STAND;
+                this.MovingFlags |= ObjectState.OBJSTA_FMOVE;
             }
             else
             {
-                this.IsFollowing = false;
-                this.IsFighting = false;
-                this.RemoveTarget();
-                this.DestinationPosition.Reset();
-                this.MovingFlags = ObjectState.OBJSTA_STAND;
-                this.SendMoverAction((int)ObjectState.OBJSTA_STAND);
+                //this.IsFollowing = false;
+                //this.IsFighting = false;
+                //this.RemoveTarget();
+                //this.DestinationPosition.Reset();
+                //this.MovingFlags = ObjectState.OBJSTA_STAND;
+                //this.SendMoverAction((int)ObjectState.OBJSTA_STAND);
             }
         }
 
@@ -422,12 +450,12 @@ namespace Hellion.World.Structures
             }
         }
 
-        internal void SendSpeed(float speed)
+        internal void SendSpeed(float speedFactor)
         {
             using (var packet = new FFPacket())
             {
                 packet.StartNewMergedPacket(this.ObjectId, SnapshotType.SET_SPEED_FACTOR);
-                packet.Write(speed);
+                packet.Write(speedFactor);
 
                 this.SendToVisible(packet);
             }

@@ -62,11 +62,6 @@ namespace Hellion.World.Systems
         public int Authority { get; set; }
 
         /// <summary>
-        /// Gets the player's attributes.
-        /// </summary>
-        public Attributes Attributes { get; private set; }
-
-        /// <summary>
         /// Gets the player's skin set id.
         /// </summary>
         public int SkinSetId { get; set; }
@@ -131,7 +126,6 @@ namespace Hellion.World.Systems
             : base(dbCharacter?.Gender == 0 ? 11 : 12)
         {
             this.Client = parentClient;
-            this.Attributes = new Attributes();
             this.Chat = new Chat(this);
             this.Inventory = new Inventory(this, dbCharacter.Items);
 
@@ -151,6 +145,7 @@ namespace Hellion.World.Systems
             this.Attributes[DefineAttributes.HP] = dbCharacter.Hp;
             this.Attributes[DefineAttributes.MP] = dbCharacter.Mp;
             this.Attributes[DefineAttributes.FP] = dbCharacter.Fp;
+            this.Attributes[DefineAttributes.SPEED] = 100;
             this.Experience = dbCharacter.Experience;
             this.SkinSetId = dbCharacter.SkinSetId;
             this.HairId = dbCharacter.HairId;

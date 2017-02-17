@@ -55,14 +55,5 @@ namespace Hellion.Core.IO
         {
             return GetTick() - start;
         }
-
-        /// <summary>
-        /// Gets the number of milliseconds since the system has started.
-        /// </summary>
-        /// <returns></returns>
-        public static long GetCurrentTick()
-        {
-            return Environment.TickCount;
-        }
     }
 }

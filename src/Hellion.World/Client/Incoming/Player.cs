@@ -301,6 +301,19 @@ namespace Hellion.World.Client
             this.Player.SendFollowTarget(this.Player.FollowDistance);
         }
 
+        [FFIncomingPacket(PacketType.QUERYGETDESTOBJ)]
+        public void OnQueryGetDestObj(NetPacketBase packet)
+        {
+            var objectId = packet.Read<int>();
+            var mover = this.Player.GetSpawnedObjectById<Mover>(objectId);
+
+            if (mover != null)
+            {
+                Log.Debug("Mover {0} arrived to destination", mover.Name);
+                mover.Position = mover.DestinationPosition.Clone();
+            }
+        }
+
         [FFIncomingPacket(PacketType.MELEE_ATTACK)]
         public void OnMeleeAttack(NetPacketBase packet)
         {
