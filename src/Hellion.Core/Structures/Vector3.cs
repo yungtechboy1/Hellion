@@ -44,7 +44,7 @@ namespace Hellion.Core.Structures
         /// </summary>
         public float Length
         {
-            get { return (float)(Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z)); }
+            get { return (float)(Math.Sqrt(this.GetLengthSq())); }
         }
 
         /// <summary>
@@ -115,14 +115,16 @@ namespace Hellion.Core.Structures
             return (xDistance * xDistance + zDistance * zDistance) <= circleRadius * circleRadius;
         }
 
-        public bool IsInSphere(Vector3 otherPosition, float circleRadius)
+        public Vector3 Normalize()
         {
-            var dist = new Vector3(
-                x - otherPosition.x,
-                y - otherPosition.y,
-                z - otherPosition.z);
+            float distance = this.Length;
 
-            return (dist.x * dist.x + dist.y * dist.y + dist.z * dist.z) <= circleRadius * circleRadius;
+            return new Vector3(this.x / distance, this.y / distance, this.z / distance);
+        }
+
+        public float GetLengthSq()
+        {
+            return this.x * this.x + this.y * this.y + this.z * this.z;
         }
 
         /// <summary>
@@ -243,40 +245,23 @@ namespace Hellion.Core.Structures
         /// <returns></returns>
         public static float AngleBetween(Vector3 a, Vector3 b)
         {
-            var distDelta = b - a;
-            distDelta.Y = 0;
+            float deltaX = a.x - b.x;
+            float deltaZ = a.z - b.z;
 
-            float angle = MathHelper.ToDegree((float)Math.Atan2(distDelta.X, -distDelta.Z));
-            float length = distDelta.Length;
+            float angle = (float)((Math.Atan2(deltaZ, deltaX) * 180 / Math.PI) + 90D);
 
-            //float fAngXZ = ToDegree((float)Math.Atan2(vDist.fPosX, -vDist.fPosZ));		// ¿ì¼± XZÆò¸éÀÇ °¢µµ¸¦ ¸ÕÀú ±¸ÇÔ
-            //float fLenXZ = D3DXVec3Length(vDistXZ);						// yÁÂÇ¥¸¦ ¹«½ÃÇÑ XZÆò¸é¿¡¼­ÀÇ ±æÀÌ¸¦ ±¸ÇÔ.
-            //float fAngH = ToDegree((float)Math.Atan2(fLenXZ, vDist.fPosY));     // XZÆò¸éÀÇ ±æÀÌ¿Í y³ôÀÌ°£ÀÇ °¢µµ¸¦ ±¸ÇÔ.
-            
             if (angle < 0)
                 angle += 360;
-            else if (angle >= 360)
+
+            if (a.X >= b.X)
+                angle += 180;
+            else
+                angle -= 180;
+
+            if (angle >= 360)
                 angle -= 360;
 
             return angle;
-
-            //float deltaX = a.x - b.x;
-            //float deltaZ = a.z - b.z;
-
-            //float angle = (float)((Math.Atan2(deltaZ, deltaX) * 180 / Math.PI) + 90D);
-
-            //if (angle < 0)
-            //    angle += 360;
-
-            //if (a.X >= b.X)
-            //    angle += 180;
-            //else
-            //    angle -= 180;
-
-            //if (angle >= 360)
-            //    angle -= 360;
-
-            //return angle;
         }
     }
 }

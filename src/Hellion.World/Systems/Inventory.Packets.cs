@@ -37,5 +37,21 @@ namespace Hellion.World.Systems
                 this.SendToVisible(packet);
             }
         }
+
+        internal void SendCreateItem(Item item)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.CREATEITEM);
+                packet.Write<byte>(0);
+                packet.Write(-1);
+                item.Serialize(packet);
+                packet.Write<byte>(1);
+                packet.Write((byte)item.Slot);
+                packet.Write((short)item.Quantity);
+
+                this.Send(packet);
+            }
+        }
     }
 }

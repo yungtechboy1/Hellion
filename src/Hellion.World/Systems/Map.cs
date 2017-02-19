@@ -13,6 +13,8 @@ namespace Hellion.World.Systems
 {
     public class Map
     {
+        public const float MaxHeight = 270f;
+
         private Thread updateThread;
 
         private ICollection<Player> players;

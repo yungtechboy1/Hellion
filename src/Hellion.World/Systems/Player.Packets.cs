@@ -484,31 +484,31 @@ namespace Hellion.World.Systems
                 packet.Write((short)(monster.Angle * 10f));
                 packet.Write(monster.ObjectId);
 
-                packet.Write<Int16>(5);
-                packet.Write<Byte>(0);
-                packet.Write<Int32>(monster.Attributes[DefineAttributes.HP]);
-                packet.Write<Int32>(1);
-                packet.Write<Int32>(0);
-                packet.Write<Byte>((Byte)monster.Data.Belligerence);
-                packet.Write<Int32>(-1);
-                packet.Write<Byte>(0);
-                packet.Write<Int32>(-1);
-                packet.Write<Byte>(0);
-                packet.Write<Int32>(0);
-                packet.Write<Byte>(0);
+                packet.Write<short>(5);
+                packet.Write((byte)0);
+                packet.Write(monster.Attributes[DefineAttributes.HP]);
+                packet.Write(1);
+                packet.Write(0);
+                packet.Write((byte)monster.Data.Belligerence);
+                packet.Write(-1);
+                packet.Write((byte)0);
+                packet.Write(-1);
+                packet.Write((byte)0);
+                packet.Write(0);
+                packet.Write((byte)0);
                 if (this.ModelId == 1021)
                 {
-                    packet.Write<Byte>(0);
+                    packet.Write((byte)0);
                 }
                 else
                 {
-                    packet.Write<Byte>(false ? (Byte)1 : (Byte)0);
+                    packet.Write(false ? (byte)1 : (byte)0);
                 }
-                packet.Write<Byte>(0);
-                packet.Write<Byte>(0);
-                packet.Write<Int32>(0);
-                packet.Write<Single>(1);
-                packet.Write<Int32>(0);
+                packet.Write((byte)0);
+                packet.Write((byte)0);
+                packet.Write(0);
+                packet.Write(this.SpeedFactor);
+                packet.Write(0);
 
                 this.Send(packet);
             }
@@ -568,6 +568,57 @@ namespace Hellion.World.Systems
                 packet.Write(motionEx);
                 packet.Write(loop);
                 packet.Write(motionOption);
+                packet.Write(tick);
+
+                base.SendToVisible(packet);
+            }
+        }
+
+        internal void SendMoverMoved(Vector3 direction, int motionEx, int loop, int motionOption, long tick, byte frame, float turnAngle)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERMOVED2);
+
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+                packet.Write(direction.X);
+                packet.Write(direction.Y);
+                packet.Write(direction.Z);
+                packet.Write(this.Angle);
+                packet.Write(this.AngleFly);
+                packet.Write(this.FlightSpeed);
+                packet.Write(turnAngle);
+                packet.Write((uint)this.MovingFlags);
+                packet.Write((int)this.MotionFlags);
+                packet.Write(this.ActionFlags);
+                packet.Write(motionEx);
+                packet.Write(loop);
+                packet.Write(motionOption);
+                packet.Write(tick);
+                packet.Write(frame);
+
+                base.SendToVisible(packet);
+            }
+        }
+
+        public void SendMoverAngle(Vector3 direction, long tick, float turnAngle)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERANGLE);
+
+                packet.Write(this.Position.X);
+                packet.Write(this.Position.Y);
+                packet.Write(this.Position.Z);
+                packet.Write(direction.X);
+                packet.Write(direction.Y);
+                packet.Write(direction.Z);
+                packet.Write(this.Angle);
+                packet.Write(this.AngleFly);
+                packet.Write(this.FlightSpeed);
+                packet.Write(turnAngle);
                 packet.Write(tick);
 
                 base.SendToVisible(packet);

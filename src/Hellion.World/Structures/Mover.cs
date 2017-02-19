@@ -12,9 +12,21 @@ using Hellion.Core.Helpers;
 
 namespace Hellion.World.Structures
 {
-    public partial class Mover : WorldObject
+    public class Mover : WorldObject
     {
+        private long nextMove;
         private long lastMoveTime;
+
+
+        /// <summary>
+        /// Get or sets the mover level.
+        /// </summary>
+        public virtual int Level { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the mover name.
+        /// </summary>
+        public virtual string Name { get; set; }
 
         public bool IsDead { get; set; }
 
@@ -28,19 +40,45 @@ namespace Hellion.World.Structures
 
         public bool IsMovingWithKeyboard { get; set; }
 
-        public float Speed { get; set; }
+        /// <summary>
+        /// Gets the mover speed.
+        /// </summary>
+        public float Speed
+        {
+            get
+            {
+                float moverSpeed = WorldServer.MonstersData[this.ModelId].Speed;
+
+                return (moverSpeed * 10f) * this.SpeedFactor;
+            }
+        }
+        
+        /// <summary>
+        /// Gets or sets the mover speed factor.
+        /// </summary>
+        public float SpeedFactor { get; set; }
+
+        /// <summary>
+        /// Gets the mover flight speed.
+        /// </summary>
+        public virtual float FlightSpeed { get; }
 
         public ObjectState MovingFlags { get; set; }
 
         public StateFlags MotionFlags { get; set; }
 
         public int ActionFlags { get; set; }
-        
-        public int Level { get; }
 
-        public virtual string Name { get; set; }
+        public Mover TargetMover { get; private set; }
+
+        public float FollowDistance { get; set; }
 
         public Vector3 DestinationPosition { get; set; }
+        
+        /// <summary>
+        /// Gets the mover's attributes.
+        /// </summary>
+        public Attributes Attributes { get; private set; }
 
         public override WorldObjectType Type
         {
@@ -50,9 +88,27 @@ namespace Hellion.World.Structures
         public Mover(int modelId)
             : base(modelId)
         {
-            this.Speed = 0.5f;
+            this.nextMove = Time.GetTick() + 10;
             this.Level = 1;
             this.DestinationPosition = new Vector3();
+            this.TargetMover = null;
+            this.FollowDistance = 1f;
+            this.SpeedFactor = 1f;
+            this.MovingFlags = ObjectState.OBJSTA_STAND;
+
+            this.Attributes = new Attributes();
+            this.Attributes[DefineAttributes.SPEED] = 50;
+        }
+
+        public void Target(Mover mover)
+        {
+            Log.Debug("{0} is targeting {1}", this.Name, mover.Name);
+            this.TargetMover = mover;
+        }
+
+        public void RemoveTarget()
+        {
+            this.TargetMover = null;
         }
 
         public virtual void Update()
@@ -60,45 +116,122 @@ namespace Hellion.World.Structures
             this.ProcessMoves();
         }
 
-        private long nextMove = Time.GetCurrentTick() + 10;
+
 
         private void ProcessMoves()
         {
             if (this.DestinationPosition.IsZero())
                 return;
 
-            if (this.nextMove > Time.GetCurrentTick())
+            if (this.nextMove > Time.GetTick())
                 return;
 
-            this.nextMove = Time.GetCurrentTick() + 10;
+            this.nextMove = Time.GetTick() + 10;
+
+            if (this.IsFollowing)
+                this.Follow();
 
             if (this.IsFlying)
                 this.Fly();
-            //else
-                //this.Walk();
+            else
+                this.Walk();
         }
 
         private void Fly()
         {
-        }
+            if (this.FlightSpeed > 0 && this.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE))
+            {
+                Vector3 distance = this.DestinationPosition - this.Position;
+                Vector3 moveVector = this.Position.Clone();
+                float angle = Vector3.AngleBetween(this.Position, this.DestinationPosition);
+                float angleFly = this.AngleFly;
+                float angleTheta = MathHelper.ToRadians(angle);
+                float angleFlyTheta = MathHelper.ToRadians(angleFly);
+                float turnAngle = 0f;
+                float accelPower = 0f;
 
-        public static void xGetDegree(ref float pfAngXZ,/* ref float pfAngH,*/ Vector3 vDist)
-        {
-            Vector3 vDistXZ = vDist.Clone();
-            //Helper.CopyVector(vDist, ref vDistXZ);
-            vDistXZ.Y = 0;
-            float fAngXZ = MathHelper.ToDegree((float)Math.Atan2(vDist.X, -vDist.Z));		// ¿ì¼± XZÆò¸éÀÇ °¢µµ¸¦ ¸ÕÀú ±¸ÇÔ
-            float fLenXZ = vDistXZ.Length;					// yÁÂÇ¥¸¦ ¹«½ÃÇÑ XZÆò¸é¿¡¼­ÀÇ ±æÀÌ¸¦ ±¸ÇÔ.
-            //float fAngH = ToDegree((float)Math.Atan2(fLenXZ, vDist.fPosY));     // XZÆò¸éÀÇ ±æÀÌ¿Í y³ôÀÌ°£ÀÇ °¢µµ¸¦ ±¸ÇÔ.
 
-            //fAngH -= 90.0f;
-            if (fAngXZ < 0)
-                fAngXZ += 360;
-            else if (fAngXZ >= 360)
-                fAngXZ -= 360;
+                switch (this.MovingFlags & ObjectState.OBJSTA_MOVE_ALL)
+                {
+                    case ObjectState.OBJSTA_STAND:
+                        accelPower = 0f;
+                        break;
+                    case ObjectState.OBJSTA_FMOVE:
+                        accelPower = this.FlightSpeed;
+                        break;
+                }
 
-            pfAngXZ = fAngXZ;
-            //pfAngH = fAngH;
+                switch (this.MovingFlags & ObjectState.OBJSTA_TURN_ALL)
+                {
+                    case ObjectState.OBJSTA_RTURN:
+                        turnAngle = this.TurnAngle;
+                        if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_ACC))
+                            turnAngle *= 2.5f;
+                        angle += turnAngle;
+                        if (angle < 0.0f)
+                            angle += 360.0f;
+                        break;
+                    case ObjectState.OBJSTA_LTURN:
+                        turnAngle = this.TurnAngle;
+                        if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_ACC))
+                            turnAngle *= 2.5f;
+                        angle += turnAngle;
+                        if (angle > 360.0f)
+                            angle -= 360.0f;
+                        break;
+                }
+
+                switch (this.MovingFlags & ObjectState.OBJSTA_LOOK_ALL)
+                {
+                    case ObjectState.OBJSTA_LOOKUP:
+                        if (angleFly > 45f)
+                            angleFly -= 1f;
+                        break;
+                    case ObjectState.OBJSTA_LOOKDOWN:
+                        if (angleFly < 45f)
+                            angleFly += 1f;
+                        break;
+                }
+
+                if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_TURBO))
+                    accelPower *= 1.5f;
+
+                float d = (float)Math.Cos(angleFlyTheta) * accelPower;
+
+                var deltaVector = new Vector3();
+                var accelVector = new Vector3()
+                {
+                    X = (float)Math.Sin(angleTheta) * d,
+                    Y = (float)-Math.Sin(angleFlyTheta) * accelPower,
+                    Z = (float)-Math.Cos(angleTheta) * d
+                };
+                var accelVectorNorm = accelVector.Normalize();
+                var deltaVectorNorm = deltaVector.Normalize();
+                float deltaVectorLength = deltaVector.GetLengthSq();
+                float maxSpeed = 0.3f;
+
+                if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_TURBO))
+                    maxSpeed *= 1.1f;
+
+                if (deltaVectorLength < (maxSpeed * maxSpeed))
+                    deltaVector += accelVector;
+
+                deltaVector *= (1.0f - 0.011f);
+
+                if (this is Player)
+                    moveVector += deltaVector;
+                else
+                {
+                    // other ?
+                }
+
+                if (moveVector.Y > Map.MaxHeight)
+                    moveVector.Y = Map.MaxHeight;
+
+                this.Position = moveVector.Clone();
+                this.AngleFly = angleFly;
+                this.Angle = angle;
+            }
         }
 
         private void Walk()
@@ -108,27 +241,8 @@ namespace Hellion.World.Structures
 
             this.lastMoveTime = Time.GetTick();
 
-            // DEBUG
-
-            //if (this.IsMovingWithKeyboard)
-            //    f = this.Angle;
-            //else
-            //    GetDegree(ref f, DestinationPosition - Position);
-            float angle = 0;
-
-            if (this.IsMovingWithKeyboard)
-            {
-                angle = this.Angle;
-            }
-            else
-            {
-                xGetDegree(ref angle, this.DestinationPosition - this.Position);
-
-                if (angle == 180)
-                {
-                }
-            }
-            //float angle = this.IsMovingWithKeyboard ? this.Angle : Vector3.AngleBetween(this.Position, this.DestinationPosition);
+            float angle = this.IsMovingWithKeyboard ?
+               this.Angle : Vector3.AngleBetween(this.Position, this.DestinationPosition);
 
             float distX = this.DestinationPosition.X - this.Position.X;
             float distZ = this.DestinationPosition.Z - this.Position.Z;
@@ -176,16 +290,15 @@ namespace Hellion.World.Structures
             Vector3 v = new Vector3();
             if (distAll <= longprogression)
             {
-                //Log.Debug("{0} Arrived", this.Name);
                 this.DestinationPosition = this.Position.Clone();
                 this.Angle = angle;
                 v.Reset();
 
                 if (!this.IsFighting)
                 {
-                    MovingFlags &= ~ObjectState.OBJSTA_FMOVE;
-                    MovingFlags |= ObjectState.OBJSTA_STAND;
-                    SendMoverAction((int)OBJMSG.OBJMSG_STAND);
+                    this.MovingFlags &= ~ObjectState.OBJSTA_FMOVE;
+                    this.MovingFlags |= ObjectState.OBJSTA_STAND;
+                    this.SendMoverAction((int)OBJMSG.OBJMSG_STAND);
                 }
             }
             else
@@ -197,14 +310,30 @@ namespace Hellion.World.Structures
 
             this.move(v.X, v.Z);
             this.Angle = angle;
+        }
 
-            if ((this is Player))
-                Log.Debug("Mover Angle = {0}", this.Angle);
+        private void Follow()
+        {
+            if (this.TargetMover != null)
+            {
+                this.DestinationPosition = this.TargetMover.Position.Clone();
+                this.MovingFlags &= ~ObjectState.OBJSTA_STAND;
+                this.MovingFlags |= ObjectState.OBJSTA_FMOVE;
+            }
+            else
+            {
+                //this.IsFollowing = false;
+                //this.IsFighting = false;
+                //this.RemoveTarget();
+                //this.DestinationPosition.Reset();
+                //this.MovingFlags = ObjectState.OBJSTA_STAND;
+                //this.SendMoverAction((int)ObjectState.OBJSTA_STAND);
+            }
         }
 
         // TODO: clean this mess up! :p
-         
-        public void move(float x, float z)
+
+        private void move(float x, float z)
         {
             if (this.IsMovingWithKeyboard)
             {
@@ -225,6 +354,8 @@ namespace Hellion.World.Structures
                 this.Position.Z += z;
             }
         }
+
+        public virtual void Fight(Mover defender) { }
 
         // TODO: Move this packets to an other file.
 
@@ -266,6 +397,21 @@ namespace Hellion.World.Structures
             }
         }
 
+        internal void SendFollowTarget(float distance)
+        {
+            if (this.TargetMover == null)
+                return;
+
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MOVERSETDESTOBJ);
+                packet.Write(this.TargetMover.ObjectId);
+                packet.Write(distance);
+
+                base.SendToVisible(packet);
+            }
+        }
+
         private void SendNormalChat(string message, Player toPlayer = null)
         {
             using (var packet = new FFPacket())
@@ -288,6 +434,31 @@ namespace Hellion.World.Structures
         internal void SendNormalChatTo(string message, Player player)
         {
             this.SendNormalChat(message, player);
+        }
+
+        internal void SendMeleeAttack(int motion, int targetId)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.MELEE_ATTACK);
+                packet.Write(motion);
+                packet.Write(targetId);
+                packet.Write(0);
+                packet.Write(0x10000);
+
+                this.SendToVisible(packet);
+            }
+        }
+
+        internal void SendSpeed(float speedFactor)
+        {
+            using (var packet = new FFPacket())
+            {
+                packet.StartNewMergedPacket(this.ObjectId, SnapshotType.SET_SPEED_FACTOR);
+                packet.Write(speedFactor);
+
+                this.SendToVisible(packet);
+            }
         }
     }
 }

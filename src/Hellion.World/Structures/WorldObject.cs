@@ -22,6 +22,10 @@ namespace Hellion.World.Structures
 
         public float Angle { get; set; }
 
+        public float AngleFly { get; set; }
+
+        public float TurnAngle { get; set; }
+
         public Vector3 Position { get; set; }
 
         public ICollection<WorldObject> SpawnedObjects { get; set; }

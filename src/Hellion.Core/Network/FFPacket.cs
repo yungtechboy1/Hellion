@@ -180,7 +180,7 @@ namespace Hellion.Core.Network
         public static void UnknowPacket<T>(uint header, int digits)
         {
             if (Enum.IsDefined(typeof(T), header))
-                Log.Warning("Unimplemented packet {0}", Enum.GetName(typeof(T), header));
+                Log.Warning("Unimplemented packet {0} (0x{1})", Enum.GetName(typeof(T), header), header.ToString("X" + digits));
             else
                 Log.Warning("Unknow packet 0x{0}", header.ToString("X" + digits));
         }

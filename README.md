@@ -37,27 +37,31 @@ We choose to use the [Ether.Network][ethernetwork] because it provides a clients
       - Dialogs
     - Player login
     - Player visibility with other players
-    - Player moves
+    - Player moves (Mouse & keyboard)
     - Player attributes
+    - Player flags
+    - Chat
+      - Normal chat
     - NPC
       - Visibility
       - Dialogs
     - Inventory
       - Move / Equip / Unequip
+      - Save
     - Monsters
       - Visibility
       - Moves
+    - Flying system (need review)
     
 ## Todo list
 
-- Chat
 - NPC
     - Shops
 - Inventory
   - Use items
-  - Create items
   - Sets bonus
 - Battle system
+- Classes
 - Skills
 - Quest system
 - Friends

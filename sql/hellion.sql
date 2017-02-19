@@ -1,8 +1,10 @@
+CREATE DATABASE  IF NOT EXISTS `hellion` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `hellion`;
 -- MySQL dump 10.13  Distrib 5.7.12, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: hellion
+-- Host: localhost    Database: hellion
 -- ------------------------------------------------------
--- Server version	5.7.15-log
+-- Server version	5.7.17-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -25,17 +27,21 @@ DROP TABLE IF EXISTS `characters`;
 CREATE TABLE `characters` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `accountId` int(11) NOT NULL,
-  `bankCode` int(11) DEFAULT NULL,
+  `bankCode` int(11) NOT NULL,
   `classId` int(11) NOT NULL,
   `dexterity` int(11) NOT NULL,
+  `exp` bigint(20) NOT NULL,
   `faceId` int(11) NOT NULL,
+  `fp` int(11) NOT NULL,
   `gender` tinyint(3) unsigned NOT NULL,
   `gold` int(11) NOT NULL,
   `hairColor` int(10) unsigned NOT NULL,
   `hairId` int(11) NOT NULL,
+  `hp` int(11) NOT NULL,
   `intelligence` int(11) NOT NULL,
   `level` int(11) NOT NULL,
   `mapId` int(11) NOT NULL,
+  `mp` int(11) NOT NULL,
   `name` longtext,
   `posX` float NOT NULL,
   `posY` float NOT NULL,
@@ -44,24 +50,10 @@ CREATE TABLE `characters` (
   `slot` int(11) NOT NULL,
   `stamina` int(11) NOT NULL,
   `strength` int(11) NOT NULL,
-  `hp` int(10) unsigned DEFAULT NULL,
-  `mp` int(10) unsigned DEFAULT NULL,
-  `fp` int(10) unsigned DEFAULT NULL,
-  `exp` bigint(20) DEFAULT NULL,
-  `characterscol` varchar(45) DEFAULT NULL,
+  `angle` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `characters`
---
-
-LOCK TABLES `characters` WRITE;
-/*!40000 ALTER TABLE `characters` DISABLE KEYS */;
-INSERT INTO `characters` VALUES (4,1,1234,0,15,4,0,0,4288575341,2,15,1,1,'Eastrall',6970,100,3328,0,0,15,15,230,230,230,0,NULL),(5,2,1234,0,15,3,1,0,4292182628,4,15,1,1,'test',6968,100,3328,0,0,15,15,0,0,0,0,NULL);
-/*!40000 ALTER TABLE `characters` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `items`
@@ -73,25 +65,15 @@ DROP TABLE IF EXISTS `items`;
 CREATE TABLE `items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `characterId` int(11) NOT NULL,
+  `itemCreatorId` int(11) NOT NULL,
   `itemCount` int(11) NOT NULL,
   `itemId` int(11) NOT NULL,
   `itemSlot` int(11) NOT NULL,
-  `itemCreatorId` int(11) NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`),
   KEY `IX_items_characterId` (`characterId`),
   CONSTRAINT `FK_items_characters_characterId` FOREIGN KEY (`characterId`) REFERENCES `characters` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `items`
---
-
-LOCK TABLES `items` WRITE;
-/*!40000 ALTER TABLE `items` DISABLE KEYS */;
-INSERT INTO `items` VALUES (13,4,1,502,44,-1),(14,4,1,506,46,-1),(15,4,1,510,47,-1),(16,4,1,21,52,-1),(17,5,1,504,44,-1),(18,5,1,508,46,-1),(19,5,1,512,47,-1),(20,5,1,21,52,-1);
-/*!40000 ALTER TABLE `items` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `users`
@@ -109,16 +91,6 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,100,'89d1ed22aac58f5bbea53b2fde81a946','admin',''),(2,100,'89d1ed22aac58f5bbea53b2fde81a946','test','');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -129,4 +101,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-12-19 22:20:57
+-- Dump completed on 2017-02-17 14:48:04

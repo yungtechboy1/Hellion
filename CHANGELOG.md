@@ -1,8 +1,26 @@
 ## Hellion ChangeLog
 
+### Update #10
+
+Date: 17/02/2017
+
+- Common
+  - Fix database dump `sql/hellion.sql`
+- Cluster
+  - Fix delete character issue
+  - Fix create character issue
+- World
+  - Monsters follow player when attacked
+
+
 ### Update #9 (10/02/2017)
 
-...
+- World
+  - Command: /createitem
+  - Save inventory items in database
+  - Fly moves (need review in some points)
+  - Follow movers (foot only)
+  - Begin of fight system
 
 ### Update #8 (03/02/2017)
 

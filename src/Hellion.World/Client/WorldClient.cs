@@ -86,8 +86,6 @@ namespace Hellion.World.Client
             var packetHeaderNumber = packet.Read<uint>();
             var packetHeader = (PacketType)packetHeaderNumber;
 
-            Log.Debug("Recieve World packet: {0}", packetHeader);
-
             if (!FFPacketHandler.Invoke(this, packetHeader, packet))
                 FFPacket.UnknowPacket<PacketType>(packetHeaderNumber, 8);
         }

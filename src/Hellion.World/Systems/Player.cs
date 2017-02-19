@@ -5,6 +5,7 @@ using Hellion.Core.Structures;
 using Hellion.Database;
 using Hellion.Database.Structures;
 using Hellion.World.Client;
+using Hellion.World.Managers;
 using Hellion.World.Structures;
 using System;
 
@@ -61,11 +62,6 @@ namespace Hellion.World.Systems
         public int Authority { get; set; }
 
         /// <summary>
-        /// Gets the player's attributes.
-        /// </summary>
-        public Attributes Attributes { get; private set; }
-
-        /// <summary>
         /// Gets the player's skin set id.
         /// </summary>
         public int SkinSetId { get; set; }
@@ -108,6 +104,19 @@ namespace Hellion.World.Systems
         // Buffs
         // etc...
 
+        public override float FlightSpeed
+        {
+            get
+            {
+                var flyItem = this.Inventory.GetItemBySlot(55);
+
+                if (flyItem == null)
+                    return 0f;
+
+                return flyItem.Data.FlightSpeed * 0.75f;
+            }
+        }
+
         /// <summary>
         /// Creates a new Player based on a <see cref="DbCharacter"/> stored in database.
         /// </summary>
@@ -117,7 +126,6 @@ namespace Hellion.World.Systems
             : base(dbCharacter?.Gender == 0 ? 11 : 12)
         {
             this.Client = parentClient;
-            this.Attributes = new Attributes();
             this.Chat = new Chat(this);
             this.Inventory = new Inventory(this, dbCharacter.Items);
 
@@ -128,6 +136,7 @@ namespace Hellion.World.Systems
             this.ClassId = dbCharacter.ClassId;
             this.Gold = dbCharacter.Gold;
             this.Slot = dbCharacter.Slot;
+            this.Level = dbCharacter.Level;
             this.Authority = this.Client.CurrentUser.Authority;
             this.Attributes[DefineAttributes.STR] = dbCharacter.Strength;
             this.Attributes[DefineAttributes.STA] = dbCharacter.Stamina;
@@ -136,6 +145,7 @@ namespace Hellion.World.Systems
             this.Attributes[DefineAttributes.HP] = dbCharacter.Hp;
             this.Attributes[DefineAttributes.MP] = dbCharacter.Mp;
             this.Attributes[DefineAttributes.FP] = dbCharacter.Fp;
+            this.Attributes[DefineAttributes.SPEED] = 100;
             this.Experience = dbCharacter.Experience;
             this.SkinSetId = dbCharacter.SkinSetId;
             this.HairId = dbCharacter.HairId;
@@ -146,9 +156,9 @@ namespace Hellion.World.Systems
             this.Position = new Vector3(dbCharacter.PosX, dbCharacter.PosY, dbCharacter.PosZ);
             this.Angle = dbCharacter.Angle;
             this.DestinationPosition = this.Position.Clone();
-            this.Speed = 1f;
+            this.IsFlying = this.Inventory.HasFlyingObjectEquiped();
 
-            // Initialize inventory, quests, guild, friends, skills etc...
+            // Initialize quests, guild, friends, skills etc...
         }
 
         /// <summary>
@@ -164,6 +174,13 @@ namespace Hellion.World.Systems
 
                 if (map != null)
                     map.RemoveObject(this);
+
+                // release targets
+                foreach (Mover mover in this.SpawnedObjects)
+                {
+                    if (mover.TargetMover == this)
+                        mover.RemoveTarget();
+                }
 
                 this.SpawnedObjects.Clear();
             }
@@ -231,13 +248,12 @@ namespace Hellion.World.Systems
                 dbCharacter.Slot = this.Slot;
                 dbCharacter.Stamina = this.Attributes[DefineAttributes.STA];
                 dbCharacter.Strength = this.Attributes[DefineAttributes.STR];
-                this.Speed = 1f;
 
                 this.Inventory.Save();
                 // TODO: save skills
                 // TODO: save quest states
 
-                DatabaseService.Characters.Update(dbCharacter);
+                DatabaseService.Characters.Update(dbCharacter, true);
             }
         }
 
@@ -274,6 +290,27 @@ namespace Hellion.World.Systems
             this.SendDespawnObject(obj);
 
             base.DespawnObject(obj);
+        }
+
+        public override void Fight(Mover defender)
+        {
+            var rightWeapon = this.Inventory.GetItemBySlot(Inventory.RightWeaponSlot);
+
+            if (rightWeapon == null)
+                rightWeapon = Inventory.Hand;
+
+            int damages = BattleManager.CalculateDamages(this, defender);
+
+            // Set monster target
+            if (defender is Monster && defender.TargetMover == null)
+            {
+                defender.Target(this);
+                defender.IsFighting = true;
+                defender.IsFollowing = true;
+            }
+
+            Log.Debug("{0} inflicted {1} damages to {2}", this.Name, damages, defender.Name);
+
         }
     }
 }

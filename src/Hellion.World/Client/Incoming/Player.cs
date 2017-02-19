@@ -5,6 +5,7 @@ using Hellion.Core.Network;
 using Hellion.Core.Structures;
 using Hellion.Database;
 using Hellion.Database.Structures;
+using Hellion.World.Structures;
 using Hellion.World.Systems;
 
 /*
@@ -115,6 +116,8 @@ namespace Hellion.World.Client
             var posZ = packet.Read<float>();
             var forward = packet.Read<byte>();
 
+            this.Player.RemoveTarget();
+            this.Player.IsFollowing = false;
             this.Player.IsMovingWithKeyboard = false;
             this.Player.MovingFlags = ObjectState.OBJSTA_NONE;
             this.Player.MovingFlags |= ObjectState.OBJSTA_FMOVE;
@@ -129,6 +132,8 @@ namespace Hellion.World.Client
         [FFIncomingPacket(PacketType.PLAYERMOVED)]
         private void OnMoveByKeyboard(NetPacketBase packet)
         {
+            this.Player.IsFollowing = false;
+
             var startPositionX = packet.Read<float>();
             var startPositionY = packet.Read<float>();
             var startPositionZ = packet.Read<float>();
@@ -162,6 +167,40 @@ namespace Hellion.World.Client
             
             this.Player.SendMoveByKeyboard(directionVector, motionEx, loop, motionOption, tick);
         }
+        
+        [FFIncomingPacket(PacketType.PLAYERMOVED2)]
+        private void OnPlayerMoved2(NetPacketBase packet)
+        {
+            var startPositionX = packet.Read<float>();
+            var startPositionY = packet.Read<float>();
+            var startPositionZ = packet.Read<float>();
+            var startPosition = new Vector3(startPositionX, startPositionY, startPositionZ);
+
+            var directionX = packet.Read<float>();
+            var directionY = packet.Read<float>();
+            var directionZ = packet.Read<float>();
+            var directionVector = new Vector3(directionX, directionY, directionZ);
+
+            if (directionVector.IsZero())
+                this.Player.DestinationPosition = startPosition.Clone();
+
+            this.Player.Angle = packet.Read<float>();
+            this.Player.AngleFly = packet.Read<float>();
+            var flySpeed = packet.Read<float>();
+            var turnAngle = packet.Read<float>();
+            this.Player.MovingFlags = (ObjectState)packet.Read<uint>();
+            this.Player.MotionFlags = (StateFlags)packet.Read<int>();
+            this.Player.ActionFlags = packet.Read<int>();
+            var motionEx = packet.Read<int>();
+            var loop = packet.Read<int>();
+            var motionOption = packet.Read<int>();
+            var tick = packet.Read<long>();
+            var frame = packet.Read<byte>();
+
+            this.Player.IsFlying = this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE);
+
+            this.Player.SendMoverMoved(directionVector, motionEx, loop, motionOption, tick, frame, turnAngle);
+        }
 
         /// <summary>
         /// This client has send a behavior request.
@@ -170,6 +209,9 @@ namespace Hellion.World.Client
         [FFIncomingPacket(PacketType.PLAYERBEHAVIOR)]
         private void OnPlayerBehavior(NetPacketBase packet)
         {
+            if (this.Player.IsFlying)
+                return;
+
             var startPositionX = packet.Read<float>();
             var startPositionY = packet.Read<float>();
             var startPositionZ = packet.Read<float>();
@@ -196,6 +238,100 @@ namespace Hellion.World.Client
             this.Player.IsMovingWithKeyboard = this.Player.MovingFlags.HasFlag(ObjectState.OBJSTA_FMOVE);
 
             this.Player.SendMoverBehavior(directionVector, motionEx, loop, motionOption, tick);
+        }
+
+        //[FFIncomingPacket(PacketType.PLAYERBEHAVIOR2)]
+        private void OnPlayerBehavior2(NetPacketBase packet)
+        {
+        }
+
+        [FFIncomingPacket(PacketType.PLAYERANGLE)]
+        private void OnPlayerAngle(NetPacketBase packet)
+        {
+            var startPositionX = packet.Read<float>();
+            var startPositionY = packet.Read<float>();
+            var startPositionZ = packet.Read<float>();
+            var startPosition = new Vector3(startPositionX, startPositionY, startPositionZ);
+
+            var directionX = packet.Read<float>();
+            var directionY = packet.Read<float>();
+            var directionZ = packet.Read<float>();
+            var directionVector = new Vector3(directionX, directionY, directionZ);
+
+            var angle = packet.Read<float>();
+            var angleY = packet.Read<float>();
+            float flySpeed = packet.Read<float>();
+            this.Player.TurnAngle = packet.Read<float>();
+            var tick = packet.Read<long>();
+
+            this.Player.Angle = angle;
+            this.Player.AngleFly = angle;
+            this.Player.Position = startPosition.Clone();
+
+            if (directionVector.IsZero())
+                this.Player.DestinationPosition = this.Player.Position.Clone();
+
+            this.Player.SendMoverAngle(directionVector, tick, this.Player.TurnAngle);
+        }
+
+        [FFIncomingPacket(PacketType.PLAYERSETDESTOBJ)]
+        public void OnPlayerSetFollowTarget(NetPacketBase packet)
+        {
+            var moverId = packet.Read<uint>();
+            this.Player.FollowDistance = packet.Read<float>();
+
+            if (moverId == this.Player.ObjectId)
+            {
+                this.Player.Target(this.Player);
+                return;
+            }
+
+            var targetMover = this.Player.GetSpawnedObjectById<Mover>((int)moverId);
+
+            if (targetMover == null)
+            {
+                Log.Error("[PLAYERSETDESTOBJ]: Cannot target mover ID: {0}", moverId);
+                return;
+            }
+
+            this.Player.IsFollowing = true;
+            this.Player.MovingFlags = ObjectState.OBJSTA_FMOVE;
+            this.Player.Target(targetMover);
+            this.Player.DestinationPosition = targetMover.Position.Clone();
+            this.Player.SendFollowTarget(this.Player.FollowDistance);
+        }
+
+        [FFIncomingPacket(PacketType.QUERYGETDESTOBJ)]
+        public void OnQueryGetDestObj(NetPacketBase packet)
+        {
+            var objectId = packet.Read<int>();
+            var mover = this.Player.GetSpawnedObjectById<Mover>(objectId);
+
+            if (mover != null)
+            {
+                Log.Debug("Mover {0} arrived to destination", mover.Name);
+                mover.Position = mover.DestinationPosition.Clone();
+            }
+        }
+
+        [FFIncomingPacket(PacketType.MELEE_ATTACK)]
+        public void OnMeleeAttack(NetPacketBase packet)
+        {
+            var motion = packet.Read<int>();
+            var targetId = packet.Read<int>();
+            var param2 = packet.Read<int>(); // ??
+            var param3 = packet.Read<int>(); // ??
+            var value = packet.Read<float>(); // ??
+            var target = this.Player.GetSpawnedObjectById<Mover>(targetId);
+
+            if (target == null || this.Player.TargetMover == null || this.Player.TargetMover.ObjectId != targetId)
+                return;
+            
+            if (target.IsDead)
+                return;
+
+            this.Player.Fight(target);
+            this.Player.SendMeleeAttack(motion, targetId);
         }
     }
 }

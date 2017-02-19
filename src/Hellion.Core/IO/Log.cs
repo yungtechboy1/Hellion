@@ -19,7 +19,9 @@ namespace Hellion.Core.IO
 
         static Log()
         {
+#if !NET45
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
         }
 
         public static void Info(string format, params object[] args)

@@ -6,15 +6,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Hellion.Core.Extensions;
 using Hellion.Database.Structures;
+using Hellion.Database;
 
 namespace Hellion.World.Systems
 {
     public class Inventory
     {
+        public const int RightWeaponSlot = 52;
         public const int EquipOffset = 42;
         public const int MaxItems = 73;
         public const int InventorySize = EquipOffset;
         public const int MaxHumanParts = MaxItems - EquipOffset;
+
+        public static readonly Item Hand = new Item(11, 1, -1, RightWeaponSlot);
 
         private Item[] items;
         private Player player;
@@ -93,6 +97,17 @@ namespace Hellion.World.Systems
         }
 
         /// <summary>
+        /// Check if the player's inventory has a flying object equiped.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasFlyingObjectEquiped()
+        {
+            var flyingItem = this.GetItemBySlot(55);
+
+            return flyingItem != null && flyingItem.Id != -1;
+        }
+
+        /// <summary>
         /// Move an item in the inventory.
         /// </summary>
         /// <param name="sourceSlot"></param>
@@ -126,6 +141,10 @@ namespace Hellion.World.Systems
             }
         }
 
+        /// <summary>
+        /// Equips an item.
+        /// </summary>
+        /// <param name="item"></param>
         public void Equip(Item item)
         {
             // TODO: Add some verifications before equip.
@@ -141,9 +160,16 @@ namespace Hellion.World.Systems
             item.Slot = destSlot;
             this.items.Swap(sourceSlot, destSlot);
 
+            if (item.Data.Parts == 13 && item.Data.ItemKind1 == 4)
+                this.player.IsFlying = true;
+
             this.player.SendItemEquip(item, equipParts, true);
         }
 
+        /// <summary>
+        /// Unequips an item.
+        /// </summary>
+        /// <param name="item"></param>
         public void Unequip(Item item)
         {
             int sourceSlot = item.Slot;
@@ -168,8 +194,41 @@ namespace Hellion.World.Systems
                 item.Slot = destSlot;
                 this.items.Swap(sourceSlot, destSlot);
 
+                if (item.Data.Parts == 13 && item.Data.ItemKind1 == 4)
+                    this.player.IsFlying = false;
+
                 this.player.SendItemEquip(item, parts, false);
             }
+        }
+
+        /// <summary>
+        /// Create a new item in the inventory.
+        /// </summary>
+        /// <param name="item"></param>
+        public void CreateItem(Item item)
+        {
+            if (item == null || !WorldServer.ItemsData.ContainsKey(item.Id))
+            {
+                Log.Warning("Item {0} doesn't exists", item.Id);
+                return;
+            }
+
+            for (int i = 0; i < item.Quantity; ++i)
+            {
+                int freeSlot = this.GetFreeSlot();
+
+                if (freeSlot == -1)
+                {
+                }
+                else
+                {
+                    item.Slot = freeSlot;
+                    item.UniqueId = freeSlot;
+                    this.items[freeSlot] = item;
+                    this.player.SendCreateItem(item);
+                }
+            }
+            
         }
 
         /// <summary>
@@ -202,6 +261,47 @@ namespace Hellion.World.Systems
         /// </summary>
         public void Save()
         {
+            var dbInventory = DatabaseService.Items.GetAll(x => x.CharacterId == this.player.Id);
+
+            // Check deleted items
+            foreach (var dbItem in dbInventory)
+            {
+                if (this.GetItemBySlot(dbItem.ItemSlot) == null)
+                    DatabaseService.Items.Delete(dbItem);
+            }
+
+            // Check updated and new items
+            foreach (var item in this.items)
+            {
+                if (item.Id == -1)
+                    continue; // ignore this item
+
+                var dbItem = dbInventory.Where(x => x.ItemId == item.Id).FirstOrDefault();
+
+                if (dbItem == null)
+                {
+                    dbItem = new DbItem()
+                    {
+                        CharacterId = this.player.Id,
+                        CreatorId = item.CreatorId,
+                        ItemId = item.Id,
+                        ItemCount = item.Quantity,
+                        ItemSlot = item.Slot
+                    };
+
+                    DatabaseService.Items.Add(dbItem);
+                }
+                else
+                {
+                    dbItem.ItemId = item.Id;
+                    dbItem.ItemCount = item.Quantity;
+                    dbItem.ItemSlot = item.Slot;
+                    // TODO: add refine and updates
+                    DatabaseService.Items.Update(dbItem);
+                }
+            }
+
+            DatabaseService.Items.Save();
         }
     }
 }
