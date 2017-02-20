@@ -49,7 +49,7 @@ namespace Hellion.World.Structures
             {
                 float moverSpeed = WorldServer.MonstersData[this.ModelId].Speed;
 
-                return (moverSpeed * 10f) * this.SpeedFactor;
+                return moverSpeed * this.SpeedFactor;
             }
         }
         
@@ -207,7 +207,7 @@ namespace Hellion.World.Structures
                 };
                 var accelVectorNorm = accelVector.Normalize();
                 var deltaVectorNorm = deltaVector.Normalize();
-                float deltaVectorLength = deltaVector.GetLengthSq();
+                float deltaVectorLength = deltaVector.SquaredLength;
                 float maxSpeed = 0.3f;
 
                 if (this.MotionFlags.HasFlag(StateFlags.OBJSTAF_TURBO))
@@ -310,6 +310,23 @@ namespace Hellion.World.Structures
 
             this.move(v.X, v.Z);
             this.Angle = angle;
+        }
+
+        private void WalkNew()
+        {
+            if (this.MovingFlags.HasFlag(ObjectState.OBJSTA_STAND))
+                return;
+
+            var speed = this.Speed;
+
+            if (this.Position.IsInCircle(this.DestinationPosition, 0.1f))
+            {
+                this.Position = this.DestinationPosition.Clone();
+            }
+            else
+            {
+                // this.Position = ...
+            }
         }
 
         private void Follow()
