@@ -1,4 +1,5 @@
 ﻿using Hellion.Core.Helpers;
+using Hellion.Core.IO;
 using System;
 
 namespace Hellion.Core.Structures
@@ -117,7 +118,9 @@ namespace Hellion.Core.Structures
         /// <returns></returns>
         public bool IsInCircle(Vector3 otherPosition, float circleRadius)
         {
-            var distance = (float)this.GetDistance2D(otherPosition);
+            float xDistance = otherPosition.X - this.X;
+            float zDistance = otherPosition.Z - this.Z;
+            float distance = (xDistance * xDistance + zDistance * zDistance);
 
             return distance <= circleRadius * circleRadius;
         }
@@ -128,7 +131,12 @@ namespace Hellion.Core.Structures
         /// <returns></returns>
         public Vector3 Normalize()
         {
-            return this / this.Length;
+            var sqLength = this.SquaredLength;
+
+            if (sqLength <= 0)
+                throw new InvalidOperationException("Cannot normalize a vector of zero length.");
+
+            return this / (float)Math.Sqrt(sqLength);
         }
 
         /// <summary>
@@ -319,23 +327,34 @@ namespace Hellion.Core.Structures
         /// <returns></returns>
         public static float AngleBetween(Vector3 a, Vector3 b)
         {
-            float deltaX = a.x - b.x;
-            float deltaZ = a.z - b.z;
+            var dist = b - a;
+            float angle = (float)Math.Atan2(dist.X, -dist.Z);
 
-            float angle = (float)((Math.Atan2(deltaZ, deltaX) * 180 / Math.PI) + 90D);
-
+            angle = MathHelper.ToDegree(angle);
             if (angle < 0)
                 angle += 360;
-
-            if (a.X >= b.X)
-                angle += 180;
-            else
-                angle -= 180;
-
-            if (angle >= 360)
+            else if (angle >= 360)
                 angle -= 360;
 
             return angle;
+
+            //float deltaX = a.x - b.x;
+            //float deltaZ = a.z - b.z;
+
+            //float angle = (float)((Math.Atan2(deltaZ, deltaX) * 180 / Math.PI) + 90D);
+
+            //if (angle < 0)
+            //    angle += 360;
+
+            //if (a.X >= b.X)
+            //    angle += 180;
+            //else
+            //    angle -= 180;
+
+            //if (angle >= 360)
+            //    angle -= 360;
+
+            //return angle;
         }
     }
 }
