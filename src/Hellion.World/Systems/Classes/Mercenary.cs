@@ -6,15 +6,10 @@ using System.Threading.Tasks;
 
 namespace Hellion.World.Systems.Classes
 {
-    public class Vagrant : AClass
+    public class Mercenary : Vagrant
     {
-        public Vagrant() 
-            : base(DefineJob.JOB_VAGRANT)
-        {
-        }
-
-        public Vagrant(int parentClassId)
-            : base(parentClassId)
+        public Mercenary() 
+            : base(DefineJob.JOB_MERCENARY)
         {
         }
     }
