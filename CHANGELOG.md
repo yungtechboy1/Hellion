@@ -1,5 +1,12 @@
 ## Hellion ChangeLog
 
+### Update #11
+
+Date : 24/02/2017
+
+- World
+  - WIP: New mover walk process algorithm in progress
+
 ### Update #10
 
 Date: 17/02/2017
